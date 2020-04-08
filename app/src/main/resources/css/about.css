@@ -1,0 +1,7 @@
+.center-box{
+    -fx-alignment: CENTER;
+    -fx-spacing: 10px;
+}
+.app-info{
+    -fx-spacing: 10px;
+}

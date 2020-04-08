@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import java.net.URL?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.openjfx.database.app.controller.CreateConnectionController"
+            prefHeight="400.0" prefWidth="600.0">
+    <stylesheets>
+        <URL value="@/css/base.css"/>
+        <URL value="@/css/create_connection.css"/>
+    </stylesheets>
+    <top>
+        <HBox styleClass="top-box">
+            <VBox HBox.hgrow="ALWAYS" spacing="10">
+                <Label text="连接设置"/>
+                <Label text="数据库连接设置"/>
+            </VBox>
+            <VBox>
+                <Label>
+                    <graphic>
+                        <ImageView>
+                            <Image url="@/assets/images/mysql.png" requestedHeight="80" requestedWidth="100"
+                                   smooth="true"/>
+                        </ImageView>
+                    </graphic>
+                </Label>
+            </VBox>
+        </HBox>
+    </top>
+    <center>
+        <VBox styleClass="config-box">
+            <VBox styleClass="server">
+                <HBox>
+                    <Label text="连接名称:"/>
+                    <TextField HBox.hgrow="ALWAYS" fx:id="name" text="localhost"/>
+                </HBox>
+                <HBox>
+                    <Label text="服务器地址:"/>
+                    <TextField HBox.hgrow="ALWAYS" fx:id="server" text="localhost"/>
+                </HBox>
+                <HBox>
+                    <Label text="端口:"/>
+                    <TextField HBox.hgrow="ALWAYS" fx:id="port" text="3306"/>
+                </HBox>
+            </VBox>
+            <VBox styleClass="auth">
+                <HBox>
+                    <Label text="用户名:"/>
+                    <TextField HBox.hgrow="ALWAYS" fx:id="user" text="root"/>
+                </HBox>
+                <HBox>
+                    <Label text="密码:"/>
+                    <PasswordField HBox.hgrow="ALWAYS" fx:id="password"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </center>
+    <bottom>
+        <HBox styleClass="bottom-box">
+            <HBox>
+                <Button text="测试连接" onAction="#test"/>
+            </HBox>
+            <HBox HBox.hgrow="ALWAYS">
+                <Button text="取消" onAction="#close"/>
+                <Button text="完成" onAction="#save"/>
+            </HBox>
+        </HBox>
+    </bottom>
+</BorderPane>

@@ -1,0 +1,22 @@
+.table-column {
+    -fx-alignment: CENTER_LEFT;
+}
+
+.top-box{
+    -fx-spacing: 10px;
+    -fx-padding: 5px;
+}
+
+.column-attr {
+    -fx-alignment: CENTER_LEFT;
+    -fx-spacing: 10px;
+    -fx-padding: 10px;
+}
+
+.column-attr .label {
+    -fx-pref-width: 200px;
+}
+
+.column-attr .choice-box, .text-field {
+    -fx-pref-width: 300px;
+}

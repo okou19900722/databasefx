@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+<?import java.net.URL?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.openjfx.database.app.controller.DesignTableController"
+            prefHeight="400.0" prefWidth="600.0">
+    <stylesheets>
+        <URL value="@/css/base.css"/>
+        <URL value="@/css/design_table.css"/>
+    </stylesheets>
+    <top>
+        <HBox styleClass="top-box">
+            <JFXButton text="新建">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/assets/images/build_icon.png" requestedWidth="20" requestedHeight="20"
+                               smooth="true"/>
+                    </ImageView>
+                </graphic>
+            </JFXButton>
+            <JFXButton text="保存">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/assets/images/save_icon.png" requestedWidth="20" requestedHeight="20"
+                               smooth="true"/>
+                    </ImageView>
+                </graphic>
+            </JFXButton>
+            <JFXButton text="另存为">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/assets/images/resave_icon.png" requestedWidth="20" requestedHeight="20"
+                               smooth="true"/>
+                    </ImageView>
+                </graphic>
+            </JFXButton>
+        </HBox>
+    </top>
+    <center>
+        <TabPane>
+            <Tab text="表结构" closable="false">
+                <VBox>
+                    <TableView fx:id="designTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn text="字段名" userData="Field"/>
+                            <TableColumn text="数据类型" userData="Type"/>
+                            <TableColumn text="键" userData="Key"/>
+                            <TableColumn text="非空" userData="Null"/>
+                            <TableColumn text="字符编码" userData="Collation"/>
+                            <TableColumn text="默认值" userData="Default"/>
+                            <TableColumn text="额外的" userData="Extra"/>
+                            <TableColumn text="注释" userData="Comment"/>
+                        </columns>
+                    </TableView>
+                    <VBox styleClass="column-attr">
+                        <HBox>
+                            <Label text="默认:"/>
+                            <ChoiceBox fx:id="defaultBox"/>
+                        </HBox>
+                        <HBox>
+                            <Label text="注释:"/>
+                            <TextField fx:id="commentField"/>
+                        </HBox>
+                        <HBox>
+                            <Label text="字符集:"/>
+                            <ChoiceBox fx:id="charsetBox"/>
+                        </HBox>
+                        <HBox>
+                            <Label text="排序规则:"/>
+                            <ChoiceBox fx:id="sortRegular"/>
+                        </HBox>
+                    </VBox>
+                </VBox>
+            </Tab>
+            <Tab text="DDL" closable="false">
+                <TextArea editable="false" fx:id="ddlTextArea"/>
+            </Tab>
+        </TabPane>
+    </center>
+</BorderPane>

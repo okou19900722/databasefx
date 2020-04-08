@@ -1,0 +1,44 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
+    id 'com.gluonhq.client-gradle-plugin' version '0.0.13'
+
+}
+
+mainClassName = 'com.openjfx.database.app.DatabaseFX'
+
+sourceCompatibility = 11
+
+group 'com.openjfx.database'
+version '1.0-SNAPSHOT'
+
+
+javafx {
+    version = "11.0.2"
+    modules = ['javafx.controls', 'javafx.fxml', 'javafx.base', 'javafx.graphics']
+}
+
+dependencies {
+    compile project(":common")
+    compile project(":mysql")
+    compile 'com.jfoenix:jfoenix:9.0.8'
+    compile group: 'org.controlsfx', name: 'controlsfx', version: '11.0.1'
+    compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.4'
+
+}
+
+jar {
+    from {
+        //添加依懒到打包文件
+        configurations.runtime.collect { zipTree(it) }
+    }
+    manifest {
+        attributes "Manifest-Version": 1.0
+        attributes 'Main-Class': 'com.openjfx.database.app.DatabaseFX'
+    }
+}
+
+//jlink {
+//     comment_line './graalvm/bin/jlink --module-path /home/yangkui/application/javafx-jmods-11.0.2/ --add-modules javafx.base,javafx.controls,javafx.fxml,javafx.graphics,java.logging --output /home/yangkui/runtine'
+//}

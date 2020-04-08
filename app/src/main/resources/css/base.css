@@ -1,0 +1,36 @@
+* {
+    -fx-font-size: 16px;
+}
+
+.table-column {
+    -fx-alignment: center;
+}
+
+.table-view .scroll-bar:vertical, .tree-view .scroll-bar:vertical {
+    -fx-pref-width: 10px;
+}
+
+.table-view .scroll-bar:horizontal, .tree-view .scroll-bar:horizontal {
+    -fx-pref-height: 10px;
+}
+
+.tab {
+    -fx-border-width: 1px;
+}
+
+.tab-label, .column-drag-header .label {
+    -fx-pref-width: 100px;
+    -fx-text-alignment: center;
+}
+
+.jfx-slider .thumb {
+    -fx-pref-width: 7px;
+    -fx-pref-height: 7px;
+}
+
+.null-style {
+    -fx-text-fill: #D7e7f5;
+}
+.change-style{
+    -fx-background-color:#FFE48F;
+}

@@ -1,0 +1,29 @@
+.top-box {
+    -fx-background-color: #FFFFFF;
+}
+
+.top-box VBox {
+    -fx-alignment: CENTER_LEFT;
+}
+
+.config-box, .top-box, .bottom-box {
+    -fx-padding: 10px 5px;
+    -fx-spacing: 5px;
+}
+
+.server, .auth {
+    -fx-spacing: 10px;
+}
+
+.server .label, .auth .label {
+    -fx-pref-width: 100px;
+}
+
+.bottom-box HBox {
+    -fx-alignment: CENTER_RIGHT;
+    -fx-spacing: 10px;
+}
+
+.button-box .button {
+    -fx-pref-width: 100px;
+}

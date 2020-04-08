@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import java.net.URL?>
+<?import com.openjfx.database.app.controls.MainTabPane?>
+<BorderPane xmlns="http://javafx.com/javafx/10.0.2-internal"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.openjfx.database.app.controller.DatabaseFxController">
+    <stylesheets>
+        <URL value="@/css/base.css"/>
+    </stylesheets>
+    <top>
+        <MenuBar fx:id="menuBar">
+            <Menu text="文件(F)">
+                <MenuItem text="打开文件" userData="open"/>
+                <MenuItem text="刷新" userData="flush"/>
+                <MenuItem text="导入" userData="import"/>
+                <MenuItem text="导出" userData="export"/>
+                <MenuItem text="退出" userData="exit"/>
+            </Menu>
+            <Menu text="编辑(E)"/>
+            <Menu text="SQL编辑器">
+                <MenuItem text="SQL编辑器" userData="editor"/>
+            </Menu>
+            <Menu text="数据库(D)">
+                <MenuItem text="新建连接" userData="connection"/>
+            </Menu>
+            <Menu text="窗口(W)">
+                <MenuItem text="首选项" userData="setting"/>
+            </Menu>
+            <Menu text="帮助(H)">
+                <MenuItem text="关于" userData="about"/>
+            </Menu>
+        </MenuBar>
+    </top>
+    <center>
+        <SplitPane fx:id="splitPane" dividerPositions="0.1">
+            <TreeView fx:id="treeView" showRoot="false">
+                <TreeItem fx:id="treeItemRoot"/>
+            </TreeView>
+            <MainTabPane fx:id="tabPane"/>
+        </SplitPane>
+    </center>
+
+</BorderPane>
