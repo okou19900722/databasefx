@@ -1,12 +1,12 @@
-package com.openjfx.database.app.controls.impl;
+package com.openjfx.database.app.component.impl;
 
 import com.jfoenix.controls.JFXButton;
 import com.openjfx.database.DML;
 import com.openjfx.database.TableColumnMetaHelper;
 import com.openjfx.database.app.TableDataHelper;
-import com.openjfx.database.app.controls.BaseTab;
-import com.openjfx.database.app.controls.TableDataCell;
-import com.openjfx.database.app.controls.TableDataView;
+import com.openjfx.database.app.component.BaseTab;
+import com.openjfx.database.app.component.TableDataCell;
+import com.openjfx.database.app.component.TableDataView;
 import com.openjfx.database.app.enums.NotificationType;
 import com.openjfx.database.app.model.TableDataChangeMode;
 import com.openjfx.database.app.model.impl.TableTabModel;

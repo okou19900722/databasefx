@@ -1,6 +1,6 @@
-package com.openjfx.database.app.controls;
+package com.openjfx.database.app.component;
 
-import com.openjfx.database.app.controls.impl.TableTab;
+import com.openjfx.database.app.component.impl.TableTab;
 import com.openjfx.database.common.VertexUtils;
 import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;

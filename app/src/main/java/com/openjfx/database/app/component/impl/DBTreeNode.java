@@ -1,8 +1,8 @@
-package com.openjfx.database.app.controls.impl;
+package com.openjfx.database.app.component.impl;
 
 import com.openjfx.database.app.config.DbPreference;
-import com.openjfx.database.app.controls.BaseTreeNode;
-import com.openjfx.database.app.controls.MainTabPane;
+import com.openjfx.database.app.component.BaseTreeNode;
+import com.openjfx.database.app.component.MainTabPane;
 import com.openjfx.database.app.stage.CreateConnectionStage;
 import com.openjfx.database.base.AbstractDataBasePool;
 import com.openjfx.database.app.utils.DialogUtils;

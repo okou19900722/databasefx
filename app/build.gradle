@@ -7,7 +7,6 @@ plugins {
 }
 
 mainClassName = 'com.openjfx.database.app.DatabaseFX'
-
 sourceCompatibility = 11
 
 group 'com.openjfx.database'

@@ -1,4 +1,4 @@
-package com.openjfx.database.app.controls;
+package com.openjfx.database.app.component;
 
 import com.openjfx.database.app.model.BaseTabMode;
 import javafx.scene.Node;

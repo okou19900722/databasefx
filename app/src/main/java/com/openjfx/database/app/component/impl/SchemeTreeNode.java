@@ -1,10 +1,9 @@
-package com.openjfx.database.app.controls.impl;
+package com.openjfx.database.app.component.impl;
 
 
 import com.openjfx.database.DDL;
-import com.openjfx.database.DML;
 import com.openjfx.database.DQL;
-import com.openjfx.database.app.controls.BaseTreeNode;
+import com.openjfx.database.app.component.BaseTreeNode;
 import com.openjfx.database.app.utils.DialogUtils;
 import io.vertx.core.Future;
 import javafx.application.Platform;
