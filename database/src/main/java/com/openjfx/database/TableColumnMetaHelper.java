@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static com.openjfx.database.common.utils.StringUtils.isEmpty;
+import static com.openjfx.database.common.utils.StringUtils.nonEmpty;
+
 /**
  * Table Column meta data
  *
@@ -21,7 +24,7 @@ public class TableColumnMetaHelper {
      */
     public static Optional<TableColumnMeta> getTableKey(List<TableColumnMeta> metas) {
         return metas.stream()
-                .filter(meta -> Objects.nonNull(meta.getKey()))
+                .filter(meta -> nonEmpty(meta.getKey()))
                 .findAny();
     }
 }
