@@ -2,7 +2,7 @@
 
 This is a free, cross platform, open source database management tool based on JavaFX and vertx SQL client.
 
-[![Travis CI](https://github.com/GZYangKui/openjfx-database/openjfx-database.svg)](https://github.com/GZYangKui/openjfx-database)
+[![Travis CI](./openjfx-database.svg)](https://github.com/GZYangKui/openjfx-database)
 
 ## Build
 To build DatabaseFX, execute the following command:
