@@ -39,6 +39,11 @@ public class TableDataCell extends TableCell<ObservableList<StringProperty>, Str
      */
     private final String CHANGE_STYLE = "change-style";
 
+    {
+        //禁止换行,防止文字显示过长
+        setWrapText(false);
+    }
+
 
     private ObjectProperty<StringConverter<String>> converter = new SimpleObjectProperty<>();
 
