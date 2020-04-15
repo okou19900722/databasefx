@@ -1,10 +1,10 @@
-= DatabaseFX
+# DatabaseFX
 
 This is a free, cross platform, open source database management tool based on JavaFX and vertx SQL client.
 
-[![Apache 2.0 license](https://img.shields.io/badge/license-BSD--3-%230778B9.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![Travis CI](https://github.com/GZYangKui/openjfx-database/openjfx-database.svg)](https://github.com/GZYangKui/openjfx-database)
 
-=== Build
+## Build
 To build DatabaseFX, execute the following command:
 ```
 gradlew build
