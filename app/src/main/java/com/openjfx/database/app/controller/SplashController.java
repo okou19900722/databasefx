@@ -4,6 +4,7 @@ import com.jfoenix.controls.JFXSlider;
 import com.openjfx.database.app.BaseController;
 import com.openjfx.database.app.config.DbPreference;
 import com.openjfx.database.app.stage.DatabaseFxStage;
+import com.openjfx.database.app.utils.AssetUtils;
 import com.openjfx.database.model.ConnectionParam;
 import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;
@@ -46,6 +47,7 @@ public class SplashController extends BaseController {
     private void loadAppConfig() {
         CompletableFuture.runAsync(() -> {
             try {
+                AssetUtils.loadAllFont();
                 updateProgress("初始化...", 0);
                 Thread.sleep(250);
                 updateProgress("加载数据库配置", 25);
@@ -61,7 +63,7 @@ public class SplashController extends BaseController {
                 updateProgress("加载app配置", 75);
                 loadConfig(UI_CONFIG_FILE);
                 Thread.sleep(250);
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 throw new RuntimeException(e);
             }

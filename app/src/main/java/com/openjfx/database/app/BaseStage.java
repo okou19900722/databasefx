@@ -1,6 +1,7 @@
 package com.openjfx.database.app;
 
 import com.openjfx.database.app.annotation.Layout;
+import com.openjfx.database.app.utils.AssetUtils;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.common.utils.StringUtils;
 import javafx.fxml.FXMLLoader;
@@ -8,6 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.net.URL;
@@ -83,6 +85,8 @@ public class BaseStage<D> extends Stage {
             throw new RuntimeException(e);
         }
         scene = new Scene(root);
+        //添加全局样式
+        scene.getStylesheets().add(AssetUtils.getCssStyle("base.css"));
         controller = loader.getController();
         controller.setStage(this);
     }

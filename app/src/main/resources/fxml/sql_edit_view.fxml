@@ -13,7 +13,6 @@
             fx:controller="com.openjfx.database.app.controller.SQLEditController"
             prefHeight="400.0" prefWidth="600.0">
     <stylesheets>
-        <URL value="@/css/base.css"/>
         <URL value="@/css/sql_edit.css"/>
     </stylesheets>
     <top>

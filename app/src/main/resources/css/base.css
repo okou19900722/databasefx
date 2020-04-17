@@ -1,5 +1,6 @@
 * {
     -fx-font-size: 16px;
+    -fx-font-family: "Source Han Serif CN Light";
 }
 
 .table-column {
@@ -31,6 +32,7 @@
 .null-style {
     -fx-text-fill: #D7e7f5;
 }
-.change-style{
-    -fx-background-color:#FFE48F;
+
+.change-style {
+    -fx-background-color: #FFE48F;
 }

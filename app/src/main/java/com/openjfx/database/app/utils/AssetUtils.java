@@ -1,9 +1,11 @@
 package com.openjfx.database.app.utils;
 
+import com.openjfx.database.common.VertexUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.text.Font;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,7 +32,25 @@ public class AssetUtils {
      * 图片根路径
      */
     private static final String IMAGE_PATH = "assets/images/";
+    /**
+     * 字体路径
+     */
+    private static final String FONT_PATH = "fonts/";
+    /**
+     * 字体默认尺寸
+     */
+    private static final double DEFAULT_FONT_SIZE = 12D;
+    /**
+     * 字体列表
+     */
+    private static final String[] FONTS = new String[]{
+            FONT_PATH + "SourceHanSerifCN-Light.otf"
+    };
 
+    /**
+     * 基本样式
+     */
+    public static final String BASE_STYLE = AssetUtils.getCssStyle("base.css");
 
     /**
      * 加载css样式
@@ -45,6 +65,7 @@ public class AssetUtils {
 
     /**
      * 加载fxml视图
+     *
      * @param fileName 文件名
      * @return 返回视图信息
      */
@@ -64,14 +85,25 @@ public class AssetUtils {
 
     /**
      * 加载图片资源
-     * @param width 图片宽度
-     * @param height 图片高度
+     *
+     * @param width    图片宽度
+     * @param height   图片高度
      * @param filename 图片名称
      * @return 返回Image
      */
-    public static Image getLocalImage(double width,double height,String filename){
-        String path = IMAGE_PATH+filename;
+    public static Image getLocalImage(double width, double height, String filename) {
+        String path = IMAGE_PATH + filename;
         InputStream in = ClassLoader.getSystemResourceAsStream(path);
-        return new Image(in,width,height,false,true);
+        return new Image(in, width, height, false, true);
+    }
+
+    /**
+     * 加载所有app字体
+     */
+    public static void loadAllFont() {
+        for (String font : FONTS) {
+            var in = ClassLoader.getSystemResourceAsStream(font);
+            Font.loadFont(in, DEFAULT_FONT_SIZE);
+        }
     }
 }

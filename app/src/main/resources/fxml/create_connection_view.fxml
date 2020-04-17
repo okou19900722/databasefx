@@ -12,7 +12,6 @@
             fx:controller="com.openjfx.database.app.controller.CreateConnectionController"
             prefHeight="400.0" prefWidth="600.0">
     <stylesheets>
-        <URL value="@/css/base.css"/>
         <URL value="@/css/create_connection.css"/>
     </stylesheets>
     <top>

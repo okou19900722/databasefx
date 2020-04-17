@@ -8,9 +8,6 @@
 <BorderPane xmlns="http://javafx.com/javafx/10.0.2-internal"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.openjfx.database.app.controller.DatabaseFxController">
-    <stylesheets>
-        <URL value="@/css/base.css"/>
-    </stylesheets>
     <top>
         <MenuBar fx:id="menuBar">
             <Menu text="文件(F)">

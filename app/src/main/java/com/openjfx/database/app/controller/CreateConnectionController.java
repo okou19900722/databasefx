@@ -3,6 +3,7 @@ package com.openjfx.database.app.controller;
 import com.openjfx.database.app.config.DbPreference;
 import com.openjfx.database.app.enums.NotificationType;
 import com.openjfx.database.app.BaseController;
+import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.model.ConnectionParam;
 import com.openjfx.database.mysql.MysqlHelper;
@@ -84,10 +85,7 @@ public class CreateConnectionController extends BaseController<String> {
         if (Objects.nonNull(data)) {
             //更新连接
             updateConnection(param);
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setContentText("连接已更改是否重连?");
-            Optional<ButtonType> optional = alert.showAndWait();
-            flag = !(optional.isPresent() && optional.get() == ButtonType.OK);
+            flag = DialogUtils.showAlertConfirm("连接已更改是否重连?");
         } else {
             //新建连接
             saveConnection(param);
