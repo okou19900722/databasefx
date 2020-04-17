@@ -70,13 +70,13 @@ public class DialogUtils {
      * 显示确认对话框
      * @apiNote 调用该方法得在Fx ui线程之中
      * @param message 消息内容
-     * @return 返回确认结果
+     * @return 返回确认结果,如果点击ok则返回true 否则返回false
      */
     public static boolean showAlertConfirm(String message) {
         var alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setContentText(message);
         alert.getDialogPane().getStylesheets().add(AssetUtils.BASE_STYLE);
         var optional = alert.showAndWait();
-        return !(optional.isPresent() && optional.get() == ButtonType.OK);
+        return optional.isPresent() && optional.get() == ButtonType.OK;
     }
 }

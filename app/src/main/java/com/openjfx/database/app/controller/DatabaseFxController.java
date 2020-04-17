@@ -182,10 +182,10 @@ public class DatabaseFxController extends BaseController {
         } else {
             if (tabType == TabType.TABLE) {
                 //新建tab
-                TableTab tableTab = new TableTab((TableTabModel) mode);
-                tableTab.setUserData(uuid);
-                tabPane.getTabs().add(tableTab);
-                tab = tableTab;
+                tab = new TableTab((TableTabModel) mode);
+                tab.setUserData(uuid);
+                tabPane.getTabs().add(tab);
+                ((TableTab)tab).init();
             }
         }
         if (Objects.nonNull(tab)) {

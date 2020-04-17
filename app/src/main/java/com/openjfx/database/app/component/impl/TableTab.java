@@ -10,7 +10,6 @@ import com.openjfx.database.app.component.TableDataView;
 import com.openjfx.database.app.enums.NotificationType;
 import com.openjfx.database.app.model.TableDataChangeMode;
 import com.openjfx.database.app.model.impl.TableTabModel;
-import com.openjfx.database.app.utils.AlertUtils;
 import com.openjfx.database.app.utils.AssetUtils;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.base.AbstractDataBasePool;
@@ -27,6 +26,9 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -45,54 +47,6 @@ import static com.openjfx.database.common.config.StringConstants.NULL;
  * @since 1.0
  */
 public class TableTab extends BaseTab<TableTabModel> {
-    /**************************************************************
-     *                          布局属性                           *
-     **************************************************************/
-    private BorderPane borderPane = new BorderPane();
-
-    private TableDataView tableView = new TableDataView();
-
-    private HBox bottomBox = new HBox();
-
-    private HBox leftBox = new HBox();
-
-    private HBox rightBox = new HBox();
-
-    /**********************************************************
-     *                       连接池信息                         *
-     **********************************************************/
-    private final AbstractDataBasePool pool;
-    /*******************************************************************
-     *                       分页查询参数                                *
-     *******************************************************************/
-
-    private int pageIndex = 1;
-    private int pageSize = 100;
-
-
-    /*********************************************************************
-     *                              控制按钮                               *
-     *********************************************************************/
-    private JFXButton addData = new JFXButton();
-
-    private JFXButton flush = new JFXButton();
-
-    private JFXButton next = new JFXButton();
-
-    private JFXButton last = new JFXButton();
-
-    private JFXButton submit = new JFXButton();
-
-    private JFXButton reduce = new JFXButton();
-
-    private TextField numberTextField = new TextField(String.valueOf(pageSize));
-
-    private List<TableColumnMeta> metas = new ArrayList<>();
-
-    private Label totalLabel = new Label("0行数据");
-
-    private final Label flag = new Label();
-
     /*************************************************************************************
      *                                图标信息                                             *
      *************************************************************************************/
@@ -103,12 +57,41 @@ public class TableTab extends BaseTab<TableTabModel> {
     private static final Image SUBMIT_ICON = getLocalImage(25, 25, "save_icon.png");
     private static final Image REDUCE_ICON = getLocalImage(30, 30, "reduce_icon.png");
     private static final Image FLAG_IMAGE = getLocalImage(20, 20, "point.png");
-
     /**
      * css样式路径
      */
     private static final String STYLE_SHEETS = "table_tab.css";
+    /**********************************************************
+     *                       连接池信息                         *
+     **********************************************************/
+    private final AbstractDataBasePool pool;
+    private final Label flag = new Label();
+    /**************************************************************
+     *                          布局属性                           *
+     **************************************************************/
+    private BorderPane borderPane = new BorderPane();
+    private TableDataView tableView = new TableDataView();
+    private HBox bottomBox = new HBox();
+    private HBox leftBox = new HBox();
+    private HBox rightBox = new HBox();
+    /*******************************************************************
+     *                       分页查询参数                                *
+     *******************************************************************/
 
+    private int pageIndex = 1;
+    private int pageSize = 100;
+    /*********************************************************************
+     *                              控制按钮                               *
+     *********************************************************************/
+    private JFXButton addData = new JFXButton();
+    private JFXButton flush = new JFXButton();
+    private JFXButton next = new JFXButton();
+    private JFXButton last = new JFXButton();
+    private JFXButton submit = new JFXButton();
+    private JFXButton reduce = new JFXButton();
+    private TextField numberTextField = new TextField(String.valueOf(pageSize));
+    private List<TableColumnMeta> metas = new ArrayList<>();
+    private Label totalLabel = new Label("0行数据");
     /**
      * 当前表的key值
      */
@@ -123,13 +106,12 @@ public class TableTab extends BaseTab<TableTabModel> {
     public TableTab(TableTabModel model) {
         super(model);
         pool = DATABASE_SOURCE.getDataBaseSource(model.getUuid());
-        init();
     }
 
     /**
      * 初始化数据
      */
-    private void init() {
+    public void init() {
         //初始化图标
         flag.setGraphic(new ImageView(FLAG_IMAGE));
         addData.setGraphic(new ImageView(ADD_DATA_ICON));
@@ -152,11 +134,11 @@ public class TableTab extends BaseTab<TableTabModel> {
 
         bottomBox.getStyleClass().add("bottom-box");
 
-        flush.setOnAction(e -> loadData());
+        flush.setOnAction(e -> checkChange());
 
         borderPane.getStylesheets().add(AssetUtils.getCssStyle(STYLE_SHEETS));
 
-        submit.setOnAction(e -> saveChange(false));
+        submit.setOnAction(e -> checkChange());
 
         tableView.isChangeProperty().addListener((observable, oldValue, newValue) -> {
             if (Objects.nonNull(newValue) && newValue) {
@@ -179,13 +161,13 @@ public class TableTab extends BaseTab<TableTabModel> {
 
         next.setOnAction(e -> {
             pageIndex++;
-            loadData();
+            checkChange();
         });
 
         last.setOnAction(e -> {
             if (pageIndex > 1) {
                 pageIndex--;
-                loadData();
+                checkChange();
             }
         });
 
@@ -204,6 +186,20 @@ public class TableTab extends BaseTab<TableTabModel> {
             }
             var item = tableView.getSelectionModel().getSelectedItem();
             tableView.addDeleteItem(item);
+        });
+
+        //注册保存快捷键
+        getTabPane().addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            var tabPane = getTabPane();
+            //如果变动的不是当前选中的tab不发生改变
+            if (tabPane.getSelectionModel().getSelectedItem() != this){
+                return;
+            }
+            //触发保存事件
+            if (event.isControlDown() && event.getCode() == KeyCode.S) {
+                event.consume();
+                checkChange();
+            }
         });
 
         borderPane.setCenter(tableView);
@@ -262,22 +258,8 @@ public class TableTab extends BaseTab<TableTabModel> {
      * 分页加载数据
      */
     private void loadData() {
-        if (tableView.isChange()) {
-            Optional<ButtonType> optional = AlertUtils.showConfirm("检测到数据已经更新是否同步到数据库?");
-            if (optional.isPresent()) {
-                ButtonType buttonType = optional.get();
-                if (buttonType == ButtonType.OK) {
-                    saveChange(true);
-                    return;
-                } else {
-                    tableView.resetChange();
-                }
-            }
-        }
         //清空之前的数据
-        Platform.runLater(() -> {
-            tableView.getItems().clear();
-        });
+        Platform.runLater(() -> tableView.getItems().clear());
         //加载数据
         Future<List<Object[]>> future = pool.getDql().query(model.getTable(), pageIndex, pageSize);
         future.onSuccess(rs -> {
@@ -302,6 +284,7 @@ public class TableTab extends BaseTab<TableTabModel> {
             Platform.runLater(() -> {
                 tableView.getItems().addAll(list);
                 tableView.refresh();
+                tableView.resetChange();
             });
 
             countDataNumber();
@@ -311,27 +294,30 @@ public class TableTab extends BaseTab<TableTabModel> {
 
     /**
      * 保存更改数据
-     *
-     * @param isLoading 是否重新加载数据
      */
-    private void saveChange(boolean isLoading) {
-        DML dml = DATABASE_SOURCE
-                .getDataBaseSource(model.getUuid()).getDml();
-        Future<Integer> future = newData(dml)
-                .compose(rs -> updateData(dml))
-                .compose(rs -> deleteData(dml));
-
-        future.onSuccess(rs -> {
-            Platform.runLater(() -> {
-                if (isLoading) {
+    private void checkChange() {
+        if (!tableView.isChange()) {
+            loadData();
+            return;
+        }
+        var result = DialogUtils.showAlertConfirm("检测到数据已经更新是否同步到数据库?");
+        //同步改数据到数据库
+        if (result) {
+            var dml = DATABASE_SOURCE.getDataBaseSource(model.getUuid()).getDml();
+            Future<Integer> future = newData(dml).compose(rs -> updateData(dml)).compose(rs -> deleteData(dml));
+            future.onSuccess(rs -> {
+                Platform.runLater(() -> {
+                    countDataNumber();
+                    tableView.resetChange();
+                    tableView.refresh();
                     loadData();
-                }
-                countDataNumber();
-                tableView.resetChange();
-                tableView.refresh();
+                });
             });
-        });
-        future.onFailure(t -> DialogUtils.showErrorDialog(t, "更新失败"));
+            future.onFailure(t -> DialogUtils.showErrorDialog(t, "更新失败"));
+        } else {
+            tableView.resetChange();
+            loadData();
+        }
     }
 
     /**
