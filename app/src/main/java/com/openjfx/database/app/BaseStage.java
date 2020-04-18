@@ -9,7 +9,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.net.URL;
@@ -96,6 +95,7 @@ public class BaseStage<D> extends Stage {
      */
     private void initStage() {
         Layout layout = getLayout();
+
         setScene(scene);
         setTitle(layout.title());
         setWidth(layout.width());
@@ -103,6 +103,7 @@ public class BaseStage<D> extends Stage {
         setMaximized(layout.maximized());
         setResizable(layout.resizable());
         setTitle(StringUtils.isEmpty(layout.title())?"DatabaseFX":layout.title());
+        setAlwaysOnTop(layout.alwaysOnTop());
 
         Image icon = getLocalImage(200,200,layout.icon());
 

@@ -88,4 +88,9 @@ public @interface Layout {
      * 是否允许最小化
      */
     boolean iconified() default false;
+
+    /**
+     * 是否显示在最顶层
+     */
+    boolean alwaysOnTop() default false;
 }

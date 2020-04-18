@@ -9,6 +9,8 @@ import javafx.scene.text.Font;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import static com.openjfx.database.app.utils.DialogUtils.showErrorDialog;
 
@@ -46,7 +48,6 @@ public class AssetUtils {
     private static final String[] FONTS = new String[]{
             FONT_PATH + "SourceHanSerifCN-Light.otf"
     };
-
     /**
      * 基本样式
      */

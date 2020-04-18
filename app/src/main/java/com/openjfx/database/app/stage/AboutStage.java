@@ -12,8 +12,6 @@ import com.openjfx.database.app.annotation.Layout;
  * @since 1.0
  *
  */
-@Layout(layout = "about_view.fxml",width = 500,
-        height = 400, resizable = false,
-        await = true,title = "关于我们")
+@Layout(layout = "about_view.fxml",width = 500, height = 400, resizable = false, title = "关于我们",alwaysOnTop = true)
 public class AboutStage extends BaseStage {
 }

@@ -32,8 +32,7 @@ import static com.openjfx.database.app.config.Constants.*;
  * @author yangkui
  * @since 1.0
  */
-@Layout(layout = "splash_view.fxml",
-        width = 600, height = 400,
-        stageStyle = StageStyle.UNDECORATED)
+@Layout(layout = "splash_view.fxml", width = 600, height = 400, stageStyle = StageStyle.UNDECORATED,
+        alwaysOnTop = true)
 public class SplashStage extends BaseStage {
 }

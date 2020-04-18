@@ -48,19 +48,19 @@ public class SplashController extends BaseController {
         CompletableFuture.runAsync(() -> {
             try {
                 AssetUtils.loadAllFont();
-                updateProgress("初始化...", 0);
+                updateProgress("初始化中....", 0);
                 Thread.sleep(250);
-                updateProgress("加载数据库配置", 25);
+                updateProgress("加载配置信息...", 25);
                 JsonObject db = loadConfig(DB_CONFIG_FILE);
                 Thread.sleep(250);
-                updateProgress("配置数据库...", 50);
+                updateProgress("加载数据库信息...", 50);
                 List<ConnectionParam> params = db.getJsonArray(DATABASE)
                         .stream()
                         .map(it -> ((JsonObject) it).mapTo(ConnectionParam.class))
                         .collect(Collectors.toList());
                 DbPreference.setParams(params);
                 Thread.sleep(250);
-                updateProgress("加载app配置", 75);
+                updateProgress("加载界面配置....", 75);
                 loadConfig(UI_CONFIG_FILE);
                 Thread.sleep(250);
             } catch (Exception e) {
@@ -69,10 +69,10 @@ public class SplashController extends BaseController {
             }
         }).whenComplete((r, t) -> {
             if (Objects.isNull(t)) {
-                updateProgress("加载成功", 100);
+                updateProgress("启动成功", 100);
                 Platform.runLater(DatabaseFxStage::new);
             } else {
-                showErrorDialog(t, "初始化失败");
+                showErrorDialog(t, "启动失败");
             }
             Platform.runLater(stage::close);
         });

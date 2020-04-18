@@ -10,7 +10,7 @@ import io.vertx.core.json.JsonObject;
  * @author yangkui
  * @since 1.0
  */
-@Layout(layout = "sql_gen_view.fxml", title = "生成sql",await = true)
+@Layout(layout = "sql_gen_view.fxml", title = "生成sql")
 public class SQLGenStage extends BaseStage<JsonObject> {
     public SQLGenStage(JsonObject data) {
         super(data);
