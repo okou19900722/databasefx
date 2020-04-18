@@ -38,6 +38,7 @@ public interface SQLGenerator {
      * @return
      */
     String insert(List<TableColumnMeta> metas, String tableName);
+
     /**
      * DELETE
      *
@@ -55,9 +56,21 @@ public interface SQLGenerator {
      * @since 1.0
      */
     enum GeneratorType {
+        /**
+         * SELECT
+         */
         SELECT,
+        /**
+         * INSERT
+         */
         INSERT,
+        /**
+         * UPDATE
+         */
         UPDATE,
+        /**
+         * DELETE
+         */
         DELETE,
     }
 }

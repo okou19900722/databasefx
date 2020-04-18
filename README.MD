@@ -15,5 +15,11 @@ gradlew run
 ```
 NOTE : DatabaseFX requires Java 11 and above.
 
+## Snapshots
+
+[![Travis CI](./SNAPSHOTS/a.png)]
+
+[![Travis CI](./SNAPSHOTS/b.png)]
+
 
 
