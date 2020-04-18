@@ -25,7 +25,8 @@ public class MySql extends AbstractDatabaseSource {
     public AbstractDataBasePool createPool(ConnectionParam params) {
         MySQLPool mySqlPool = MysqlHelper.createPool(params);
         AbstractDataBasePool pool = MysqlPoolImpl.create(mySqlPool);
-        pools.put(params.getUuid(), pool);
+        //确保链接可用后在加入缓存之中
+        pool.getDql().heartBeatQuery().onSuccess(r-> pools.put(params.getUuid(), pool));
         return pool;
     }
 
@@ -54,10 +55,10 @@ public class MySql extends AbstractDatabaseSource {
 
     @Override
     public void heartBeat() {
-        //每隔5s向mysql服务器发送一次sql查询语句
+        //每隔10s向mysql服务器发送一次sql查询语句
         VertexUtils.getVertex().setPeriodic(10000, timer -> {
             pools.forEach((a, b) -> {
-                var future = b.getDql().showDatabase();
+                var future = b.getDql().heartBeatQuery();
                 future.onSuccess(ar -> {
                     System.out.println("success heart beat to " + a + " server");
                 });

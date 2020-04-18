@@ -52,7 +52,11 @@ public class MysqlHelper {
                 .setHost(param.getHost())
                 .setUser(param.getUser())
                 .setPassword(param.getPassword())
-                .setTcpKeepAlive(true);
+                .setTcpKeepAlive(true)
+                //设置链接超时为5s
+                .setConnectTimeout(5000)
+                .setIdleTimeout(5)
+                .setSslHandshakeTimeout(5);
 
         if (StringUtils.nonEmpty(database)) {
             options.setDatabase(database);

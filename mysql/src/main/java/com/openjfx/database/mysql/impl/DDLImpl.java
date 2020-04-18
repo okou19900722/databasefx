@@ -18,9 +18,6 @@ public class DDLImpl implements DDL {
         String sql = "DROP DATABASE "+database;
         Promise<Void> promise = Promise.promise();
         client.query(sql).onSuccess(rows->{
-            for (Row row : rows) {
-                System.out.println(row);
-            }
             promise.complete();
         }).onFailure(promise::fail);
         return promise.future();

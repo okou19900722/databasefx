@@ -117,4 +117,14 @@ public class DQLImpl implements DQL {
         }).onFailure(promise::fail);
         return promise.future();
     }
+
+    @Override
+    public Future<Void> heartBeatQuery() {
+        var sql = "SELECT 1";
+        var promise = Promise.<Void>promise();
+        var future = client.query(sql);
+        future.onSuccess(ar->promise.complete());
+        future.onFailure(promise::fail);
+        return promise.future();
+    }
 }

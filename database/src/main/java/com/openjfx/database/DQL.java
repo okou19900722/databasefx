@@ -51,4 +51,10 @@ public interface DQL {
      */
     Future<Long> count(String tableName);
 
+    /**
+     * 心跳查询语句
+     * @return 返回空查询结果
+     */
+    Future<Void> heartBeatQuery();
+
 }
