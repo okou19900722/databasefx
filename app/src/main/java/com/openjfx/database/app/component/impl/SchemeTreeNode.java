@@ -40,10 +40,7 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
 
         addMenus(flush, deleteMenu);
 
-        flush.setOnAction(e -> {
-            getChildren().clear();
-            init();
-        });
+        flush.setOnAction(e -> flush());
 
         deleteMenu.setOnAction(event -> {
             //删除scheme

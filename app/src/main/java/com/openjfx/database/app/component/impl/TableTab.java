@@ -55,7 +55,7 @@ public class TableTab extends BaseTab<TableTabModel> {
     private static final Image NEXT_ICON = getLocalImage(20, 20, "next_icon.png");
     private static final Image LAST_ICON = getLocalImage(20, 20, "last_icon.png");
     private static final Image SUBMIT_ICON = getLocalImage(25, 25, "save_icon.png");
-    private static final Image REDUCE_ICON = getLocalImage(30, 30, "reduce_icon.png");
+    private static final Image DELETE_ICON = getLocalImage(30, 30, "delete_icon.png");
     private static final Image FLAG_IMAGE = getLocalImage(20, 20, "point.png");
     /**
      * css样式路径
@@ -69,11 +69,11 @@ public class TableTab extends BaseTab<TableTabModel> {
     /**************************************************************
      *                          布局属性                           *
      **************************************************************/
-    private BorderPane borderPane = new BorderPane();
-    private TableDataView tableView = new TableDataView();
-    private HBox bottomBox = new HBox();
-    private HBox leftBox = new HBox();
-    private HBox rightBox = new HBox();
+    private final BorderPane borderPane = new BorderPane();
+    private final TableDataView tableView = new TableDataView();
+    private final HBox bottomBox = new HBox();
+    private final HBox leftBox = new HBox();
+    private final HBox rightBox = new HBox();
     /*******************************************************************
      *                       分页查询参数                                *
      *******************************************************************/
@@ -88,7 +88,7 @@ public class TableTab extends BaseTab<TableTabModel> {
     private final JFXButton next = new JFXButton();
     private final JFXButton last = new JFXButton();
     private final JFXButton submit = new JFXButton();
-    private final JFXButton reduce = new JFXButton();
+    private final JFXButton delete = new JFXButton();
     private final TextField numberTextField = new TextField(String.valueOf(pageSize));
     private final List<TableColumnMeta> metas = new ArrayList<>();
     private final Label totalLabel = new Label("0行数据");
@@ -119,14 +119,14 @@ public class TableTab extends BaseTab<TableTabModel> {
         next.setGraphic(new ImageView(NEXT_ICON));
         last.setGraphic(new ImageView(LAST_ICON));
         submit.setGraphic(new ImageView(SUBMIT_ICON));
-        reduce.setGraphic(new ImageView(REDUCE_ICON));
+        delete.setGraphic(new ImageView(DELETE_ICON));
 
         addData.setTooltip(new Tooltip("新增数据"));
         flush.setTooltip(new Tooltip("刷新"));
         submit.setTooltip(new Tooltip("保存更改"));
-        reduce.setTooltip(new Tooltip("删除"));
+        delete.setTooltip(new Tooltip("删除"));
 
-        leftBox.getChildren().addAll(addData, reduce, submit);
+        leftBox.getChildren().addAll(addData, delete, submit);
         rightBox.getChildren().addAll(totalLabel, last, next, numberTextField, flush);
 
         HBox.setHgrow(rightBox, Priority.ALWAYS);
@@ -134,13 +134,13 @@ public class TableTab extends BaseTab<TableTabModel> {
 
         bottomBox.getStyleClass().add("bottom-box");
 
-        flush.setOnAction(e -> checkChange());
+        flush.setOnAction(e -> checkChange(true));
 
         borderPane.getStylesheets().add(AssetUtils.getCssStyle(STYLE_SHEETS));
 
-        submit.setOnAction(e -> checkChange());
+        submit.setOnAction(e -> checkChange(false));
 
-        tableView.isChangeProperty().addListener((observable, oldValue, newValue) -> {
+        tableView.changeStatusProperty().addListener((observable, oldValue, newValue) -> {
             if (Objects.nonNull(newValue) && newValue) {
                 setGraphic(flag);
             } else {
@@ -161,13 +161,13 @@ public class TableTab extends BaseTab<TableTabModel> {
 
         next.setOnAction(e -> {
             pageIndex++;
-            checkChange();
+            checkChange(true);
         });
 
         last.setOnAction(e -> {
             if (pageIndex > 1) {
                 pageIndex--;
-                checkChange();
+                checkChange(true);
             }
         });
 
@@ -179,7 +179,7 @@ public class TableTab extends BaseTab<TableTabModel> {
             tableView.getSelectionModel().select(newData);
         });
 
-        reduce.setOnAction(e -> {
+        delete.setOnAction(e -> {
             var selectIndex = tableView.getSelectionModel().getSelectedIndex();
             if (selectIndex == -1) {
                 return;
@@ -192,13 +192,14 @@ public class TableTab extends BaseTab<TableTabModel> {
         getTabPane().addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             var tabPane = getTabPane();
             //如果变动的不是当前选中的tab不发生改变
-            if (tabPane.getSelectionModel().getSelectedItem() != this){
+            var selectItem = tabPane.getSelectionModel();
+            if (Objects.isNull(selectItem) || selectItem.getSelectedItem() != this) {
                 return;
             }
             //触发保存事件
             if (event.isControlDown() && event.getCode() == KeyCode.S) {
                 event.consume();
-                checkChange();
+                checkChange(false);
             }
         });
 
@@ -294,9 +295,11 @@ public class TableTab extends BaseTab<TableTabModel> {
 
     /**
      * 保存更改数据
+     *
+     * @param isLoading 是否当前数据列表 true刷新 false不刷新
      */
-    private void checkChange() {
-        if (!tableView.isChange()) {
+    private void checkChange(boolean isLoading) {
+        if (!tableView.isChangeStatus()) {
             loadData();
             return;
         }
@@ -310,7 +313,9 @@ public class TableTab extends BaseTab<TableTabModel> {
                     countDataNumber();
                     tableView.resetChange();
                     tableView.refresh();
-                    loadData();
+                    if (isLoading) {
+                        loadData();
+                    }
                 });
             });
             future.onFailure(t -> DialogUtils.showErrorDialog(t, "更新失败"));

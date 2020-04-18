@@ -37,7 +37,7 @@ public class TableDataView extends TableView<ObservableList<StringProperty>> {
     /**
      * 当前表数据是否改变
      */
-    private BooleanProperty change = new SimpleBooleanProperty();
+    private BooleanProperty changeStatus = new SimpleBooleanProperty();
 
 
     public TableDataView() {
@@ -66,6 +66,12 @@ public class TableDataView extends TableView<ObservableList<StringProperty>> {
 
             optional.ifPresent(changeModes::remove);
 
+            //检查数据是否在新增列之中
+            var b = newRows.contains(item);
+            if (b){
+                //移除数据
+                newRows.remove(item);
+            }
             deletes.add(item);
             sortChange(index);
             updateChange();
@@ -113,12 +119,12 @@ public class TableDataView extends TableView<ObservableList<StringProperty>> {
      */
     private void updateChange() {
         boolean a = (changeModes.isEmpty() && deletes.isEmpty() && newRows.isEmpty());
-        if (!a && !isChange()) {
-            setIsChange(true);
+        if (!a && !isChangeStatus()) {
+            setChangeStatus(true);
         }
 
-        if (a && isChange()) {
-            setIsChange(false);
+        if (a && isChangeStatus()) {
+            setChangeStatus(false);
         }
         //刷新视图
         refresh();
@@ -131,7 +137,7 @@ public class TableDataView extends TableView<ObservableList<StringProperty>> {
         this.deletes.clear();
         this.changeModes.clear();
         this.newRows.clear();
-        this.setIsChange(false);
+        this.setChangeStatus(false);
     }
 
     /**
@@ -145,20 +151,16 @@ public class TableDataView extends TableView<ObservableList<StringProperty>> {
                 .forEach(item -> item.setRowIndex(item.getRowIndex() - 1));
     }
 
-    public boolean isChange() {
-        return change.get();
+    public boolean isChangeStatus() {
+        return changeStatus.get();
     }
 
-    public BooleanProperty changeProperty() {
-        return change;
+    public BooleanProperty changeStatusProperty() {
+        return changeStatus;
     }
 
-    public BooleanProperty isChangeProperty() {
-        return change;
-    }
-
-    public void setIsChange(boolean isChange) {
-        this.change.set(isChange);
+    public void setChangeStatus(boolean changeStatus) {
+        this.changeStatus.set(changeStatus);
     }
 
     public List<ObservableList<StringProperty>> getDeletes() {

@@ -10,7 +10,6 @@ import com.openjfx.database.common.VertexUtils;
 import io.vertx.core.json.JsonObject;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
 
 import static com.openjfx.database.app.config.Constants.*;
@@ -54,7 +53,7 @@ public class TableTreeNode extends BaseTreeNode<String> {
         sqlMenu.setOnAction(e -> new SQLGenStage(params));
         design.setOnAction(e -> new DesignTableStage(params));
         delete.setOnAction(e -> {
-            JsonObject message = new JsonObject();
+            var message = new JsonObject();
             message.put(ACTION, MainTabPane.EventBusAction.REMOVE);
             message.put(UUID, FXStringUtils.getTableTabUUID(uuid, database, tableName));
             VertexUtils.eventBus().send(MainTabPane.EVENT_BUS_ADDRESS, message);

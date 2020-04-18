@@ -45,7 +45,6 @@ public abstract class BaseTreeNode<T> extends TreeItem<T> {
      */
     protected List<MenuItem> menus = new ArrayList<>();
 
-    private final StackPane stackPane = new StackPane();
     /**
      * 加载进度信息
      */
@@ -59,10 +58,13 @@ public abstract class BaseTreeNode<T> extends TreeItem<T> {
      */
     public BaseTreeNode(String uuid, Image image) {
         this.uuid = uuid;
-        ImageView icon = new ImageView(image);
+        var icon = new ImageView(image);
+        var stackPane = new StackPane();
+
         indicator.setPrefWidth(20);
         indicator.setPrefHeight(20);
         indicator.setVisible(false);
+
         stackPane.setAlignment(Pos.CENTER);
         stackPane.getChildren().addAll(indicator, icon);
         setGraphic(stackPane);

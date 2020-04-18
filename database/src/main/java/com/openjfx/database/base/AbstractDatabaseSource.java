@@ -16,7 +16,10 @@ public abstract class AbstractDatabaseSource {
      * 数据库连接池缓存Map
      */
     protected ConcurrentHashMap<String, AbstractDataBasePool> pools = new ConcurrentHashMap<>();
-
+    /**
+     * 心跳id
+     */
+    protected Long timerId;
 
     /**
      * 根据UUID 获取数据库连接池
@@ -48,4 +51,9 @@ public abstract class AbstractDatabaseSource {
      * 关闭资源
      */
     public abstract void closeAll();
+
+    /**
+     * 防止长时间没有交互与数据库服务器失去响应
+     */
+    public abstract void heartBeat();
 }

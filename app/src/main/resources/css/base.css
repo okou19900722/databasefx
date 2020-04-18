@@ -36,3 +36,7 @@
 .change-style {
     -fx-background-color: #FFE48F;
 }
+
+.tree-view .tree-cell:selected {
+    -fx-background-color: #3962EF;
+}

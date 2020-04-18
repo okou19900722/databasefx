@@ -2,6 +2,7 @@ package com.openjfx.database.mysql;
 
 import com.openjfx.database.base.AbstractDataBasePool;
 import com.openjfx.database.base.AbstractDatabaseSource;
+import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.model.ConnectionParam;
 
 import com.openjfx.database.mysql.impl.MysqlPoolImpl;
@@ -17,7 +18,9 @@ import java.util.Objects;
  */
 public class MySql extends AbstractDatabaseSource {
 
-
+    {
+        heartBeat();
+    }
     @Override
     public AbstractDataBasePool createPool(ConnectionParam params) {
         MySQLPool mySqlPool = MysqlHelper.createPool(params);
@@ -43,5 +46,25 @@ public class MySql extends AbstractDatabaseSource {
         });
         //清空数据库缓存
         pools.clear();
+        //关闭定时器
+        if (timerId != null) {
+            VertexUtils.getVertex().cancelTimer(timerId);
+        }
+    }
+
+    @Override
+    public void heartBeat() {
+        //每隔5s向mysql服务器发送一次sql查询语句
+        VertexUtils.getVertex().setPeriodic(10000, timer -> {
+            pools.forEach((a, b) -> {
+                var future = b.getDql().showDatabase();
+                future.onSuccess(ar -> {
+                    System.out.println("success heart beat to " + a + " server");
+                });
+                future.onFailure(t -> {
+                    System.out.println("failed heart beat to " + a + " server cause:" + t.getMessage());
+                });
+            });
+        });
     }
 }

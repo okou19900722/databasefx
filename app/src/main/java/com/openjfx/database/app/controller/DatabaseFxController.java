@@ -15,6 +15,7 @@ import com.openjfx.database.app.model.impl.TableTabModel;
 import com.openjfx.database.app.stage.AboutStage;
 import com.openjfx.database.app.stage.CreateConnectionStage;
 import com.openjfx.database.app.stage.SQLEditStage;
+import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.common.VertexUtils;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
@@ -56,7 +57,9 @@ public class DatabaseFxController extends BaseController {
 
     @FXML
     private SplitPane splitPane;
-
+    /**
+     * EVENT-BUS 地址
+     */
     public static final String EVENT_ADDRESS = "controller:databaseFX";
 
 
@@ -137,18 +140,15 @@ public class DatabaseFxController extends BaseController {
             new SQLEditStage();
         }
         if (order == MenuItemOrder.FLUSH) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setContentText("你确定要刷新,刷新将断开所有连接!");
-            alert.showAndWait().ifPresent(buttonType -> {
-                if (buttonType == ButtonType.OK) {
-                    tabPane.getTabs().clear();
-                    DATABASE_SOURCE.closeAll();
-                    initDbList();
-                    JsonObject message = new JsonObject();
-                    message.put(ACTION, MainTabPane.EventBusAction.CLEAR);
-                    VertexUtils.eventBus().send(MainTabPane.EVENT_BUS_ADDRESS, message);
-                }
-            });
+            var result = DialogUtils.showAlertConfirm("你确定要刷新,刷新将断开所有连接!");
+            if (result) {
+                tabPane.getTabs().clear();
+                DATABASE_SOURCE.closeAll();
+                initDbList();
+                JsonObject message = new JsonObject();
+                message.put(ACTION, MainTabPane.EventBusAction.CLEAR);
+                VertexUtils.eventBus().send(MainTabPane.EVENT_BUS_ADDRESS, message);
+            }
         }
     }
 
@@ -185,7 +185,7 @@ public class DatabaseFxController extends BaseController {
                 tab = new TableTab((TableTabModel) mode);
                 tab.setUserData(uuid);
                 tabPane.getTabs().add(tab);
-                ((TableTab)tab).init();
+                ((TableTab) tab).init();
             }
         }
         if (Objects.nonNull(tab)) {
