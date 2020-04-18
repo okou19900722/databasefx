@@ -38,20 +38,14 @@ public class TableTreeNode extends BaseTreeNode<String> {
     private final JsonObject params = new JsonObject();
 
     public TableTreeNode(String database, String tableName, String uuid) {
-        super(uuid);
+        super(uuid, ICON_IMAGE);
 
         this.database = database;
 
         params.put(Constants.UUID, uuid);
         params.put(TABLE_NAME, database + "." + tableName);
 
-        ImageView imageView = new ImageView(ICON_IMAGE);
-
-        setGraphic(imageView);
-
         setValue(tableName);
-
-        isLeaf();
 
         MenuItem sqlMenu = new MenuItem("生成SQL");
         MenuItem design = new MenuItem("设计表");
@@ -67,7 +61,6 @@ public class TableTreeNode extends BaseTreeNode<String> {
             getParent().getChildren().remove(this);
         });
         addMenus(sqlMenu, design);
-
     }
 
     public String getDatabase() {

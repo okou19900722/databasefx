@@ -30,39 +30,38 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
 
     private static final Image ICON_IMAGE = getLocalImage(20, 20, "db_icon.png");
 
-    private MenuItem flush = new MenuItem("刷新");
-
-    private MenuItem deleteMenu = new MenuItem("删除");
-
     public SchemeTreeNode(String scheme, String uuid) {
-        super(uuid);
-        ImageView imageView = new ImageView(ICON_IMAGE);
-
-        setGraphic(imageView);
+        super(uuid, ICON_IMAGE);
 
         setValue(scheme);
 
+        MenuItem flush = new MenuItem("刷新");
+        MenuItem deleteMenu = new MenuItem("删除");
+
         addMenus(flush, deleteMenu);
 
-        flush.setOnAction(e ->this.flush());
+        flush.setOnAction(e -> {
+            getChildren().clear();
+            init();
+        });
 
         deleteMenu.setOnAction(event -> {
             //删除scheme
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setContentText("你确定要删除"+scheme+"?");
+            alert.setContentText("你确定要删除" + scheme + "?");
             Optional<ButtonType> optional = alert.showAndWait();
             optional.ifPresent(buttonType -> {
                 //确定删除
-                if (buttonType==ButtonType.OK){
+                if (buttonType == ButtonType.OK) {
                     DDL dml = DATABASE_SOURCE.getDataBaseSource(uuid).getDdl();
                     Future<Void> future = dml.dropDatabase(scheme);
-                    future.onSuccess(r->{
+                    future.onSuccess(r -> {
                         //删除当前节点
                         getParent().getChildren().remove(this);
                         //移出缓存数据
                         DATABASE_SOURCE.close(uuid);
                     });
-                    future.onFailure(t->DialogUtils.showErrorDialog(t,"删除schema失败"));
+                    future.onFailure(t -> DialogUtils.showErrorDialog(t, "删除schema失败"));
                 }
             });
         });
@@ -70,14 +69,10 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
 
     @Override
     public void init() {
-        if (loading) {
+        if (getChildren().size()>0) {
             return;
         }
-
-        if (getChildren().size() > 0) {
-            getChildren().clear();
-        }
-
+        setLoading(true);
         DQL dcl = DATABASE_SOURCE.getDataBaseSource(uuid).getDql();
         Future<List<String>> future = dcl.showTables(getValue());
         future.onSuccess(tables ->
@@ -85,9 +80,8 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
             List<TableTreeNode> tas = tables.stream().map(s -> new TableTreeNode(getValue(), s, uuid))
                     .collect(Collectors.toList());
             Platform.runLater(() -> getChildren().addAll(tas));
-            loading = true;
+            setLoading(false);
         });
-        future.onFailure(t -> DialogUtils.showErrorDialog(t, "获取scheme失败"));
+        future.onFailure(t->initFailed(t,"获取scheme失败"));
     }
-
 }

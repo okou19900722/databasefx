@@ -45,17 +45,13 @@ public class DBTreeNode extends BaseTreeNode<String> {
     );
 
     public DBTreeNode(String uuid) {
-        super(uuid);
+        super(uuid, ICON_IMAGE);
         initPreference();
 
-        ImageView imageView = new ImageView(ICON_IMAGE);
-
-        setGraphic(imageView);
-
-        MenuItem editMenu = new MenuItem("编辑");
-        MenuItem lostConnectMenu = new MenuItem("断开连接");
-        MenuItem deleteMenu = new MenuItem("删除连接");
-        MenuItem flush = new MenuItem("刷新");
+        var editMenu = new MenuItem("编辑");
+        var lostConnectMenu = new MenuItem("断开连接");
+        var deleteMenu = new MenuItem("删除连接");
+        var flush = new MenuItem("刷新");
 
         flush.setOnAction((e) -> this.flush());
 
@@ -64,7 +60,7 @@ public class DBTreeNode extends BaseTreeNode<String> {
         lostConnectMenu.setOnAction(e -> {
             DATABASE_SOURCE.close(uuid);
             getChildren().clear();
-            loading = false;
+            setLoading(false);
             removeAllTab();
         });
 
@@ -97,9 +93,10 @@ public class DBTreeNode extends BaseTreeNode<String> {
 
     @Override
     public void init() {
-        if (loading) {
+        if (getChildren().size() > 0) {
             return;
         }
+        setLoading(true);
         initPreference();
         if (!getChildren().isEmpty()) {
             getChildren().clear();
@@ -109,23 +106,21 @@ public class DBTreeNode extends BaseTreeNode<String> {
         Future<List<String>> future = pool.getDql().showDatabase();
         future.onSuccess(sc ->
         {
-            List<SchemeTreeNode> schemeTreeNodes = sc.stream()
-                    .map(s -> new SchemeTreeNode(s, uuid)).collect(Collectors.toList());
+            List<SchemeTreeNode> schemeTreeNodes = sc.stream().map(s -> new SchemeTreeNode(s, uuid)).collect(Collectors.toList());
             Platform.runLater(() -> getChildren().addAll(schemeTreeNodes));
-            loading = true;
+            setLoading(false);
+            if (!isExpanded()) {
+                Platform.runLater(() -> setExpanded(true));
+            }
         });
-        future.onFailure(t -> DialogUtils.showErrorDialog(t, "连接数据库失败"));
+        future.onFailure(t -> initFailed(t, "连接数据库失败"));
     }
 
-    private void removeAllTab(){
+    private void removeAllTab() {
         JsonObject message = new JsonObject();
-        message.put(ACTION,MainTabPane.EventBusAction.REMOVE_MANY);
-        message.put(UUID,uuid);
+        message.put(ACTION, MainTabPane.EventBusAction.REMOVE_MANY);
+        message.put(UUID, uuid);
         //移出当前数据库相关的Tab
-        VertexUtils.eventBus().send(MainTabPane.EVENT_BUS_ADDRESS,message);
-    }
-
-    public void close() {
-        DATABASE_SOURCE.close(uuid);
+        VertexUtils.eventBus().send(MainTabPane.EVENT_BUS_ADDRESS, message);
     }
 }

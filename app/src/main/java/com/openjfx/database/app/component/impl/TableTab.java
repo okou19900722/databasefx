@@ -83,15 +83,15 @@ public class TableTab extends BaseTab<TableTabModel> {
     /*********************************************************************
      *                              控制按钮                               *
      *********************************************************************/
-    private JFXButton addData = new JFXButton();
-    private JFXButton flush = new JFXButton();
-    private JFXButton next = new JFXButton();
-    private JFXButton last = new JFXButton();
-    private JFXButton submit = new JFXButton();
-    private JFXButton reduce = new JFXButton();
-    private TextField numberTextField = new TextField(String.valueOf(pageSize));
-    private List<TableColumnMeta> metas = new ArrayList<>();
-    private Label totalLabel = new Label("0行数据");
+    private final JFXButton addData = new JFXButton();
+    private final JFXButton flush = new JFXButton();
+    private final JFXButton next = new JFXButton();
+    private final JFXButton last = new JFXButton();
+    private final JFXButton submit = new JFXButton();
+    private final JFXButton reduce = new JFXButton();
+    private final TextField numberTextField = new TextField(String.valueOf(pageSize));
+    private final List<TableColumnMeta> metas = new ArrayList<>();
+    private final Label totalLabel = new Label("0行数据");
     /**
      * 当前表的key值
      */

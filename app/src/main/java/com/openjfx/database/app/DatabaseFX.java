@@ -5,7 +5,7 @@ import com.openjfx.database.app.stage.SplashStage;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.mysql.MySql;
 import javafx.application.Application;
-import javafx.scene.text.Font;
+
 import javafx.stage.Stage;
 
 /**
