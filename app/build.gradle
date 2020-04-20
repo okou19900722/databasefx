@@ -1,3 +1,5 @@
+import javax.tools.JavaCompiler
+
 plugins {
     id 'java'
     id 'application'
@@ -24,6 +26,11 @@ dependencies {
     compile group: 'org.controlsfx', name: 'controlsfx', version: '11.0.1'
     compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.4'
 
+}
+
+//解决window平台下中文乱码问题
+tasks.withType(JavaCompile){
+    options.encoding="UTF-8"
 }
 
 jar {
