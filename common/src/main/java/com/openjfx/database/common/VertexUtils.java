@@ -11,34 +11,37 @@ import io.vertx.core.file.FileSystem;
  * @since 1.0
  */
 public class VertexUtils {
-    /**
-     *
-     * vertx实例对象
-     *
+    /*
+     * 在国内这个大环境下,禁用vertx默认dns解析器是有必要的
      */
-    private static Vertx vertx = Vertx.vertx();
+    static {
+        System.setProperty("vertx.disableDnsResolver", "true");
+    }
 
     /**
-     *
-     * vertx 文件系统
-     *
+     * vertx实例对象
      */
-    private static FileSystem fileSystem = vertx.fileSystem();
+    private static final Vertx VERTX = Vertx.vertx();
+
+    /**
+     * vertx 文件系统
+     */
+    private static final FileSystem FILE_SYSTEM = VERTX.fileSystem();
 
 
     public static Vertx getVertex() {
-        return vertx;
+        return VERTX;
     }
 
-    public static void close(){
-        vertx.close();
+    public static void close() {
+        VERTX.close();
     }
 
     public static FileSystem getFileSystem() {
-        return fileSystem;
+        return FILE_SYSTEM;
     }
 
-    public static EventBus eventBus(){
-        return vertx.eventBus();
+    public static EventBus eventBus() {
+        return VERTX.eventBus();
     }
 }

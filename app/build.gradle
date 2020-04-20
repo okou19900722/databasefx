@@ -1,5 +1,3 @@
-import javax.tools.JavaCompiler
-
 plugins {
     id 'java'
     id 'application'
