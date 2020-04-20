@@ -111,7 +111,6 @@ public class DatabaseFxController extends BaseController {
                 }
             }
         });
-
         //窗口关闭->关闭所有连接
         stage.setOnCloseRequest(e -> Platform.exit());
 

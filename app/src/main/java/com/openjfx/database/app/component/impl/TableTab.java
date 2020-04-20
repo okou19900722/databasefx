@@ -172,6 +172,9 @@ public class TableTab extends BaseTab<TableTabModel> {
         });
 
         addData.setOnAction(e -> {
+            if (!canUpdate()) {
+                return;
+            }
             newData = FXCollections.observableArrayList();
             metas.forEach(meta -> newData.add(new SimpleStringProperty(NULL)));
             tableView.addNewRow(newData);
@@ -180,6 +183,9 @@ public class TableTab extends BaseTab<TableTabModel> {
         });
 
         delete.setOnAction(e -> {
+            if (!canUpdate()) {
+                return;
+            }
             var selectIndex = tableView.getSelectionModel().getSelectedIndex();
             if (selectIndex == -1) {
                 return;
@@ -232,8 +238,6 @@ public class TableTab extends BaseTab<TableTabModel> {
             if (optional.isPresent()) {
                 tableView.setEditable(true);
                 keyMeta = optional.get();
-            } else {
-                DialogUtils.showNotification("当前设计表无Key,无法进行更新操作", Pos.TOP_CENTER, NotificationType.WARNING);
             }
             loadData();
         });
@@ -400,5 +404,18 @@ public class TableTab extends BaseTab<TableTabModel> {
         Future<Long> future = pool.getDql().count(model.getTable());
         future.onSuccess(number -> Platform.runLater(() -> totalLabel.setText(number + "行数据")));
         future.onFailure(t -> DialogUtils.showErrorDialog(t, "统计数据失败"));
+    }
+
+    /**
+     * 判断当前表是否能更新
+     *
+     * @return true能更新 false 不能更新
+     */
+    private boolean canUpdate() {
+        if (Objects.isNull(keyMeta)) {
+            DialogUtils.showNotification("当前设计表无Key,无法进行更新操作", Pos.TOP_CENTER, NotificationType.WARNING);
+            return false;
+        }
+        return true;
     }
 }
