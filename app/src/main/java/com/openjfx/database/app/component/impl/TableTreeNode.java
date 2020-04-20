@@ -1,13 +1,16 @@
 package com.openjfx.database.app.component.impl;
 
+import com.openjfx.database.app.DatabaseFX;
 import com.openjfx.database.app.config.Constants;
 import com.openjfx.database.app.component.BaseTreeNode;
 import com.openjfx.database.app.component.MainTabPane;
 import com.openjfx.database.app.stage.DesignTableStage;
 import com.openjfx.database.app.stage.SQLGenStage;
+import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.app.utils.FXStringUtils;
 import com.openjfx.database.common.VertexUtils;
 import io.vertx.core.json.JsonObject;
+import javafx.application.Platform;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 
@@ -53,13 +56,24 @@ public class TableTreeNode extends BaseTreeNode<String> {
         sqlMenu.setOnAction(e -> new SQLGenStage(params));
         design.setOnAction(e -> new DesignTableStage(params));
         delete.setOnAction(e -> {
-            var message = new JsonObject();
-            message.put(ACTION, MainTabPane.EventBusAction.REMOVE);
-            message.put(UUID, FXStringUtils.getTableTabUUID(uuid, database, tableName));
-            VertexUtils.eventBus().send(MainTabPane.EVENT_BUS_ADDRESS, message);
-            getParent().getChildren().remove(this);
+            var result = DialogUtils.showAlertConfirm("确定要删除"+tableName+"表?");
+            if (!result) {
+                return;
+            }
+            var pool = DatabaseFX.DATABASE_SOURCE.getDataBaseSource(uuid);
+            var future = pool.getDdl().dropTable(database + "." + tableName);
+
+            future.onSuccess(ar -> {
+                var message = new JsonObject();
+                message.put(ACTION, MainTabPane.EventBusAction.REMOVE);
+                message.put(UUID, FXStringUtils.getTableTabUUID(uuid, database, tableName));
+                VertexUtils.eventBus().send(MainTabPane.EVENT_BUS_ADDRESS, message);
+                Platform.runLater(()->getParent().getChildren().remove(this));
+            });
+
+            future.onFailure(t -> DialogUtils.showErrorDialog(t, "删除表失败"));
         });
-        addMenus(sqlMenu, design);
+        addMenus(sqlMenu, design, delete);
     }
 
     public String getDatabase() {

@@ -26,6 +26,7 @@ public class DDLImpl implements DDL {
     @Override
     public Future<Void> dropTable(String table) {
         String sql = "DROP TABLE "+table;
+        System.out.println(sql);
         Promise<Void> promise = Promise.promise();
         client.query(sql).onSuccess(rows->{
             promise.complete();
