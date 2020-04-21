@@ -76,7 +76,12 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
         {
             List<TableTreeNode> tas = tables.stream().map(s -> new TableTreeNode(getValue(), s, uuid))
                     .collect(Collectors.toList());
-            Platform.runLater(() -> getChildren().addAll(tas));
+            Platform.runLater(() -> {
+                getChildren().addAll(tas);
+                if (tas.size()>0){
+                    setExpanded(true);
+                }
+            });
             setLoading(false);
         });
         future.onFailure(t->initFailed(t,"获取scheme失败"));

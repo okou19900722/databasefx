@@ -1,16 +1,30 @@
-.bottom-box {
-    -fx-padding: 2px 10px;
+.bottom-box HBox {
+    -fx-padding: 5px 10px;
+    -fx-spacing: 5px;
 }
 
-.bottom-box HBox {
-    -fx-spacing: 10px;
+.bottom-box .text-field {
+    -fx-pref-height: 10px;
+}
+
+.bottom-box1 .text-field {
+    -fx-pref-width: 200px;
+}
+
+.bottom-box1 .button-bar {
+    -fx-min-button-width: 50px;
+    -fx-padding: 0;
+}
+
+.bottom-box2 HBox {
     -fx-alignment: CENTER_RIGHT;
+}
+
+.bottom-box2 .text-field {
+    -fx-pref-width: 70px;
 }
 
 .table-view * {
     -fx-font-size: 14px;
 }
 
-.bottom-box .text-field {
-    -fx-pref-width: 70px;
-}

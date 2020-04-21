@@ -68,11 +68,12 @@ public class TableDataView extends TableView<ObservableList<StringProperty>> {
 
             //检查数据是否在新增列之中
             var b = newRows.contains(item);
-            if (b){
+            if (b) {
                 //移除数据
                 newRows.remove(item);
+            } else {
+                deletes.add(item);
             }
-            deletes.add(item);
             sortChange(index);
             updateChange();
         }

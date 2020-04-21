@@ -32,6 +32,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 
 import java.util.*;
 
@@ -50,13 +51,14 @@ public class TableTab extends BaseTab<TableTabModel> {
     /*************************************************************************************
      *                                图标信息                                             *
      *************************************************************************************/
-    private static final Image ADD_DATA_ICON = getLocalImage(25, 25, "add_data.png");
-    private static final Image FLUSH_ICON = getLocalImage(25, 25, "flush_icon.png");
+    private static final Image ADD_DATA_ICON = getLocalImage(20, 20, "add_data.png");
+    private static final Image FLUSH_ICON = getLocalImage(20, 20, "flush_icon.png");
     private static final Image NEXT_ICON = getLocalImage(20, 20, "next_icon.png");
     private static final Image LAST_ICON = getLocalImage(20, 20, "last_icon.png");
-    private static final Image SUBMIT_ICON = getLocalImage(25, 25, "save_icon.png");
-    private static final Image DELETE_ICON = getLocalImage(30, 30, "delete_icon.png");
+    private static final Image SUBMIT_ICON = getLocalImage(20, 20, "save_icon.png");
+    private static final Image DELETE_ICON = getLocalImage(20, 20, "delete_icon.png");
     private static final Image FLAG_IMAGE = getLocalImage(20, 20, "point.png");
+    private static final Image CLOSE_IMAGE = getLocalImage(20, 20, "close.png");
     /**
      * css样式路径
      */
@@ -71,9 +73,11 @@ public class TableTab extends BaseTab<TableTabModel> {
      **************************************************************/
     private final BorderPane borderPane = new BorderPane();
     private final TableDataView tableView = new TableDataView();
-    private final HBox bottomBox = new HBox();
-    private final HBox leftBox = new HBox();
-    private final HBox rightBox = new HBox();
+
+    private final VBox bottomBox = new VBox();
+    private final HBox searchBox = new HBox();
+    private final HBox actionBox = new HBox();
+
     /*******************************************************************
      *                       分页查询参数                                *
      *******************************************************************/
@@ -90,6 +94,7 @@ public class TableTab extends BaseTab<TableTabModel> {
     private final JFXButton submit = new JFXButton();
     private final JFXButton delete = new JFXButton();
     private final TextField numberTextField = new TextField(String.valueOf(pageSize));
+    private final TextField searchTextField = new TextField();
     private final List<TableColumnMeta> metas = new ArrayList<>();
     private final Label totalLabel = new Label("0行数据");
     /**
@@ -126,11 +131,39 @@ public class TableTab extends BaseTab<TableTabModel> {
         submit.setTooltip(new Tooltip("保存更改"));
         delete.setTooltip(new Tooltip("删除"));
 
-        leftBox.getChildren().addAll(addData, delete, submit);
-        rightBox.getChildren().addAll(totalLabel, last, next, numberTextField, flush);
 
-        HBox.setHgrow(rightBox, Priority.ALWAYS);
-        bottomBox.getChildren().addAll(leftBox, rightBox);
+
+        var lBox = new HBox();
+        var  rBox= new HBox();
+
+        var closeSearchBox = new JFXButton();
+
+        var btGroup = new ButtonBar();
+        var lastSearch = new Button();
+        var nextSearch = new Button();
+
+
+        lastSearch.setGraphic(new ImageView(LAST_ICON));
+        nextSearch.setGraphic(new ImageView(NEXT_ICON));
+
+        btGroup.getButtons().addAll(lastSearch,nextSearch);
+        btGroup.setButtonMinWidth(50);
+
+        closeSearchBox.setGraphic(new ImageView(CLOSE_IMAGE));
+
+        lBox.getChildren().addAll(addData, delete, submit);
+        rBox.getChildren().addAll(totalLabel, last, next, numberTextField, flush);
+
+        HBox.setHgrow(rBox, Priority.ALWAYS);
+
+
+        searchBox.getChildren().addAll(closeSearchBox,searchTextField,btGroup);
+        actionBox.getChildren().addAll(lBox,rBox);
+
+        bottomBox.getChildren().add(actionBox);
+
+        searchBox.getStyleClass().add("bottom-box1");
+        actionBox.getStyleClass().add("bottom-box2");
 
         bottomBox.getStyleClass().add("bottom-box");
 
@@ -139,6 +172,8 @@ public class TableTab extends BaseTab<TableTabModel> {
         borderPane.getStylesheets().add(AssetUtils.getCssStyle(STYLE_SHEETS));
 
         submit.setOnAction(e -> checkChange(false));
+
+        closeSearchBox.setOnAction(e-> bottomBox.getChildren().remove(0));
 
         tableView.changeStatusProperty().addListener((observable, oldValue, newValue) -> {
             if (Objects.nonNull(newValue) && newValue) {
@@ -206,6 +241,10 @@ public class TableTab extends BaseTab<TableTabModel> {
             if (event.isControlDown() && event.getCode() == KeyCode.S) {
                 event.consume();
                 checkChange(false);
+            }
+            //搜索表格内的数据
+            if (event.isControlDown()&&event.getCode() == KeyCode.F){
+                bottomBox.getChildren().add(0,searchBox);
             }
         });
 

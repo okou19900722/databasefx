@@ -36,7 +36,7 @@ public class DDLImpl implements DDL {
 
     @Override
     public Future<String> ddl(String tableName) {
-        String sql = "show create table "+tableName;
+        String sql = "SHOW CREATE TABLE "+tableName;
         Promise<String> promise = Promise.promise();
         client.query(sql).onSuccess(rows->{
             String ddl = "";
