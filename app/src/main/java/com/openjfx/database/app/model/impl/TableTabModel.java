@@ -9,9 +9,14 @@ import com.openjfx.database.app.model.BaseTabMode;
  * @since 1.0
  */
 public class TableTabModel extends BaseTabMode {
-
-    private String database;
-    private String tableName;
+    /**
+     * 数据库名称
+     */
+    private final String database;
+    /**
+     * 表名
+     */
+    private final String tableName;
 
     public TableTabModel(String uuid, String database, String tableName) {
         this.uuid = uuid;
