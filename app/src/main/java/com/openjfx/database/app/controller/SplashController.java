@@ -46,12 +46,12 @@ public class SplashController extends BaseController {
             }
         });
         future.whenComplete((r, t) -> {
-            if (Objects.isNull(t)) {
-                updateProgress("启动成功", 100);
-                Platform.runLater(DatabaseFxStage::new);
-            } else {
+            if (Objects.nonNull(t)) {
                 showErrorDialog(t, "启动失败");
+                return;
             }
+            updateProgress("启动成功", 100);
+            Platform.runLater(DatabaseFxStage::new);
             Platform.runLater(stage::close);
         });
     }
