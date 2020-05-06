@@ -21,13 +21,10 @@ import static com.openjfx.database.app.config.FileConfig.loadConfig;
 import static com.openjfx.database.app.utils.DialogUtils.showErrorDialog;
 
 /**
- *
- *
  * Splash 启动页控制器
  *
  * @author yangkui
  * @since 1.0
- *
  */
 public class SplashController extends BaseController {
     @FXML
@@ -38,36 +35,17 @@ public class SplashController extends BaseController {
 
     @Override
     public void init() {
-        loadAppConfig();
-    }
-
-    /**
-     * 加载app配置信息
-     */
-    private void loadAppConfig() {
-        CompletableFuture.runAsync(() -> {
+        var future = CompletableFuture.runAsync(() -> {
             try {
-                AssetUtils.loadAllFont();
-                updateProgress("初始化中....", 0);
-                Thread.sleep(250);
-                updateProgress("加载配置信息...", 25);
-                JsonObject db = loadConfig(DB_CONFIG_FILE);
-                Thread.sleep(250);
-                updateProgress("加载数据库信息...", 50);
-                List<ConnectionParam> params = db.getJsonArray(DATABASE)
-                        .stream()
-                        .map(it -> ((JsonObject) it).mapTo(ConnectionParam.class))
-                        .collect(Collectors.toList());
-                DbPreference.setParams(params);
-                Thread.sleep(250);
-                updateProgress("加载界面配置....", 75);
-                loadConfig(UI_CONFIG_FILE);
-                Thread.sleep(250);
+                init0();
+                init1();
+                init2();
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new RuntimeException(e);
             }
-        }).whenComplete((r, t) -> {
+        });
+        future.whenComplete((r, t) -> {
             if (Objects.isNull(t)) {
                 updateProgress("启动成功", 100);
                 Platform.runLater(DatabaseFxStage::new);
@@ -77,6 +55,7 @@ public class SplashController extends BaseController {
             Platform.runLater(stage::close);
         });
     }
+
 
     /**
      * 更新进度
@@ -89,5 +68,27 @@ public class SplashController extends BaseController {
             this.title.setText(title);
             progress.setValue(value);
         });
+    }
+
+    private void init0() throws InterruptedException {
+        AssetUtils.loadAllFont();
+        updateProgress("初始化中....", 0);
+        Thread.sleep(250);
+    }
+
+    private void init1() throws InterruptedException {
+        updateProgress("加载配置信息...", 25);
+        var db = loadConfig(DB_CONFIG_FILE);
+        var params = db.getJsonArray(DATABASE).stream()
+                .map(it -> ((JsonObject) it).mapTo(ConnectionParam.class))
+                .collect(Collectors.toList());
+        DbPreference.setParams(params);
+        Thread.sleep(250);
+    }
+
+    private void init2() throws InterruptedException {
+        updateProgress("加载UI配置....", 75);
+        loadConfig(UI_CONFIG_FILE);
+        Thread.sleep(250);
     }
 }
