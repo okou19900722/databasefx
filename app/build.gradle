@@ -23,7 +23,6 @@ dependencies {
     compile 'com.jfoenix:jfoenix:9.0.8'
     compile group: 'org.controlsfx', name: 'controlsfx', version: '11.0.1'
     compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.4'
-    compile group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.8.2'
 }
 
 //解决window平台下中文乱码问题
