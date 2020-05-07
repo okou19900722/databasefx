@@ -61,11 +61,11 @@ public class CreateConnectionController extends BaseController<String> {
 
     @FXML
     private void test() {
-        ConnectionParam param = validatorParam();
+        var param = validatorParam();
         if (Objects.isNull(param)) {
             return;
         }
-        Future<Boolean> future = MysqlHelper.testConnection(param);
+        var future = MysqlHelper.testConnection(param);
         future.onSuccess(r -> showNotification("连接成功", Pos.TOP_CENTER, NotificationType.INFORMATION));
         future.onFailure(t -> showErrorDialog(t, "连接失败"));
     }
@@ -81,7 +81,7 @@ public class CreateConnectionController extends BaseController<String> {
         if (param == null) {
             return;
         }
-        boolean flag = true;
+        var flag = true;
         if (Objects.nonNull(data)) {
             //更新连接
             updateConnection(param);
@@ -91,7 +91,7 @@ public class CreateConnectionController extends BaseController<String> {
             saveConnection(param);
             DbPreference.addConnection(param);
         }
-        JsonObject message = new JsonObject();
+        var message = new JsonObject();
         DatabaseFxController.EventBusAction action = Objects.nonNull(data)
                 ? DatabaseFxController.EventBusAction.UPDATE_CONNECTION
                 : DatabaseFxController.EventBusAction.ADD_CONNECTION;
@@ -108,28 +108,28 @@ public class CreateConnectionController extends BaseController<String> {
     }
 
     private ConnectionParam validatorParam() {
-        String host = server.getText();
-        String p = port.getText();
-        String u = user.getText();
-        String ps = password.getText();
-        String n = name.getText();
+        var a = server.getText();
+        var b = port.getText();
+        var c = user.getText();
+        var d = password.getText();
+        var e = name.getText();
 
-        if (isEmpty(host) || isEmpty(p) || isEmpty(u) || isEmpty(n)) {
+        if (isEmpty(a) || isEmpty(b) || isEmpty(c) || isEmpty(d)) {
             showNotification("参数不全", Pos.TOP_CENTER, NotificationType.WARNING);
             return null;
         }
 
-        ConnectionParam param = new ConnectionParam();
+        var param = new ConnectionParam();
 
         if (Objects.nonNull(data)) {
             param.setUuid(data);
         }
 
-        param.setHost(host);
-        param.setUser(u);
-        param.setPassword(ps);
-        param.setPort(Integer.parseInt(p));
-        param.setName(n);
+        param.setHost(a);
+        param.setUser(c);
+        param.setPassword(d);
+        param.setPort(Integer.parseInt(b));
+        param.setName(e);
 
         return param;
     }

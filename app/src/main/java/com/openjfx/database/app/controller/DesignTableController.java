@@ -35,9 +35,6 @@ public class DesignTableController extends BaseController<JsonObject> {
     private TextArea ddlTextArea;
 
     @FXML
-    private ChoiceBox defaultBox;
-
-    @FXML
     private TextField commentField;
 
     private String uuid = null;

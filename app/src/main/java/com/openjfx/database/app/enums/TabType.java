@@ -8,9 +8,7 @@ package com.openjfx.database.app.enums;
  */
 public enum TabType {
     /**
-     *
      * 数据表
-     *
      */
     TABLE
 }

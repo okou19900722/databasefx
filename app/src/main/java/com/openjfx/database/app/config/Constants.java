@@ -1,14 +1,10 @@
 package com.openjfx.database.app.config;
 
 /**
- *
- *
- *
  * 字符串常亮
  *
  * @author yangkui
  * @since 1.0
- *
  */
 public class Constants {
     /**
@@ -39,4 +35,8 @@ public class Constants {
      * action
      */
     public static final String ACTION = "action";
+    /**
+     * FLAG
+     */
+    public static final String FLAG = "flag";
 }

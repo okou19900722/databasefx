@@ -17,19 +17,17 @@ public class TableTabModel extends BaseTabMode {
      * 表名
      */
     private final String tableName;
+    /**
+     * 连接名称
+     */
+    private final String serverName;
 
-    public TableTabModel(String uuid, String database, String tableName) {
+    public TableTabModel(String serverName, String uuid, String database, String tableName) {
+        super(uuid + "_" + database + "_" + tableName);
         this.uuid = uuid;
         this.database = database;
         this.tableName = tableName;
-    }
-
-    public String getUuid() {
-        return uuid.split("_")[0];
-    }
-
-    public String getRawUUid(){
-        return uuid;
+        this.serverName = serverName;
     }
 
     public String getDatabase() {
@@ -37,9 +35,14 @@ public class TableTabModel extends BaseTabMode {
     }
 
     public String getTable() {
-        return  database+"."+tableName;
+        return database + "." + tableName;
     }
-    public String getTableName(){
+
+    public String getTableName() {
         return tableName;
+    }
+
+    public String getServerName() {
+        return serverName;
     }
 }

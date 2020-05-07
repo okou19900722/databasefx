@@ -5,6 +5,7 @@ import com.openjfx.database.DDL;
 import com.openjfx.database.DQL;
 import com.openjfx.database.app.component.BaseTreeNode;
 import com.openjfx.database.app.utils.DialogUtils;
+import com.openjfx.database.model.ConnectionParam;
 import io.vertx.core.Future;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -30,8 +31,8 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
 
     private static final Image ICON_IMAGE = getLocalImage(20, 20, "db_icon.png");
 
-    public SchemeTreeNode(String scheme, String uuid) {
-        super(uuid, ICON_IMAGE);
+    public SchemeTreeNode(String scheme, ConnectionParam param) {
+        super(param, ICON_IMAGE);
 
         setValue(scheme);
 
@@ -50,13 +51,13 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
             optional.ifPresent(buttonType -> {
                 //确定删除
                 if (buttonType == ButtonType.OK) {
-                    DDL dml = DATABASE_SOURCE.getDataBaseSource(uuid).getDdl();
+                    DDL dml = DATABASE_SOURCE.getDataBaseSource(getUuid()).getDdl();
                     Future<Void> future = dml.dropDatabase(scheme);
                     future.onSuccess(r -> {
                         //删除当前节点
                         getParent().getChildren().remove(this);
                         //移出缓存数据
-                        DATABASE_SOURCE.close(uuid);
+                        DATABASE_SOURCE.close(getUuid());
                     });
                     future.onFailure(t -> DialogUtils.showErrorDialog(t, "删除schema失败"));
                 }
@@ -66,24 +67,23 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
 
     @Override
     public void init() {
-        if (getChildren().size()>0) {
+        if (getChildren().size() > 0) {
             return;
         }
         setLoading(true);
-        DQL dcl = DATABASE_SOURCE.getDataBaseSource(uuid).getDql();
+        DQL dcl = DATABASE_SOURCE.getDataBaseSource(getUuid()).getDql();
         Future<List<String>> future = dcl.showTables(getValue());
         future.onSuccess(tables ->
         {
-            List<TableTreeNode> tas = tables.stream().map(s -> new TableTreeNode(getValue(), s, uuid))
-                    .collect(Collectors.toList());
+            var tas = tables.stream().map(s -> new TableTreeNode(getValue(), s, param)).collect(Collectors.toList());
             Platform.runLater(() -> {
                 getChildren().addAll(tas);
-                if (tas.size()>0){
+                if (tas.size() > 0) {
                     setExpanded(true);
                 }
             });
             setLoading(false);
         });
-        future.onFailure(t->initFailed(t,"获取scheme失败"));
+        future.onFailure(t -> initFailed(t, "获取scheme失败"));
     }
 }

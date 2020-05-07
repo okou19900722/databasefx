@@ -20,7 +20,9 @@ import io.vertx.core.Future;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -259,7 +261,7 @@ public class TableTab extends BaseTab<TableTabModel> {
         setText(model.getTableName());
 
         //设置tooltip 防止表名太长显示不全问题
-        setTooltip(new Tooltip(model.getTableName()));
+        setTooltip(new Tooltip(model.getDatabase() + "/" + model.getTableName()));
 
         loadTableMeta();
     }

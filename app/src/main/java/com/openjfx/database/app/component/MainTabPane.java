@@ -12,8 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.openjfx.database.app.config.Constants.ACTION;
-import static com.openjfx.database.app.config.Constants.UUID;
+import static com.openjfx.database.app.config.Constants.*;
 
 /**
  * 主界面TabPane
@@ -35,20 +34,18 @@ public class MainTabPane extends TabPane {
         VertexUtils.eventBus().<JsonObject>consumer(EVENT_BUS_ADDRESS, handler -> {
             JsonObject body = handler.body();
             String action = body.getString(ACTION);
-            String uuid = body.getString(UUID);
+            String flag = body.getString(FLAG);
             EventBusAction busAction = EventBusAction.valueOf(action);
             final List<Tab> tabs = new ArrayList<>();
             //移出一个Tab
             if (busAction == EventBusAction.REMOVE) {
-                Optional<Tab> optional = this.getTabs().stream().filter(
-                        it -> ((TableTab) it).getModel().getRawUUid().equals(uuid)
-                ).findAny();
-                optional.ifPresent(tabs::add);
+                this.getTabs().stream().filter(it -> ((TableTab) it)
+                        .getModel().getFlag().equals(flag)).findAny().ifPresent(tabs::add);
             }
             //移出多个Tab
             if (busAction == EventBusAction.REMOVE_MANY) {
                 List<Tab> tt = this.getTabs().stream().filter(
-                        it -> ((TableTab) it).getModel().getRawUUid().startsWith(uuid)
+                        it -> ((TableTab) it).getModel().getFlag().startsWith(flag)
                 ).collect(Collectors.toList());
                 tabs.addAll(tt);
             }
@@ -56,8 +53,8 @@ public class MainTabPane extends TabPane {
             if (busAction == EventBusAction.CLEAR) {
                 tabs.addAll(getTabs());
             }
-            if (!tabs.isEmpty()){
-                Platform.runLater(()->getTabs().removeAll(tabs));
+            if (!tabs.isEmpty()) {
+                Platform.runLater(() -> getTabs().removeAll(tabs));
             }
         });
     }
@@ -65,7 +62,7 @@ public class MainTabPane extends TabPane {
     /**
      * 消息类型
      */
-   public enum EventBusAction {
+    public enum EventBusAction {
         /**
          * 移出单个Tab
          */

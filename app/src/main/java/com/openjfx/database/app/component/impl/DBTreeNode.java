@@ -1,29 +1,24 @@
 package com.openjfx.database.app.component.impl;
 
-import com.openjfx.database.app.config.DbPreference;
 import com.openjfx.database.app.component.BaseTreeNode;
+import com.openjfx.database.app.config.DbPreference;
+
 import com.openjfx.database.app.component.MainTabPane;
 import com.openjfx.database.app.stage.CreateConnectionStage;
-import com.openjfx.database.base.AbstractDataBasePool;
-import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.model.ConnectionParam;
-import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
-import static com.openjfx.database.app.config.Constants.ACTION;
-import static com.openjfx.database.app.config.Constants.UUID;
+import static com.openjfx.database.app.config.Constants.*;
 import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
 
 /**
@@ -33,10 +28,6 @@ import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
  * @since 1.0
  */
 public class DBTreeNode extends BaseTreeNode<String> {
-    /**
-     * 连接参数
-     */
-    private ConnectionParam param = null;
 
     private static final Image ICON_IMAGE = getLocalImage(
             20,
@@ -44,21 +35,22 @@ public class DBTreeNode extends BaseTreeNode<String> {
             "mysql_icon.png"
     );
 
-    public DBTreeNode(String uuid) {
-        super(uuid, ICON_IMAGE);
-        initPreference();
+    public DBTreeNode(ConnectionParam param) {
+        super(param, ICON_IMAGE);
 
         var editMenu = new MenuItem("编辑");
         var lostConnectMenu = new MenuItem("断开连接");
         var deleteMenu = new MenuItem("删除连接");
         var flush = new MenuItem("刷新");
 
+        setValue(param.getName());
+
         flush.setOnAction((e) -> this.flush());
 
-        editMenu.setOnAction(e -> new CreateConnectionStage(uuid));
+        editMenu.setOnAction(e -> new CreateConnectionStage(getUuid()));
 
         lostConnectMenu.setOnAction(e -> {
-            DATABASE_SOURCE.close(uuid);
+            DATABASE_SOURCE.close(getUuid());
             getChildren().clear();
             setLoading(false);
             removeAllTab();
@@ -71,9 +63,9 @@ public class DBTreeNode extends BaseTreeNode<String> {
             optional.ifPresent(t -> {
                 if (t == ButtonType.OK) {
                     //删除磁盘缓存
-                    DbPreference.deleteConnect(uuid);
+                    DbPreference.deleteConnect(getUuid());
                     //删除内存缓存
-                    DATABASE_SOURCE.close(uuid);
+                    DATABASE_SOURCE.close(getUuid());
                     //删除当前节点
                     getParent().getChildren().remove(this);
                     removeAllTab();
@@ -83,30 +75,21 @@ public class DBTreeNode extends BaseTreeNode<String> {
         addMenus(editMenu, lostConnectMenu, deleteMenu, flush);
     }
 
-    private void initPreference() {
-        Optional<ConnectionParam> optional = DbPreference.getConnectionParam(uuid);
-        optional.ifPresent(connectionParam -> {
-            param = connectionParam;
-            Platform.runLater(() -> setValue(param.getName()));
-        });
-    }
-
     @Override
     public void init() {
         if (getChildren().size() > 0) {
             return;
         }
         setLoading(true);
-        initPreference();
         if (!getChildren().isEmpty()) {
             getChildren().clear();
         }
         //开始连接数据库
-        AbstractDataBasePool pool = DATABASE_SOURCE.createPool(param);
-        Future<List<String>> future = pool.getDql().showDatabase();
+        var pool = DATABASE_SOURCE.createPool(param);
+        var future = pool.getDql().showDatabase();
         future.onSuccess(sc ->
         {
-            List<SchemeTreeNode> schemeTreeNodes = sc.stream().map(s -> new SchemeTreeNode(s, uuid)).collect(Collectors.toList());
+            var schemeTreeNodes = sc.stream().map(s -> new SchemeTreeNode(s, param)).collect(Collectors.toList());
             Platform.runLater(() -> getChildren().addAll(schemeTreeNodes));
             setLoading(false);
             if (!isExpanded()) {
@@ -117,9 +100,9 @@ public class DBTreeNode extends BaseTreeNode<String> {
     }
 
     private void removeAllTab() {
-        JsonObject message = new JsonObject();
+        var message = new JsonObject();
         message.put(ACTION, MainTabPane.EventBusAction.REMOVE_MANY);
-        message.put(UUID, uuid);
+        message.put(FLAG, getUuid());
         //移出当前数据库相关的Tab
         VertexUtils.eventBus().send(MainTabPane.EVENT_BUS_ADDRESS, message);
     }

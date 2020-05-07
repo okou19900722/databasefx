@@ -2,6 +2,7 @@ package com.openjfx.database.app.component;
 
 
 import com.openjfx.database.app.utils.DialogUtils;
+import com.openjfx.database.model.ConnectionParam;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -22,6 +23,8 @@ import java.util.List;
  * 数据库节点base类
  *
  * @param <T> value type
+ * @author yangkui
+ * @since 1.0
  */
 public abstract class BaseTreeNode<T> extends TreeItem<T> {
 
@@ -31,9 +34,9 @@ public abstract class BaseTreeNode<T> extends TreeItem<T> {
     private final BooleanProperty loading = new SimpleBooleanProperty();
 
     /**
-     * uuid 数据库标识
+     * 连接参数
      */
-    protected String uuid;
+    protected final ConnectionParam param;
 
     /**
      * 初始化子节点时调用
@@ -53,11 +56,10 @@ public abstract class BaseTreeNode<T> extends TreeItem<T> {
     /**
      * 节点构造器
      *
-     * @param uuid  数据库标识
-     * @param image 节点图标
+     * @param param 链接参数
      */
-    public BaseTreeNode(String uuid, Image image) {
-        this.uuid = uuid;
+    public BaseTreeNode(ConnectionParam param, Image image) {
+        this.param = param;
         var icon = new ImageView(image);
         var stackPane = new StackPane();
 
@@ -85,23 +87,28 @@ public abstract class BaseTreeNode<T> extends TreeItem<T> {
 
     /**
      * 初始化失败
+     *
      * @param throwable 异常信息
-     * @param message 错误提示信息
+     * @param message   错误提示信息
      */
-    protected void initFailed(Throwable throwable,String message){
+    protected void initFailed(Throwable throwable, String message) {
         DialogUtils.showErrorDialog(throwable, message);
         setLoading(false);
     }
 
     public String getUuid() {
-        return uuid;
+        return param.getUuid();
+    }
+
+    public String getServerName() {
+        return param.getName();
     }
 
     /**
      * 刷新
      */
     public void flush() {
-        Platform.runLater(()->{
+        Platform.runLater(() -> {
             setExpanded(false);
             getChildren().clear();
             init();

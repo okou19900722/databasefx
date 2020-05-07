@@ -1,6 +1,7 @@
 package com.openjfx.database.app.controller;
 
 import com.openjfx.database.app.BaseController;
+import com.openjfx.database.app.component.BaseTab;
 import com.openjfx.database.app.config.Constants;
 import com.openjfx.database.app.component.MainTabPane;
 import com.openjfx.database.app.component.impl.TableTab;
@@ -20,6 +21,7 @@ import com.openjfx.database.common.VertexUtils;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -84,13 +86,13 @@ public class DatabaseFxController extends BaseController {
             }
         }
 
-        ContextMenu menu = new ContextMenu();
+        var menu = new ContextMenu();
         treeView.setContextMenu(menu);
 
 
         treeView.setOnContextMenuRequested(e -> {
             menu.getItems().clear();
-            Object item = treeView.getSelectionModel().getSelectedItem();
+            var item = treeView.getSelectionModel().getSelectedItem();
             if (item instanceof BaseTreeNode) {
                 menu.getItems().addAll(((BaseTreeNode) item).getMenus());
             }
@@ -98,17 +100,19 @@ public class DatabaseFxController extends BaseController {
 
         treeView.setOnMouseClicked(e -> {
             if (e.getClickCount() >= 2) {
-                Object selectedItem = treeView.getSelectionModel().getSelectedItem();
+                var selectedItem = treeView.getSelectionModel().getSelectedItem();
                 if (!(selectedItem instanceof TableTreeNode)) {
                     ((BaseTreeNode) selectedItem).init();
                 } else {
                     //加载表数据
-                    TableTreeNode tableTreeNode = ((TableTreeNode) selectedItem);
-                    String uuid = tableTreeNode.getUuid() + "_" + tableTreeNode.getDatabase() + "_" + tableTreeNode.getValue();
-                    TableTabModel model = new TableTabModel(uuid, tableTreeNode.getDatabase(), tableTreeNode.getValue());
-                    addTab(uuid, model, TabType.TABLE);
+                    var tableTreeNode = ((TableTreeNode) selectedItem);
+                    var model = new TableTabModel(tableTreeNode.getServerName(), tableTreeNode.getUuid(), tableTreeNode.getDatabase(), tableTreeNode.getValue());
+                    addTab(model.getFlag(), model, TabType.TABLE);
                 }
             }
+        });
+        tabPane.getTabs().addListener((ListChangeListener<Tab>) c -> {
+            var tabs = tabPane.getTabs();
         });
         //窗口关闭->关闭所有连接
         stage.setOnCloseRequest(e -> Platform.exit());
@@ -155,40 +159,35 @@ public class DatabaseFxController extends BaseController {
      */
     private void initDbList() {
         //渲染数据库列表
-        List<DBTreeNode> nodes = DbPreference.getParams()
-                .stream().map(t -> new DBTreeNode(t.getUuid()))
-                .collect(Collectors.toList());
-        ObservableList<TreeItem<String>> observableList = treeItemRoot.getChildren();
+        var nodes = DbPreference.getParams().stream().map(DBTreeNode::new).collect(Collectors.toList());
+        var observableList = treeItemRoot.getChildren();
         if (!observableList.isEmpty()) {
             observableList.clear();
         }
         treeItemRoot.getChildren().addAll(nodes);
     }
 
-    private void addTab(String uuid, BaseTabMode mode, TabType tabType) {
+    private void addTab(String flag, BaseTabMode mode, TabType tabType) {
+        var tabs = tabPane.getTabs();
+        var optional = tabs.stream().map(it -> (BaseTab) it)
+                .filter(t -> t.getModel().getFlag().equals(flag)).findAny();
 
-        ObservableList<Tab> tabs = tabPane.getTabs();
-        Optional<Tab> optional = tabs.stream()
-                .filter(t -> t.getUserData().equals(uuid))
-                .findAny();
-
-        Tab tab = null;
         if (optional.isPresent()) {
             //切换tab
             int index = tabs.indexOf(optional.get());
-            tab = tabs.get(index);
+            tabPane.getSelectionModel().select(index);
+            return;
+        }
+        final Tab tab;
+        if (tabType == TabType.TABLE) {
+            //新建tab
+            tab = new TableTab((TableTabModel) mode);
+            tabPane.getTabs().add(tab);
+            ((TableTab) tab).init();
         } else {
-            if (tabType == TabType.TABLE) {
-                //新建tab
-                tab = new TableTab((TableTabModel) mode);
-                tab.setUserData(uuid);
-                tabPane.getTabs().add(tab);
-                ((TableTab) tab).init();
-            }
+            tab = new Tab();
         }
-        if (Objects.nonNull(tab)) {
-            tabPane.getSelectionModel().select(tab);
-        }
+        tabPane.getSelectionModel().select(tab);
     }
 
     /**
@@ -197,21 +196,21 @@ public class DatabaseFxController extends BaseController {
      * @param message 消息内容
      */
     private void eventBusHandler(Message<JsonObject> message) {
-        JsonObject body = message.body();
+        var body = message.body();
 
-        EventBusAction action = EventBusAction.valueOf(body.getString(ACTION));
+        var action = EventBusAction.valueOf(body.getString(ACTION));
 
-        String uuid = body.getString(Constants.UUID);
+        var uuid = body.getString(Constants.UUID);
         //新增连接
         if (action == EventBusAction.ADD_CONNECTION) {
             DbPreference.getConnectionParam(uuid).ifPresent(db -> {
-                DBTreeNode node = new DBTreeNode(uuid);
+                var node = new DBTreeNode(db);
                 Platform.runLater(() -> treeItemRoot.getChildren().add(node));
             });
         }
         //更新连接信息
         if (action == EventBusAction.UPDATE_CONNECTION) {
-            ObservableList<TreeItem<String>> nodes = treeItemRoot.getChildren();
+            var nodes = treeItemRoot.getChildren();
             nodes.stream().map(db -> ((BaseTreeNode) db))
                     .filter(db -> db.getUuid().equals(uuid))
                     .findAny()
