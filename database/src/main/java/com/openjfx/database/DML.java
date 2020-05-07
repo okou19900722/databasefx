@@ -27,12 +27,13 @@ public interface DML {
 
     /**
      * 批量更新
+     *
      * @param tableName 表名
-     * @param items 待更新数据
-     * @param metas 列信息
+     * @param items     待更新数据
+     * @param metas     列信息
      * @return 返回更新结果
      */
-    Future<Integer> batchUpdate(List<Map<String,Object[]>> items,String tableName,List<TableColumnMeta> metas);
+    Future<Integer> batchUpdate(List<Map<String, Object[]>> items, String tableName, List<TableColumnMeta> metas);
 
     /**
      * 新增数据
@@ -56,6 +57,7 @@ public interface DML {
 
     /**
      * 获取自增字段
+     *
      * @param metas 字段列表
      * @return 返回自增字段
      */
@@ -63,10 +65,19 @@ public interface DML {
 
     /**
      * 批量删除
-     * @param keyMeta key字段
+     *
+     * @param keyMeta   key字段
      * @param keyValues key值列表
      * @param tableName 表名
      * @return 返回受影响行数
      */
-    Future<Integer> batchDelete(TableColumnMeta keyMeta,Object[] keyValues,String tableName);
+    Future<Integer> batchDelete(TableColumnMeta keyMeta, Object[] keyValues, String tableName);
+
+    /**
+     * 执行给定的sql更新语句
+     *
+     * @param sql sql语句
+     * @return 返回受影响行数
+     */
+    Future<Integer> executeSqlUpdate(String sql);
 }

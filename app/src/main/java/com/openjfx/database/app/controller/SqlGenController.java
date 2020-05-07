@@ -5,6 +5,8 @@ import com.openjfx.database.SQLGenerator;
 import com.openjfx.database.app.BaseController;
 import com.openjfx.database.app.enums.NotificationType;
 import com.openjfx.database.app.utils.DialogUtils;
+import com.openjfx.database.app.utils.RobotUtils;
+import com.openjfx.database.common.utils.StringUtils;
 import com.openjfx.database.model.TableColumnMeta;
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
@@ -98,12 +100,12 @@ public class SqlGenController extends BaseController<JsonObject> {
 
     @FXML
     public void copy(ActionEvent event) {
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        String target = sqlPrevious.getText();
-        Transferable tText = new StringSelection(target);
-        clipboard.setContents(tText, null);
-        DialogUtils.showNotification("复制成功", Pos.TOP_CENTER,
-                NotificationType.INFORMATION);
+        var text = sqlPrevious.getText();
+        if (StringUtils.isEmpty(text)) {
+            DialogUtils.showNotification("sql不能为空", Pos.TOP_CENTER, NotificationType.INFORMATION);
+            return;
+        }
+        RobotUtils.addStrClipboard(text);
     }
 
     @FXML

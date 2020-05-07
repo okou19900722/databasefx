@@ -182,7 +182,7 @@ public class DMLImpl implements DML {
 
     @Override
     public Future<Integer> batchDelete(TableColumnMeta keyMeta, Object[] keyValues, String tableName) {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         sb.append("DELETE FROM ");
         sb.append(tableName);
         sb.append(" WHERE ");
@@ -194,13 +194,23 @@ public class DMLImpl implements DML {
             tuples.add(Tuple.of(keyValue));
         }
         Promise<Integer> promise = Promise.promise();
-        System.out.println(sql);
-        client.preparedBatch(sql, tuples)
-                .onSuccess(rows->{
-                    promise.complete(keyValues.length);
-                })
-                .onFailure(promise::fail);
+        var future = client.preparedBatch(sql, tuples);
+        future.onSuccess(rows -> {
+            promise.complete(keyValues.length);
+        });
+        future.onFailure(promise::fail);
 
+        return promise.future();
+    }
+
+    @Override
+    public Future<Integer> executeSqlUpdate(String sql) {
+        var promise = Promise.<Integer>promise();
+        var future = client.query(sql);
+        future.onSuccess(rows -> {
+            promise.complete(rows.rowCount());
+        });
+        future.onFailure(promise::fail);
         return promise.future();
     }
 

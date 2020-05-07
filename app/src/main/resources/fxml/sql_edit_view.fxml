@@ -4,8 +4,6 @@
 
 <?import org.fxmisc.richtext.CodeArea?>
 <?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ChoiceBox?>
 <?import java.net.URL?>
 <?import com.jfoenix.controls.JFXButton?>
 <?import javafx.scene.image.ImageView?>
@@ -19,14 +17,14 @@
     <stylesheets>
         <URL value="@/css/sql_edit.css"/>
     </stylesheets>
-<!--    <top>-->
-<!--        <HBox styleClass="top-box">-->
-<!--            <HBox>-->
-<!--                <Label text="数据库:"/>-->
-<!--                <ChoiceBox fx:id="scheme"/>-->
-<!--            </HBox>-->
-<!--        </HBox>-->
-<!--    </top>-->
+    <!--    <top>-->
+    <!--        <HBox styleClass="top-box">-->
+    <!--            <HBox>-->
+    <!--                <Label text="数据库:"/>-->
+    <!--                <ChoiceBox fx:id="scheme"/>-->
+    <!--            </HBox>-->
+    <!--        </HBox>-->
+    <!--    </top>-->
     <left>
         <VBox alignment="TOP_CENTER" styleClass="action-box">
             <JFXButton onAction="#executeSql">
@@ -40,11 +38,33 @@
                     <Tooltip text="执行"/>
                 </tooltip>
             </JFXButton>
+            <JFXButton onAction="#copySql">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/assets/images/copy_icon.png" requestedWidth="20" requestedHeight="20"
+                               smooth="true"/>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="复制SQL"/>
+                </tooltip>
+            </JFXButton>
+            <JFXButton onAction="#clearSql">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/assets/images/clear_icon.png" requestedWidth="20" requestedHeight="20"
+                               smooth="true"/>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="清空SQL"/>
+                </tooltip>
+            </JFXButton>
         </VBox>
     </left>
     <center>
         <SplitPane orientation="VERTICAL">
-            <CodeArea fx:id="codeArea"/>
+            <CodeArea fx:id="codeArea" wrapText="true"/>
             <TableDataView fx:id="tableView"/>
         </SplitPane>
     </center>

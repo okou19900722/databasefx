@@ -4,6 +4,7 @@ import com.openjfx.database.app.BaseController;
 import com.openjfx.database.app.component.TableDataCell;
 import com.openjfx.database.app.enums.NotificationType;
 import com.openjfx.database.app.utils.DialogUtils;
+import com.openjfx.database.app.utils.RobotUtils;
 import com.openjfx.database.base.AbstractDataBasePool;
 import com.openjfx.database.common.utils.StringUtils;
 import com.openjfx.database.model.ConnectionParam;
@@ -59,7 +60,8 @@ public class SQLEditController extends BaseController<ConnectionParam> {
             "UPDATE",
             "DELETE",
             "SHOW",
-            "DROP"
+            "DROP",
+            "WHERE"
     };
     private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORD) + ")\\b";
     private static final String PAREN_PATTERN = "[()]";
@@ -100,14 +102,6 @@ public class SQLEditController extends BaseController<ConnectionParam> {
 
         //加载scheme
         client = DATABASE_SOURCE.getDataBaseSource(data.getUuid());
-
-//        var future = client.getDql().showDatabase();
-//        future.onSuccess(r -> {
-//            ObservableList<String> items = FXCollections.observableArrayList();
-//            items.addAll(r);
-//            Platform.runLater(() -> scheme.setItems(items));
-//        });
-//        future.onFailure(t -> DialogUtils.showErrorDialog(t, "获取scheme失败"));
 
         //开启行显示
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
@@ -178,8 +172,23 @@ public class SQLEditController extends BaseController<ConnectionParam> {
         if (a) {
             executeSqlQuery(sql);
         } else {
-
+            executeSqlUpdate(sql);
         }
+    }
+
+    @FXML
+    public void copySql(ActionEvent event) {
+        var sql = codeArea.getText();
+        if (StringUtils.isEmpty(sql)) {
+            DialogUtils.showNotification("sql不能为空", Pos.TOP_CENTER, NotificationType.INFORMATION);
+            return;
+        }
+        RobotUtils.addStrClipboard(sql);
+    }
+
+    @FXML
+    public void clearSql(ActionEvent event) {
+        codeArea.deleteText(0,codeArea.getText().length());
     }
 
     public void executeSqlQuery(String sql) {
@@ -188,45 +197,65 @@ public class SQLEditController extends BaseController<ConnectionParam> {
             for (Map.Entry<List<String>, List<Object[]>> entry : rs.entrySet()) {
                 var columns = entry.getKey();
                 var data = entry.getValue();
+                tableView.getColumns().clear();
                 //创建列
-                for (int i = 0; i < columns.size(); i++) {
-                    createColumn(i, columns.get(i));
-                }
-
-                List<ObservableList<StringProperty>> list = FXCollections.observableArrayList();
-
-                for (var objects : data) {
-                    ObservableList<StringProperty> item = FXCollections.observableArrayList();
-
-                    for (Object object : objects) {
-                        String val = object.toString();
-                        item.add(new SimpleStringProperty(val));
-                    }
-
-                    list.add(item);
-                }
-                tableView.getItems().addAll(list);
+                createColumn(columns);
+                createData(data);
             }
         });
         future.onFailure(t -> DialogUtils.showErrorDialog(t, "执行查询失败"));
     }
 
     public void executeSqlUpdate(String sql) {
-
+        var future = client.getDml().executeSqlUpdate(sql);
+        future.onSuccess(rs -> {
+            //创建列
+            var columnName = "affected rows";
+            createColumn(Collections.singletonList(columnName));
+            //新增列数据
+            createData(Collections.singletonList(new Object[]{rs}));
+        });
+        future.onFailure(t -> DialogUtils.showErrorDialog(t, "更新失败"));
     }
 
-    private void createColumn(final int columnIndex, String title) {
-        TableColumn<ObservableList<StringProperty>, String> column = new TableColumn<>();
-        column.setText(title);
-        column.setCellValueFactory(cellDataFeatures -> {
-            ObservableList<StringProperty> values = cellDataFeatures.getValue();
-            if (columnIndex >= values.size()) {
-                return new SimpleStringProperty("");
-            } else {
-                return cellDataFeatures.getValue().get(columnIndex);
+    private void createColumn(List<String> columns) {
+        //clear exist table column
+        Platform.runLater(() -> tableView.getColumns().clear());
+        for (int i = 0; i < columns.size(); i++) {
+            var title = columns.get(i);
+            TableColumn<ObservableList<StringProperty>, String> column = new TableColumn<>();
+            column.setText(title);
+            final var j = i;
+            column.setCellValueFactory(cellDataFeatures -> {
+                ObservableList<StringProperty> values = cellDataFeatures.getValue();
+                if (j >= values.size()) {
+                    return new SimpleStringProperty("");
+                } else {
+                    return cellDataFeatures.getValue().get(j);
+                }
+            });
+            column.setCellFactory(TableDataCell.forTableColumn());
+            Platform.runLater(() -> tableView.getColumns().add(column));
+        }
+    }
+
+    private void createData(List<Object[]> data) {
+        List<ObservableList<StringProperty>> list = FXCollections.observableArrayList();
+
+        for (var objects : data) {
+            ObservableList<StringProperty> item = FXCollections.observableArrayList();
+
+            for (Object object : objects) {
+                String val = object.toString();
+                item.add(new SimpleStringProperty(val));
             }
+
+            list.add(item);
+        }
+        Platform.runLater(() -> {
+            tableView.getItems().clear();
+            tableView.getItems().addAll(list);
         });
-        column.setCellFactory(TableDataCell.forTableColumn());
-        Platform.runLater(() -> tableView.getColumns().add(column));
+
     }
 }
