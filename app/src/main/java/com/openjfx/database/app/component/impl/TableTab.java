@@ -8,7 +8,6 @@ import com.openjfx.database.app.component.BaseTab;
 import com.openjfx.database.app.component.TableDataCell;
 import com.openjfx.database.app.component.TableDataView;
 import com.openjfx.database.app.enums.NotificationType;
-import com.openjfx.database.app.model.TableDataChangeMode;
 import com.openjfx.database.app.model.impl.TableTabModel;
 import com.openjfx.database.app.utils.AssetUtils;
 import com.openjfx.database.app.utils.DialogUtils;

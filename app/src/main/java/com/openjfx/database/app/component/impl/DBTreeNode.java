@@ -5,16 +5,14 @@ import com.openjfx.database.app.config.DbPreference;
 
 import com.openjfx.database.app.component.MainTabPane;
 import com.openjfx.database.app.stage.CreateConnectionStage;
+import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.model.ConnectionParam;
 import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
@@ -57,20 +55,16 @@ public class DBTreeNode extends BaseTreeNode<String> {
         });
 
         deleteMenu.setOnAction(e -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setContentText("确定要删除连接?");
-            Optional<ButtonType> optional = alert.showAndWait();
-            optional.ifPresent(t -> {
-                if (t == ButtonType.OK) {
-                    //删除磁盘缓存
-                    DbPreference.deleteConnect(getUuid());
-                    //删除内存缓存
-                    DATABASE_SOURCE.close(getUuid());
-                    //删除当前节点
-                    getParent().getChildren().remove(this);
-                    removeAllTab();
-                }
-            });
+            var r = DialogUtils.showAlertConfirm("确定要删除连接?");
+            if (r) {
+                //删除磁盘缓存
+                DbPreference.deleteConnect(getUuid());
+                //删除内存缓存
+                DATABASE_SOURCE.close(getUuid());
+                //删除当前节点
+                getParent().getChildren().remove(this);
+                removeAllTab();
+            }
         });
         addMenus(editMenu, lostConnectMenu, deleteMenu, flush);
     }
