@@ -47,17 +47,22 @@ import static com.openjfx.database.common.config.StringConstants.NULL;
  * @since 1.0
  */
 public class TableTab extends BaseTab<TableTabModel> {
+    /***********************************************************
+     *                    icon size                            *
+     ***********************************************************/
+    private static final double ICON_WIDTH = 0x14;
+    private static final double ICON_HEIGHT = 0x14;
     /*************************************************************************************
      *                                图标信息                                             *
      *************************************************************************************/
-    private static final Image ADD_DATA_ICON = getLocalImage(20, 20, "add_data.png");
-    private static final Image FLUSH_ICON = getLocalImage(20, 20, "flush_icon.png");
-    private static final Image NEXT_ICON = getLocalImage(20, 20, "next_icon.png");
-    private static final Image LAST_ICON = getLocalImage(20, 20, "last_icon.png");
-    private static final Image SUBMIT_ICON = getLocalImage(20, 20, "save_icon.png");
-    private static final Image DELETE_ICON = getLocalImage(20, 20, "delete_icon.png");
-    private static final Image FLAG_IMAGE = getLocalImage(20, 20, "point.png");
-    private static final Image CLOSE_IMAGE = getLocalImage(20, 20, "close.png");
+    private static final Image ADD_DATA_ICON = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "add_data.png");
+    private static final Image FLUSH_ICON = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "flush_icon.png");
+    private static final Image NEXT_ICON = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "next_icon.png");
+    private static final Image LAST_ICON = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "last_icon.png");
+    private static final Image SUBMIT_ICON = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "save_icon.png");
+    private static final Image DELETE_ICON = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "delete_icon.png");
+    private static final Image FLAG_IMAGE = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "point.png");
+    private static final Image CLOSE_IMAGE = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "close.png");
     /**
      * css样式路径
      */
@@ -131,9 +136,8 @@ public class TableTab extends BaseTab<TableTabModel> {
         delete.setTooltip(new Tooltip("删除"));
 
 
-
         var lBox = new HBox();
-        var  rBox= new HBox();
+        var rBox = new HBox();
 
         var closeSearchBox = new JFXButton();
 
@@ -145,7 +149,7 @@ public class TableTab extends BaseTab<TableTabModel> {
         lastSearch.setGraphic(new ImageView(LAST_ICON));
         nextSearch.setGraphic(new ImageView(NEXT_ICON));
 
-        btGroup.getButtons().addAll(lastSearch,nextSearch);
+        btGroup.getButtons().addAll(lastSearch, nextSearch);
         btGroup.setButtonMinWidth(50);
 
         closeSearchBox.setGraphic(new ImageView(CLOSE_IMAGE));
@@ -156,8 +160,8 @@ public class TableTab extends BaseTab<TableTabModel> {
         HBox.setHgrow(rBox, Priority.ALWAYS);
 
 
-        searchBox.getChildren().addAll(closeSearchBox,searchTextField,btGroup);
-        actionBox.getChildren().addAll(lBox,rBox);
+        searchBox.getChildren().addAll(closeSearchBox, searchTextField, btGroup);
+        actionBox.getChildren().addAll(lBox, rBox);
 
         bottomBox.getChildren().add(actionBox);
 
@@ -172,7 +176,7 @@ public class TableTab extends BaseTab<TableTabModel> {
 
         submit.setOnAction(e -> checkChange(false));
 
-        closeSearchBox.setOnAction(e-> bottomBox.getChildren().remove(0));
+        closeSearchBox.setOnAction(e -> bottomBox.getChildren().remove(0));
 
         tableView.changeStatusProperty().addListener((observable, oldValue, newValue) -> {
             if (Objects.nonNull(newValue) && newValue) {
@@ -242,8 +246,8 @@ public class TableTab extends BaseTab<TableTabModel> {
                 checkChange(false);
             }
             //搜索表格内的数据
-            if (event.isControlDown()&&event.getCode() == KeyCode.F){
-                bottomBox.getChildren().add(0,searchBox);
+            if (event.isControlDown() && event.getCode() == KeyCode.F && !tableView.getItems().isEmpty()) {
+                bottomBox.getChildren().add(0, searchBox);
             }
         });
 
@@ -254,6 +258,9 @@ public class TableTab extends BaseTab<TableTabModel> {
 
         setText(model.getTableName());
 
+        //设置tooltip 防止表名太长显示不全问题
+        setTooltip(new Tooltip(model.getTableName()));
+
         loadTableMeta();
     }
 
@@ -261,7 +268,6 @@ public class TableTab extends BaseTab<TableTabModel> {
     private void loadTableMeta() {
         Future<List<TableColumnMeta>> future = pool.getDql().showColumns(model.getTable());
         future.onSuccess(metas ->
-
         {
             int i = 0;
             for (TableColumnMeta meta : metas) {

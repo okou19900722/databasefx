@@ -43,7 +43,7 @@ public class SqlGenController extends BaseController<JsonObject> {
     @FXML
     private TextArea sqlPrevious;
 
-    private List<TableColumnMeta> columnMetas = new ArrayList<>();
+    private final List<TableColumnMeta> columnMetas = new ArrayList<>();
 
     private String uuid;
 
