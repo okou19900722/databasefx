@@ -26,7 +26,7 @@ public class MainTabPane extends TabPane {
      */
     public static final String EVENT_BUS_ADDRESS = "controls:mainTabPane";
 
-    public MainTabPane() {
+    {
         registerEventBus();
     }
 

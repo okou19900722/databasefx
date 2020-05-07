@@ -33,7 +33,7 @@
         </MenuBar>
     </top>
     <center>
-        <SplitPane fx:id="splitPane" dividerPositions="0.1">
+        <SplitPane fx:id="splitPane">
             <TreeView fx:id="treeView" showRoot="false">
                 <TreeItem fx:id="treeItemRoot"/>
             </TreeView>

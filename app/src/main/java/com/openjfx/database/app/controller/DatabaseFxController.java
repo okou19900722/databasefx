@@ -21,6 +21,8 @@ import com.openjfx.database.common.VertexUtils;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -113,6 +115,22 @@ public class DatabaseFxController extends BaseController {
         });
         tabPane.getTabs().addListener((ListChangeListener<Tab>) c -> {
             var tabs = tabPane.getTabs();
+            var n = tabs.stream().map(it -> (BaseTab) it)
+                    .map(it -> it.getModel().getUuid()).distinct().count();
+            var b = n > 1;
+            for (Tab tab : tabs) {
+                if (tab instanceof TableTab) {
+                    ((TableTab) tab).updateValue(b);
+                }
+            }
+        });
+        stage.widthProperty().addListener((observable, oldValue, newValue) -> {
+            var t = 800;
+            var position = 0.2;
+            if (newValue.doubleValue() > t) {
+                position = 0.1;
+            }
+            splitPane.setDividerPosition(0, position);
         });
         //窗口关闭->关闭所有连接
         stage.setOnCloseRequest(e -> Platform.exit());
@@ -147,7 +165,7 @@ public class DatabaseFxController extends BaseController {
                 tabPane.getTabs().clear();
                 DATABASE_SOURCE.closeAll();
                 initDbList();
-                JsonObject message = new JsonObject();
+                var message = new JsonObject();
                 message.put(ACTION, MainTabPane.EventBusAction.CLEAR);
                 VertexUtils.eventBus().send(MainTabPane.EVENT_BUS_ADDRESS, message);
             }

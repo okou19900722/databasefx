@@ -250,11 +250,6 @@ public class TableTab extends BaseTab<TableTabModel> {
 
         setContent(borderPane);
 
-        setText(model.getTableName());
-
-        //设置tooltip 防止表名太长显示不全问题
-        setTooltip(new Tooltip(model.getServerName() + "/" + model.getTableName()));
-
         loadTableMeta();
     }
 
@@ -263,7 +258,7 @@ public class TableTab extends BaseTab<TableTabModel> {
         Future<List<TableColumnMeta>> future = pool.getDql().showColumns(model.getTable());
         future.onSuccess(metas ->
         {
-            int i = 0;
+            var i = 0;
             for (TableColumnMeta meta : metas) {
                 createColumn(i, meta.getField());
                 i++;
@@ -272,7 +267,7 @@ public class TableTab extends BaseTab<TableTabModel> {
                 this.metas.clear();
             }
             this.metas.addAll(metas);
-            Optional<TableColumnMeta> optional = TableColumnMetaHelper.getTableKey(metas);
+            var optional = TableColumnMetaHelper.getTableKey(metas);
             if (optional.isPresent()) {
                 tableView.setEditable(true);
                 keyMeta = optional.get();
@@ -457,5 +452,26 @@ public class TableTab extends BaseTab<TableTabModel> {
             return false;
         }
         return true;
+    }
+
+    /**
+     * 动态更新Tab value
+     *
+     * @param t 是否显示完整表名 serverName+'/'+tableName
+     */
+    public void updateValue(boolean t) {
+        if (Objects.nonNull(getText())) {
+            var a = getText().contains("/");
+            var b = !t && !a || t && a;
+            if (b) {
+                return;
+            }
+        }
+        var name = model.getTableName();
+        if (t) {
+            name = model.getServerName() + "/" + name;
+        }
+        setText(name);
+        setTooltip(new Tooltip(name));
     }
 }
