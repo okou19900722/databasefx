@@ -17,12 +17,11 @@ import com.openjfx.database.common.utils.StringUtils;
 import com.openjfx.database.model.TableColumnMeta;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -107,12 +106,6 @@ public class TableTab extends BaseTab<TableTabModel> {
      * 当前表的key值
      */
     private TableColumnMeta keyMeta = null;
-
-    /**
-     * 新数据
-     */
-    private ObservableList<StringProperty> newData = null;
-
 
     public TableTab(TableTabModel model) {
         super(model);
@@ -215,7 +208,7 @@ public class TableTab extends BaseTab<TableTabModel> {
             if (!canUpdate()) {
                 return;
             }
-            newData = FXCollections.observableArrayList();
+            ObservableList<StringProperty> newData = FXCollections.observableArrayList();
             metas.forEach(meta -> newData.add(new SimpleStringProperty(NULL)));
             tableView.addNewRow(newData);
             tableView.scrollTo(newData);
@@ -357,7 +350,7 @@ public class TableTab extends BaseTab<TableTabModel> {
         //同步改数据到数据库
         if (result) {
             var dml = DATABASE_SOURCE.getDataBaseSource(model.getUuid()).getDml();
-            Future<Integer> future = newData(dml).compose(rs -> updateData(dml)).compose(rs -> deleteData(dml));
+            var future = newData(dml).compose(rs -> updateData(dml)).compose(rs -> deleteData(dml));
             future.onSuccess(rs -> {
                 Platform.runLater(() -> {
                     countDataNumber();
@@ -381,14 +374,14 @@ public class TableTab extends BaseTab<TableTabModel> {
      * @param dml dml
      * @return 返回新增结果
      */
-    private Future newData(DML dml) {
-        List<ObservableList<StringProperty>> newRows = tableView.getNewRows();
+    private Future<Integer> newData(DML dml) {
+        var newRows = tableView.getNewRows();
 
         List<Future> futures = new ArrayList<>();
 
         for (ObservableList<StringProperty> newRow : newRows) {
-            Object[] columns = TableDataHelper.fxPropertyToObject(newRow);
-            Future<Long> future = dml.insert(metas, columns, model.getTable());
+            var columns = TableDataHelper.fxPropertyToObject(newRow);
+            var future = dml.insert(metas, columns, model.getTable());
             var optional = dml.getAutoIncreaseField(metas);
             if (optional.isPresent()) {
                 int i = metas.indexOf(optional.get());
@@ -405,10 +398,13 @@ public class TableTab extends BaseTab<TableTabModel> {
             }
             futures.add(future);
         }
+        var promise = Promise.<Integer>promise();
         if (futures.size() > 0) {
-            return CompositeFuture.all(futures);
+            var fut = CompositeFuture.all(futures);
+            fut.onSuccess(e -> promise.complete(futures.size()));
+            fut.onFailure(promise::fail);
         }
-        return Future.succeededFuture();
+        return promise.future();
     }
 
     /**
@@ -418,25 +414,24 @@ public class TableTab extends BaseTab<TableTabModel> {
      * @return 返回更新结果
      */
     private Future<Integer> updateData(DML dml) {
-        List<TableDataChangeMode> change = tableView.getChangeModes();
+        var change = tableView.getChangeModes();
         //更新数据
         if (change.size() > 0) {
             int keyIndex = metas.indexOf(keyMeta);
 
             //由于异步问题可能只能走批量更新,无法走单条更新
-            List<Map<String, Object[]>> values = TableDataHelper
-                    .getChangeValue(change, metas, keyIndex, tableView.getItems());
+            var values = TableDataHelper.getChangeValue(change, metas, keyIndex, tableView.getItems());
             //异步更新数据
             return dml.batchUpdate(values, model.getTable(), metas);
         }
         return Future.succeededFuture();
     }
 
-    private Future deleteData(DML dml) {
-        List<ObservableList<StringProperty>> list = tableView.getDeletes();
+    private Future<Integer> deleteData(DML dml) {
+        var list = tableView.getDeletes();
         if (!list.isEmpty()) {
-            int index = metas.indexOf(keyMeta);
-            Object[] keys = list.stream()
+            var index = metas.indexOf(keyMeta);
+            var keys = list.stream()
                     .map(it -> it.get(index))
                     .map(TableDataHelper::singleFxPropertyToObject)
                     .toArray();
@@ -447,7 +442,7 @@ public class TableTab extends BaseTab<TableTabModel> {
 
 
     private void countDataNumber() {
-        Future<Long> future = pool.getDql().count(model.getTable());
+        var future = pool.getDql().count(model.getTable());
         future.onSuccess(number -> Platform.runLater(() -> totalLabel.setText(number + "行数据")));
         future.onFailure(t -> DialogUtils.showErrorDialog(t, "统计数据失败"));
     }
