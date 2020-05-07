@@ -254,7 +254,7 @@ public class TableTab extends BaseTab<TableTabModel> {
         setText(model.getTableName());
 
         //设置tooltip 防止表名太长显示不全问题
-        setTooltip(new Tooltip(model.getDatabase() + "/" + model.getTableName()));
+        setTooltip(new Tooltip(model.getServerName() + "/" + model.getTableName()));
 
         loadTableMeta();
     }
