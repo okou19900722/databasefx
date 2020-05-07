@@ -22,21 +22,31 @@ public abstract class BaseController<D> implements Initializable {
      * stage引用
      */
     protected Stage stage;
+    /**
+     * ResourceBundle
+     */
+    protected ResourceBundle resourceBundle;
+    /**
+     * URL
+     */
+    protected URL location;
 
     /**
      * 初始化fxml视图时调用
-     * @param location location
+     *
+     * @param location  location
      * @param resources resources
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        //todo override
+        this.resourceBundle = resources;
+        this.location = location;
     }
 
     /**
      * 初始化controller
      */
-    public  void init(){
+    public void init() {
         //todo override
     }
 
