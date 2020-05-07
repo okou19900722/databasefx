@@ -45,7 +45,7 @@ public class TableDataCell extends TableCell<ObservableList<StringProperty>, Str
     }
 
 
-    private ObjectProperty<StringConverter<String>> converter = new SimpleObjectProperty<>();
+    private final ObjectProperty<StringConverter<String>> converter = new SimpleObjectProperty<>();
 
     public TableDataCell(StringConverter<String> converter) {
         this.setConverter(converter);

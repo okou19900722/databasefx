@@ -9,9 +9,7 @@ import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.Tuple;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static com.openjfx.database.common.config.StringConstants.NULL;
 
@@ -95,7 +93,7 @@ public class DQLImpl implements DQL {
                 Object[] obj = new Object[size];
                 for (int i = 0; i < size; i++) {
                     Object b = row.getValue(i);
-                    obj[i] = Objects.isNull(b)?NULL:b;
+                    obj[i] = Objects.isNull(b) ? NULL : b;
                 }
                 dd.add(obj);
             }
@@ -106,9 +104,9 @@ public class DQLImpl implements DQL {
 
     @Override
     public Future<Long> count(String tableName) {
-        String sql = "SELECT COUNT(*) FROM "+tableName;
+        String sql = "SELECT COUNT(*) FROM " + tableName;
         Promise<Long> promise = Promise.promise();
-        client.query(sql).onSuccess(rows->{
+        client.query(sql).onSuccess(rows -> {
             Long number = 0L;
             for (Row row : rows) {
                 number = row.getLong(0);
@@ -123,7 +121,31 @@ public class DQLImpl implements DQL {
         var sql = "SELECT 1";
         var promise = Promise.<Void>promise();
         var future = client.query(sql);
-        future.onSuccess(ar->promise.complete());
+        future.onSuccess(ar -> promise.complete());
+        future.onFailure(promise::fail);
+        return promise.future();
+    }
+
+    @Override
+    public Future<Map<List<String>, List<Object[]>>> executeSql(String sql) {
+        var future = client.query(sql);
+        var promise = Promise.<Map<List<String>, List<Object[]>>>promise();
+        future.onSuccess(rows -> {
+            var columns = rows.columnsNames();
+            List<Object[]> dd = new ArrayList<>();
+            for (Row row : rows) {
+                int size = row.size();
+                Object[] obj = new Object[size];
+                for (int i = 0; i < size; i++) {
+                    Object b = row.getValue(i);
+                    obj[i] = Objects.isNull(b) ? NULL : b;
+                }
+                dd.add(obj);
+            }
+            Map<List<String>, List<Object[]>> map = new HashMap<>();
+            map.put(columns, dd);
+            promise.complete(map);
+        });
         future.onFailure(promise::fail);
         return promise.future();
     }

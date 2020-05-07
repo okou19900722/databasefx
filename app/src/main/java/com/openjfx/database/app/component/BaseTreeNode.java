@@ -134,4 +134,8 @@ public abstract class BaseTreeNode<T> extends TreeItem<T> {
     public void setLoading(boolean loading) {
         this.loading.set(loading);
     }
+
+    public ConnectionParam getParam() {
+        return param;
+    }
 }

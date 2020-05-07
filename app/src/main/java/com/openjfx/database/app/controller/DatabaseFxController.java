@@ -128,7 +128,7 @@ public class DatabaseFxController extends BaseController {
             var t = 800;
             var position = 0.2;
             if (newValue.doubleValue() > t) {
-                position = 0.1;
+                position = 0.15;
             }
             splitPane.setDividerPosition(0, position);
         });
@@ -157,7 +157,13 @@ public class DatabaseFxController extends BaseController {
             Platform.exit();
         }
         if (order == MenuItemOrder.EDITOR) {
-            new SQLEditStage();
+            var item = treeView.getSelectionModel().getSelectedItem();
+            if (Objects.isNull(item)) {
+                DialogUtils.showAlertInfo("至少打开一个数据源");
+                return;
+            }
+            var param = ((BaseTreeNode) item).getParam();
+            new SQLEditStage(param);
         }
         if (order == MenuItemOrder.FLUSH) {
             var result = DialogUtils.showAlertConfirm("你确定要刷新,刷新将断开所有连接!");

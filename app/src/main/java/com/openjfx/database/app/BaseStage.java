@@ -97,15 +97,16 @@ public class BaseStage<D> extends Stage {
         Layout layout = getLayout();
 
         setScene(scene);
-        setTitle(layout.title());
         setWidth(layout.width());
         setHeight(layout.height());
         setMaximized(layout.maximized());
         setResizable(layout.resizable());
-        setTitle(StringUtils.isEmpty(layout.title())?"DatabaseFX":layout.title());
+        if (StringUtils.isEmpty(getTitle())) {
+            setTitle(StringUtils.isEmpty(layout.title()) ? "DatabaseFX" : layout.title());
+        }
         setAlwaysOnTop(layout.alwaysOnTop());
 
-        Image icon = getLocalImage(200,200,layout.icon());
+        Image icon = getLocalImage(200, 200, layout.icon());
 
         initStyle(layout.stageStyle());
         setIconified(layout.iconified());

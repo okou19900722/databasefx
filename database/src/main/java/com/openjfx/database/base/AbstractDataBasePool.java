@@ -1,15 +1,15 @@
 package com.openjfx.database.base;
 
 import com.openjfx.database.*;
+import io.vertx.core.Future;
 import io.vertx.sqlclient.Pool;
+import io.vertx.sqlclient.Row;
 
 /**
- *
- *
  * 封装数据库管理连接池
+ *
  * @author yangkui
  * @since 1.0
- *
  */
 public class AbstractDataBasePool {
     /*********************************
@@ -56,7 +56,7 @@ public class AbstractDataBasePool {
         this.dql = dql;
     }
 
-    public void close(){
+    public void close() {
         pool.close();
     }
 

@@ -4,7 +4,7 @@
 }
 
 .table-column {
-    -fx-alignment: center;
+    -fx-alignment: center-left;
 }
 
 .table-view .scroll-bar:vertical, .tree-view .scroll-bar:vertical {

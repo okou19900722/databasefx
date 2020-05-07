@@ -68,9 +68,10 @@ public class DialogUtils {
 
     /**
      * 显示确认对话框
-     * @apiNote 调用该方法得在Fx ui线程之中
+     *
      * @param message 消息内容
-     * @return 返回确认结果,如果点击ok则返回true 否则返回false
+     * @return 返回确认结果, 如果点击ok则返回true 否则返回false
+     * @apiNote 调用该方法得在Fx ui线程之中
      */
     public static boolean showAlertConfirm(String message) {
         var alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -78,5 +79,18 @@ public class DialogUtils {
         alert.getDialogPane().getStylesheets().add(AssetUtils.BASE_STYLE);
         var optional = alert.showAndWait();
         return optional.isPresent() && optional.get() == ButtonType.OK;
+    }
+
+    /**
+     * 显示对话框信息
+     *
+     * @param message 消息内容
+     */
+    public static void showAlertInfo(String message) {
+        var alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("消息");
+        alert.setContentText(message);
+        alert.getDialogPane().getStylesheets().add(AssetUtils.BASE_STYLE);
+        alert.showAndWait();
     }
 }

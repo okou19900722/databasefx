@@ -3,11 +3,15 @@
 <?import javafx.scene.layout.*?>
 
 <?import org.fxmisc.richtext.CodeArea?>
-<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import java.net.URL?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.control.Tooltip?>
+<?import com.openjfx.database.app.component.TableDataView?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.openjfx.database.app.controller.SQLEditController"
@@ -15,26 +19,33 @@
     <stylesheets>
         <URL value="@/css/sql_edit.css"/>
     </stylesheets>
-    <top>
-        <HBox styleClass="top-box">
-            <HBox>
-                <Label text="数据源:"/>
-                <ChoiceBox/>
-            </HBox>
-            <HBox>
-                <Label text="数据库:"/>
-                <ChoiceBox/>
-            </HBox>
-            <HBox>
-                <Label text="数据表:"/>
-                <ChoiceBox/>
-            </HBox>
-        </HBox>
-    </top>
+<!--    <top>-->
+<!--        <HBox styleClass="top-box">-->
+<!--            <HBox>-->
+<!--                <Label text="数据库:"/>-->
+<!--                <ChoiceBox fx:id="scheme"/>-->
+<!--            </HBox>-->
+<!--        </HBox>-->
+<!--    </top>-->
+    <left>
+        <VBox alignment="TOP_CENTER" styleClass="action-box">
+            <JFXButton onAction="#executeSql">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/assets/images/start_icon.png" requestedWidth="20" requestedHeight="20"
+                               smooth="true"/>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="执行"/>
+                </tooltip>
+            </JFXButton>
+        </VBox>
+    </left>
     <center>
         <SplitPane orientation="VERTICAL">
             <CodeArea fx:id="codeArea"/>
-            <TableView/>
+            <TableDataView fx:id="tableView"/>
         </SplitPane>
     </center>
 </BorderPane>

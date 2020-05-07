@@ -5,6 +5,7 @@ import io.vertx.core.Future;
 import io.vertx.core.Promise;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 数据库查询语言接口
@@ -30,6 +31,7 @@ public interface DQL {
 
     /**
      * 获取某个表的column情况
+     *
      * @param table table
      * @return 返回table column原始数据
      */
@@ -37,15 +39,17 @@ public interface DQL {
 
     /**
      * 分页查询某张表的数据
-     * @param pageIndex  分页查询起始页面
-     * @param pageSize 分页查询尺寸
-     * @param table 表名
+     *
+     * @param pageIndex 分页查询起始页面
+     * @param pageSize  分页查询尺寸
+     * @param table     表名
      * @return 返回查询结果
      */
-    Future<List<Object[]>> query(String table,int pageIndex,int pageSize);
+    Future<List<Object[]>> query(String table, int pageIndex, int pageSize);
 
     /**
      * 统计目标表的数量
+     *
      * @param tableName 表名
      * @return 返回数量
      */
@@ -53,8 +57,17 @@ public interface DQL {
 
     /**
      * 心跳查询语句
+     *
      * @return 返回空查询结果
      */
     Future<Void> heartBeatQuery();
+
+    /**
+     * 执行sql查询语句
+     *
+     * @param sql sql语句
+     * @return 返回结果
+     */
+    Future<Map<List<String>, List<Object[]>>> executeSql(String sql);
 
 }
