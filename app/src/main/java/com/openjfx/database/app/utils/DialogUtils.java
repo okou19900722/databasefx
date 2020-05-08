@@ -5,6 +5,8 @@ import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.controlsfx.control.Notifications;
 import org.controlsfx.dialog.ExceptionDialog;
 
@@ -17,6 +19,9 @@ import java.util.Optional;
  * @since 1.0
  */
 public class DialogUtils {
+
+    private final static Logger LOGGER = LogManager.getLogger();
+
     /**
      * 显示错误对话框
      *
@@ -24,7 +29,7 @@ public class DialogUtils {
      * @param throwable 错误信息
      */
     public static void showErrorDialog(Throwable throwable, String title) {
-
+        LOGGER.error(throwable.getMessage(), throwable);
         Platform.runLater(() -> {
             ExceptionDialog dialog = new ExceptionDialog(throwable);
             dialog.setTitle(title);

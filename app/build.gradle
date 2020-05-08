@@ -38,9 +38,10 @@ jar {
     manifest {
         attributes "Manifest-Version": 1.0
         attributes 'Main-Class': 'com.openjfx.database.app.DatabaseFX'
+        attributes 'Multi-Release': true
     }
 }
 
 //jlink {
-//     comment_line './graalvm/bin/jlink --module-path /home/yangkui/application/javafx-jmods-11.0.2/ --add-modules javafx.base,javafx.controls,javafx.fxml,javafx.graphics,java.logging --output /home/yangkui/runtine'
+//     comment_line './graalvm/bin/jlink --module-path /home/yangkui/application/javafx-jmods-11.0.2/ --add-modules javafx.base,javafx.controls,javafx.fxml,javafx.graphics,java.logging,java.management --output /home/yangkui/runtine'
 //}

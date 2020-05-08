@@ -1,5 +1,6 @@
 package com.openjfx.database.app.annotation;
 
+import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 
 import java.lang.annotation.ElementType;
@@ -93,4 +94,9 @@ public @interface Layout {
      * 是否显示在最顶层
      */
     boolean alwaysOnTop() default false;
+
+    /**
+     * 窗口模式
+     */
+    Modality modality() default Modality.NONE;
 }

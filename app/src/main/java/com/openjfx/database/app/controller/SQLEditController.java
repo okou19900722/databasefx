@@ -1,13 +1,15 @@
 package com.openjfx.database.app.controller;
 
+import com.openjfx.database.JSqlParserHelper;
 import com.openjfx.database.app.BaseController;
 import com.openjfx.database.app.component.TableDataCell;
+import com.openjfx.database.app.config.Constants;
 import com.openjfx.database.app.enums.NotificationType;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.app.utils.RobotUtils;
 import com.openjfx.database.base.AbstractDataBasePool;
 import com.openjfx.database.common.utils.StringUtils;
-import com.openjfx.database.model.ConnectionParam;
+import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -19,6 +21,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import net.sf.jsqlparser.JSQLParserException;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
@@ -39,9 +42,9 @@ import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
  * @author yangkui
  * @since 1.0
  */
-public class SQLEditController extends BaseController<ConnectionParam> {
-
-    private static final String[] KEYWORD = new String[]{
+public class SQLEditController extends BaseController<JsonObject> {
+    //大写关键字
+    private static final String[] UPPER_KEYWORD = new String[]{
             "ADD",
             "ALL",
             "ALTER",
@@ -60,9 +63,13 @@ public class SQLEditController extends BaseController<ConnectionParam> {
             "DELETE",
             "SHOW",
             "DROP",
-            "WHERE"
+            "WHERE",
+            "FROM"
     };
-    private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORD) + ")\\b";
+    //小写关键字
+    private static final String[] LOW_KEYWORD = Arrays.stream(UPPER_KEYWORD).map(String::toLowerCase).toArray(String[]::new);
+
+    private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", UPPER_KEYWORD) + String.join("|", LOW_KEYWORD) + ")\\b";
     private static final String PAREN_PATTERN = "[()]";
     private static final String BRACE_PATTERN = "[{}]";
     private static final String BRACKET_PATTERN = "[\\[\\]]";
@@ -83,11 +90,10 @@ public class SQLEditController extends BaseController<ConnectionParam> {
     @FXML
     private CodeArea codeArea;
 
-//    @FXML
-//    private ChoiceBox<String> scheme;
-
     @FXML
     private TableView<ObservableList<StringProperty>> tableView;
+
+    private String scheme;
     /**
      * 创建线程池渲染高亮
      */
@@ -97,10 +103,16 @@ public class SQLEditController extends BaseController<ConnectionParam> {
 
     @Override
     public void init() {
-        stage.setTitle(data.getName() + "<" + data.getHost() + ">");
+        var uuid = data.getString(Constants.UUID);
+
+        scheme = data.getString(Constants.SCHEME);
 
         //加载scheme
-        client = DATABASE_SOURCE.getDataBaseSource(data.getUuid());
+        client = DATABASE_SOURCE.getDataBaseSource(uuid);
+        var param = client.getConnectionParam();
+        var title = param.getName() + "<" + param.getHost() + "/" + scheme + ">";
+
+        stage.setTitle(title);
 
         //开启行显示
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
@@ -162,9 +174,16 @@ public class SQLEditController extends BaseController<ConnectionParam> {
 
     @FXML
     public void executeSql(ActionEvent event) {
-        var sql = codeArea.getText();
-        if (StringUtils.isEmpty(sql)) {
+        var str = codeArea.getText();
+        if (StringUtils.isEmpty(str)) {
             DialogUtils.showNotification("sql语句不能为空", Pos.TOP_CENTER, NotificationType.WARNING);
+            return;
+        }
+        String sql;
+        try {
+            sql = JSqlParserHelper.transformSqlToFullName(str, scheme);
+        } catch (JSQLParserException e) {
+            DialogUtils.showErrorDialog(e, "sql转换异常");
             return;
         }
         var b = sql.toLowerCase().trim();
@@ -197,7 +216,6 @@ public class SQLEditController extends BaseController<ConnectionParam> {
             for (Map.Entry<List<String>, List<Object[]>> entry : rs.entrySet()) {
                 var columns = entry.getKey();
                 var data = entry.getValue();
-                tableView.getColumns().clear();
                 //创建列
                 createColumn(columns);
                 createData(data);
@@ -255,6 +273,7 @@ public class SQLEditController extends BaseController<ConnectionParam> {
         Platform.runLater(() -> {
             tableView.getItems().clear();
             tableView.getItems().addAll(list);
+            tableView.refresh();
         });
     }
 }

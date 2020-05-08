@@ -10,6 +10,8 @@ import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 import java.util.Objects;
@@ -33,6 +35,8 @@ public class SplashController extends BaseController {
     @FXML
     private JFXSlider progress;
 
+    private final static Logger LOGGER = LogManager.getLogger();
+
     @Override
     public void init() {
         var future = CompletableFuture.runAsync(() -> {
@@ -47,12 +51,15 @@ public class SplashController extends BaseController {
         });
         future.whenComplete((r, t) -> {
             if (Objects.nonNull(t)) {
+                LOGGER.error("application startup failed cause:{}", t.getMessage());
                 showErrorDialog(t, "启动失败");
                 return;
             }
             updateProgress("启动成功", 100);
-            Platform.runLater(DatabaseFxStage::new);
-            Platform.runLater(stage::close);
+            Platform.runLater(() -> {
+                new DatabaseFxStage();
+                stage.close();
+            });
         });
     }
 

@@ -217,7 +217,7 @@ public class TableTab extends BaseTab<TableTabModel> {
             }
             //搜索表格内的数据
             if (event.isControlDown() && event.getCode() == KeyCode.F && !tableView.getItems().isEmpty()) {
-//                bottomBox.getChildren().add(0, searchBox);
+
             }
         });
 
@@ -320,7 +320,9 @@ public class TableTab extends BaseTab<TableTabModel> {
         //同步改数据到数据库
         if (result) {
             var dml = DATABASE_SOURCE.getDataBaseSource(model.getUuid()).getDml();
-            var future = newData(dml).compose(rs -> updateData(dml)).compose(rs -> deleteData(dml));
+            var future = newData(dml)
+                    .compose(rs -> updateData(dml))
+                    .compose(rs -> deleteData(dml));
             future.onSuccess(rs -> {
                 Platform.runLater(() -> {
                     countDataNumber();
@@ -373,6 +375,8 @@ public class TableTab extends BaseTab<TableTabModel> {
             var fut = CompositeFuture.all(futures);
             fut.onSuccess(e -> promise.complete(futures.size()));
             fut.onFailure(promise::fail);
+        } else {
+            promise.complete(0);
         }
         return promise.future();
     }

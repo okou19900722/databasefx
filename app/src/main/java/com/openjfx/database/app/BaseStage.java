@@ -112,6 +112,7 @@ public class BaseStage<D> extends Stage {
         setIconified(layout.iconified());
 
         getIcons().add(icon);
+        initModality(layout.modality());
         if (!layout.show()) {
             return;
         }

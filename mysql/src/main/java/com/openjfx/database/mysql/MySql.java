@@ -7,6 +7,8 @@ import com.openjfx.database.model.ConnectionParam;
 
 import com.openjfx.database.mysql.impl.MysqlPoolImpl;
 import io.vertx.mysqlclient.MySQLPool;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Objects;
 
@@ -17,6 +19,7 @@ import java.util.Objects;
  * @since 1.0
  */
 public class MySql extends AbstractDatabaseSource {
+    private final static Logger LOGGER = LogManager.getLogger();
 
     {
         heartBeat();
@@ -59,17 +62,14 @@ public class MySql extends AbstractDatabaseSource {
     @Override
     public void heartBeat() {
         //每隔10s向mysql服务器发送一次sql查询语句
-        VertexUtils.getVertex().setPeriodic(10000, timer -> {
+        VertexUtils.getVertex().setPeriodic(20000, timer -> {
             pools.forEach((a, b) -> {
                 var future = b.getDql().heartBeatQuery();
                 var serverName = b.getConnectionParam().getName();
                 var host = b.getConnectionParam().getHost();
                 var target = serverName + "<" + host + ">";
-                future.onSuccess(ar -> {
-                    System.out.println("success heart beat to " + target + " server");
-                });
                 future.onFailure(t -> {
-                    System.out.println("failed heart beat to " + target + " server cause:" + t.getMessage());
+                    LOGGER.error("failed heart beat to {} server cause:{}", target, t.getMessage());
                 });
             });
         });

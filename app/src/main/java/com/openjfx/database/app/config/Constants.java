@@ -39,4 +39,8 @@ public class Constants {
      * FLAG
      */
     public static final String FLAG = "flag";
+    /**
+     * scheme
+     */
+    public static final String SCHEME = "scheme";
 }

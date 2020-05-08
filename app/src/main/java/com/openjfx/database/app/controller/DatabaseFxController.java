@@ -156,15 +156,7 @@ public class DatabaseFxController extends BaseController {
         if (order == MenuItemOrder.EXIT) {
             Platform.exit();
         }
-        if (order == MenuItemOrder.EDITOR) {
-            var item = treeView.getSelectionModel().getSelectedItem();
-            if (Objects.isNull(item)) {
-                DialogUtils.showAlertInfo("至少打开一个数据源");
-                return;
-            }
-            var param = ((BaseTreeNode) item).getParam();
-            new SQLEditStage(param);
-        }
+
         if (order == MenuItemOrder.FLUSH) {
             var result = DialogUtils.showAlertConfirm("你确定要刷新,刷新将断开所有连接!");
             if (result) {

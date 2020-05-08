@@ -4,9 +4,12 @@ package com.openjfx.database.app.component.impl;
 import com.openjfx.database.DDL;
 import com.openjfx.database.DQL;
 import com.openjfx.database.app.component.BaseTreeNode;
+import com.openjfx.database.app.config.Constants;
+import com.openjfx.database.app.stage.SQLEditStage;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.model.ConnectionParam;
 import io.vertx.core.Future;
+import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -14,6 +17,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -35,10 +39,12 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
 
         setValue(scheme);
 
-        MenuItem flush = new MenuItem("刷新");
-        MenuItem deleteMenu = new MenuItem("删除");
+        var flush = new MenuItem("刷新");
+        var deleteMenu = new MenuItem("删除");
+        var sqlEditor = new MenuItem("SQL编辑器");
 
-        addMenus(flush, deleteMenu);
+
+        addMenus(flush, sqlEditor, deleteMenu);
 
         flush.setOnAction(e -> flush());
 
@@ -61,6 +67,12 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
                     future.onFailure(t -> DialogUtils.showErrorDialog(t, "删除schema失败"));
                 }
             });
+        });
+        sqlEditor.setOnAction(e -> {
+            var json = new JsonObject();
+            json.put(Constants.UUID, param.getUuid());
+            json.put(Constants.SCHEME, getValue());
+            new SQLEditStage(json);
         });
     }
 
