@@ -3,11 +3,17 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<?import java.net.URL?>
 <?import com.openjfx.database.app.component.MainTabPane?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import java.net.URL?>
 <BorderPane xmlns="http://javafx.com/javafx/10.0.2-internal"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.openjfx.database.app.controller.DatabaseFxController">
+    <stylesheets>
+        <URL value="@/css/database_fx.css"/>
+    </stylesheets>
     <top>
         <MenuBar fx:id="menuBar">
             <Menu text="文件(F)">
@@ -40,5 +46,29 @@
             <MainTabPane fx:id="tabPane"/>
         </SplitPane>
     </center>
+    <bottom>
+        <HBox styleClass="bottom-box">
+            <JFXButton>
+                <graphic>
+                    <ImageView>
+                        <Image url="@/assets/images/system_log_icon.png" requestedHeight="18" requestedWidth="18" smooth="true"/>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="系统日志"/>
+                </tooltip>
+            </JFXButton>
+            <JFXButton>
+                <graphic>
+                    <ImageView>
+                        <Image url="@/assets/images/monitor_icon.png" requestedHeight="18" requestedWidth="18" smooth="true"/>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="监视器"/>
+                </tooltip>
+            </JFXButton>
+        </HBox>
+    </bottom>
 
 </BorderPane>

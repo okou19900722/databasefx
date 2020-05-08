@@ -30,11 +30,11 @@
 }
 
 .null-style {
-    -fx-text-fill: #D7e7f5;
+    -fx-text-fill: #D7e7f5 !important;
 }
 
 .change-style {
-    -fx-background-color: #FFE48F;
+    -fx-background-color: #FFE48F !important;
 }
 
 .tree-view .tree-cell:selected {

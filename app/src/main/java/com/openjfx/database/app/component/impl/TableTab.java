@@ -1,6 +1,7 @@
 package com.openjfx.database.app.component.impl;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXTextField;
 import com.openjfx.database.DML;
 import com.openjfx.database.TableColumnMetaHelper;
 import com.openjfx.database.app.TableDataHelper;
@@ -62,7 +63,6 @@ public class TableTab extends BaseTab<TableTabModel> {
     private static final Image SUBMIT_ICON = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "save_icon.png");
     private static final Image DELETE_ICON = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "delete_icon.png");
     private static final Image FLAG_IMAGE = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "point.png");
-    private static final Image CLOSE_IMAGE = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "close.png");
     /**
      * css样式路径
      */
@@ -78,9 +78,7 @@ public class TableTab extends BaseTab<TableTabModel> {
     private final BorderPane borderPane = new BorderPane();
     private final TableDataView tableView = new TableDataView();
 
-    private final VBox bottomBox = new VBox();
-    private final HBox searchBox = new HBox();
-    private final HBox actionBox = new HBox();
+    private final HBox bottomBox = new HBox();
 
     /*******************************************************************
      *                       分页查询参数                                *
@@ -97,8 +95,8 @@ public class TableTab extends BaseTab<TableTabModel> {
     private final JFXButton last = new JFXButton();
     private final JFXButton submit = new JFXButton();
     private final JFXButton delete = new JFXButton();
-    private final TextField numberTextField = new TextField(String.valueOf(pageSize));
-    private final TextField searchTextField = new TextField();
+    private final JFXTextField numberTextField = new JFXTextField(String.valueOf(pageSize));
+
     private final List<TableColumnMeta> metas = new ArrayList<>();
     private final Label totalLabel = new Label("0行数据");
     /**
@@ -133,20 +131,6 @@ public class TableTab extends BaseTab<TableTabModel> {
         var lBox = new HBox();
         var rBox = new HBox();
 
-        var closeSearchBox = new JFXButton();
-
-        var btGroup = new ButtonBar();
-        var lastSearch = new Button();
-        var nextSearch = new Button();
-
-
-        lastSearch.setGraphic(new ImageView(LAST_ICON));
-        nextSearch.setGraphic(new ImageView(NEXT_ICON));
-
-        btGroup.getButtons().addAll(lastSearch, nextSearch);
-        btGroup.setButtonMinWidth(50);
-
-        closeSearchBox.setGraphic(new ImageView(CLOSE_IMAGE));
 
         lBox.getChildren().addAll(addData, delete, submit);
         rBox.getChildren().addAll(totalLabel, last, next, numberTextField, flush);
@@ -154,14 +138,7 @@ public class TableTab extends BaseTab<TableTabModel> {
         HBox.setHgrow(rBox, Priority.ALWAYS);
 
 
-        searchBox.getChildren().addAll(closeSearchBox, searchTextField, btGroup);
-        actionBox.getChildren().addAll(lBox, rBox);
-
-        bottomBox.getChildren().add(actionBox);
-
-        searchBox.getStyleClass().add("bottom-box1");
-        actionBox.getStyleClass().add("bottom-box2");
-
+        bottomBox.getChildren().addAll(lBox, rBox);
         bottomBox.getStyleClass().add("bottom-box");
 
         flush.setOnAction(e -> checkChange(true));
@@ -170,7 +147,6 @@ public class TableTab extends BaseTab<TableTabModel> {
 
         submit.setOnAction(e -> checkChange(false));
 
-        closeSearchBox.setOnAction(e -> bottomBox.getChildren().remove(0));
 
         tableView.changeStatusProperty().addListener((observable, oldValue, newValue) -> {
             if (Objects.nonNull(newValue) && newValue) {
@@ -241,7 +217,7 @@ public class TableTab extends BaseTab<TableTabModel> {
             }
             //搜索表格内的数据
             if (event.isControlDown() && event.getCode() == KeyCode.F && !tableView.getItems().isEmpty()) {
-                bottomBox.getChildren().add(0, searchBox);
+//                bottomBox.getChildren().add(0, searchBox);
             }
         });
 

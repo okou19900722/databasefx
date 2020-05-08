@@ -1,0 +1,9 @@
+.bottom-box {
+    -fx-alignment: center-right;
+    -fx-padding: 3px 6px;
+    -fx-spacing: 6px;
+}
+
+.bottom-box > .jfx-button {
+    -fx-padding: 3px;
+}
