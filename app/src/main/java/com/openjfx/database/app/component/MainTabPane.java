@@ -28,6 +28,7 @@ public class MainTabPane extends TabPane {
 
     {
         registerEventBus();
+        getStyleClass().add(TabPane.STYLE_CLASS_FLOATING);
     }
 
     private void registerEventBus() {
