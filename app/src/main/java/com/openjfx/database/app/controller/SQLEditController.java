@@ -92,7 +92,7 @@ public class SQLEditController extends BaseController<ConnectionParam> {
     /**
      * 创建线程池渲染高亮
      */
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private AbstractDataBasePool client;
 
@@ -117,6 +117,7 @@ public class SQLEditController extends BaseController<ConnectionParam> {
                         return Optional.empty();
                     }
                 }).subscribe(this::applyHighlighting);
+        stage.setOnCloseRequest(event -> executor.shutdown());
     }
 
     private Task<StyleSpans<Collection<String>>> computeHighlightingAsync() {
@@ -188,7 +189,7 @@ public class SQLEditController extends BaseController<ConnectionParam> {
 
     @FXML
     public void clearSql(ActionEvent event) {
-        codeArea.deleteText(0,codeArea.getText().length());
+        codeArea.deleteText(0, codeArea.getText().length());
     }
 
     public void executeSqlQuery(String sql) {

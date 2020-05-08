@@ -4,6 +4,7 @@ import com.openjfx.database.*;
 import io.vertx.core.Future;
 import io.vertx.sqlclient.Pool;
 import io.vertx.sqlclient.Row;
+import io.vertx.sqlclient.SqlConnection;
 
 /**
  * 封装数据库管理连接池
@@ -66,5 +67,17 @@ public class AbstractDataBasePool {
 
     public void setGenerator(SQLGenerator generator) {
         this.generator = generator;
+    }
+
+    /**
+     * get connection from database pool.
+     * <p>This method will not be used in general,
+     * but it needs to be called when some scenes only need to get the linked object to complete.
+     * Such as database things, etc</p>
+     *
+     * @return connection
+     */
+    public Future<SqlConnection> getConnection() {
+        return pool.getConnection();
     }
 }
