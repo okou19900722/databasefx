@@ -21,18 +21,21 @@ public class MySql extends AbstractDatabaseSource {
     {
         heartBeat();
     }
+
     @Override
     public AbstractDataBasePool createPool(ConnectionParam params) {
-        MySQLPool mySqlPool = MysqlHelper.createPool(params);
-        AbstractDataBasePool pool = MysqlPoolImpl.create(mySqlPool);
+        var mySqlPool = MysqlHelper.createPool(params);
+        var pool = MysqlPoolImpl.create(mySqlPool);
+        pool.setConnectionParam(params);
         //确保链接可用后在加入缓存之中
-        pool.getDql().heartBeatQuery().onSuccess(r-> pools.put(params.getUuid(), pool));
+        pool.getDql().heartBeatQuery()
+                .onSuccess(r -> pools.put(params.getUuid(), pool));
         return pool;
     }
 
     @Override
     public void close(String uuid) {
-        AbstractDataBasePool pool = pools.get(uuid);
+        var pool = pools.get(uuid);
         if (Objects.nonNull(pool)) {
             pool.close();
         }
@@ -59,11 +62,14 @@ public class MySql extends AbstractDatabaseSource {
         VertexUtils.getVertex().setPeriodic(10000, timer -> {
             pools.forEach((a, b) -> {
                 var future = b.getDql().heartBeatQuery();
+                var serverName = b.getConnectionParam().getName();
+                var host = b.getConnectionParam().getHost();
+                var target = serverName + "<" + host + ">";
                 future.onSuccess(ar -> {
-                    System.out.println("success heart beat to " + a + " server");
+                    System.out.println("success heart beat to " + target + " server");
                 });
                 future.onFailure(t -> {
-                    System.out.println("failed heart beat to " + a + " server cause:" + t.getMessage());
+                    System.out.println("failed heart beat to " + target + " server cause:" + t.getMessage());
                 });
             });
         });

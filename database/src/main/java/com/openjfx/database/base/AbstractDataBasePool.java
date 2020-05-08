@@ -1,6 +1,7 @@
 package com.openjfx.database.base;
 
 import com.openjfx.database.*;
+import com.openjfx.database.model.ConnectionParam;
 import io.vertx.core.Future;
 import io.vertx.sqlclient.Pool;
 import io.vertx.sqlclient.Row;
@@ -24,6 +25,10 @@ public class AbstractDataBasePool {
     protected SQLGenerator generator;
 
     protected Pool pool;
+    /**
+     * connection param
+     */
+    private ConnectionParam connectionParam;
 
     public DDL getDdl() {
         return ddl;
@@ -61,5 +66,13 @@ public class AbstractDataBasePool {
      */
     public Future<SqlConnection> getConnection() {
         return pool.getConnection();
+    }
+
+    public ConnectionParam getConnectionParam() {
+        return connectionParam;
+    }
+
+    public void setConnectionParam(ConnectionParam connectionParam) {
+        this.connectionParam = connectionParam;
     }
 }
