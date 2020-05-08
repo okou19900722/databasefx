@@ -17,7 +17,6 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import org.fxmisc.richtext.CodeArea;
@@ -257,6 +256,5 @@ public class SQLEditController extends BaseController<ConnectionParam> {
             tableView.getItems().clear();
             tableView.getItems().addAll(list);
         });
-
     }
 }

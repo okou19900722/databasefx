@@ -29,32 +29,18 @@ public class AbstractDataBasePool {
         return ddl;
     }
 
-    public void setDdl(DDL ddl) {
-        this.ddl = ddl;
-    }
-
     public DCL getDcl() {
         return dcl;
     }
 
-    public void setDcl(DCL dcl) {
-        this.dcl = dcl;
-    }
 
     public DML getDml() {
         return dml;
     }
 
-    public void setDml(DML dml) {
-        this.dml = dml;
-    }
 
     public DQL getDql() {
         return dql;
-    }
-
-    public void setDql(DQL dql) {
-        this.dql = dql;
     }
 
     public void close() {
@@ -63,10 +49,6 @@ public class AbstractDataBasePool {
 
     public SQLGenerator getGenerator() {
         return generator;
-    }
-
-    public void setGenerator(SQLGenerator generator) {
-        this.generator = generator;
     }
 
     /**
