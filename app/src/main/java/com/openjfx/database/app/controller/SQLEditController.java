@@ -1,6 +1,6 @@
 package com.openjfx.database.app.controller;
 
-import com.openjfx.database.JSqlParserHelper;
+import com.openjfx.database.mysql.JSqlParserHelper;
 import com.openjfx.database.app.BaseController;
 import com.openjfx.database.app.component.TableDataCell;
 import com.openjfx.database.app.config.Constants;

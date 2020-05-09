@@ -1,4 +1,4 @@
-package com.openjfx.database;
+package com.openjfx.database.mysql;
 
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
