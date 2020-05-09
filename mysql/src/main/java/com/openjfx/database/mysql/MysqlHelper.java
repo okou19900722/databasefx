@@ -47,7 +47,7 @@ public class MysqlHelper {
      * @return 返回连接池
      */
     public static MySQLPool createPool(ConnectionParam param, int initSize, String database) {
-        MySQLConnectOptions options = new MySQLConnectOptions()
+        var options = new MySQLConnectOptions()
                 .setPort(param.getPort())
                 .setHost(param.getHost())
                 .setUser(param.getUser())
@@ -62,7 +62,7 @@ public class MysqlHelper {
             options.setDatabase(database);
         }
 
-        PoolOptions poolOptions = new PoolOptions();
+        var poolOptions = new PoolOptions();
         poolOptions.setMaxSize(initSize);
         return MySQLPool.pool(options, poolOptions);
     }
@@ -74,9 +74,9 @@ public class MysqlHelper {
      * @return 异步返回测试结果
      */
     public static Future<Boolean> testConnection(ConnectionParam param) {
-        MySQLPool client = createPool(param);
-        String testSql = "SHOW DATABASES";
-        Promise<Boolean> promise = Promise.promise();
+        var client = createPool(param);
+        var testSql = "SELECT 1";
+        var promise = Promise.<Boolean>promise();
         client.query(testSql).setHandler(ar -> {
             if (ar.succeeded()) {
                 promise.complete(true);

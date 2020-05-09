@@ -64,7 +64,12 @@ public class SQLEditController extends BaseController<JsonObject> {
             "SHOW",
             "DROP",
             "WHERE",
-            "FROM"
+            "FROM",
+            "LIMIT",
+            "INNER",
+            "LEFT",
+            "RIGHT",
+            "LIMIT"
     };
     //小写关键字
     private static final String[] LOW_KEYWORD = Arrays.stream(UPPER_KEYWORD).map(String::toLowerCase).toArray(String[]::new);
@@ -181,7 +186,7 @@ public class SQLEditController extends BaseController<JsonObject> {
         }
         String sql;
         try {
-            sql = JSqlParserHelper.transformSqlToFullName(str, scheme);
+            sql = JSqlParserHelper.transform(str, scheme);
         } catch (JSQLParserException e) {
             DialogUtils.showErrorDialog(e, "sql转换异常");
             return;
