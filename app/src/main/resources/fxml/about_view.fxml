@@ -23,8 +23,8 @@
            <Separator orientation="VERTICAL"/>
            <VBox alignment="CENTER_LEFT" styleClass="app-info">
                <Label text="软件名称:DatabaseFx"/>
-               <Label text="软件版本:0.1-beta"/>
-               <Label text="发布日期:2020年3月29日"/>
+               <Label text="软件版本:1.0.0-beta1"/>
+               <Label text="发布日期:2020年5月9日"/>
                <Label text="联系方式:752544765@qq.com"/>
                <Label text="软件官网:http://navigational.cn"/>
            </VBox>
