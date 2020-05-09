@@ -32,7 +32,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
 
 import java.util.*;
 
@@ -217,7 +216,6 @@ public class TableTab extends BaseTab<TableTabModel> {
             }
             //搜索表格内的数据
             if (event.isControlDown() && event.getCode() == KeyCode.F && !tableView.getItems().isEmpty()) {
-
             }
         });
 
@@ -320,9 +318,7 @@ public class TableTab extends BaseTab<TableTabModel> {
         //同步改数据到数据库
         if (result) {
             var dml = DATABASE_SOURCE.getDataBaseSource(model.getUuid()).getDml();
-            var future = newData(dml)
-                    .compose(rs -> updateData(dml))
-                    .compose(rs -> deleteData(dml));
+            var future = newData(dml).compose(rs -> updateData(dml)).compose(rs -> deleteData(dml));
             future.onSuccess(rs -> {
                 Platform.runLater(() -> {
                     countDataNumber();
@@ -371,13 +367,14 @@ public class TableTab extends BaseTab<TableTabModel> {
             futures.add(future);
         }
         var promise = Promise.<Integer>promise();
-        if (futures.size() > 0) {
-            var fut = CompositeFuture.all(futures);
-            fut.onSuccess(e -> promise.complete(futures.size()));
-            fut.onFailure(promise::fail);
-        } else {
-            promise.complete(0);
-        }
+        var fut = CompositeFuture.all(futures);
+        fut.setHandler(ar -> {
+            if (ar.succeeded()) {
+                promise.complete(futures.size());
+                return;
+            }
+            promise.fail(ar.cause());
+        });
         return promise.future();
     }
 

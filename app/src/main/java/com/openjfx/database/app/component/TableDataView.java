@@ -7,6 +7,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableView;
 
 import java.util.*;
@@ -22,27 +23,30 @@ public class TableDataView extends TableView<ObservableList<StringProperty>> {
     /**
      * 缓存被删除的行数据
      */
-    private List<ObservableList<StringProperty>> deletes = FXCollections.observableArrayList();
+    private final List<ObservableList<StringProperty>> deletes = FXCollections.observableArrayList();
 
     /**
      * 将更改的列信息存储到集合之中
      */
-    private List<TableDataChangeMode> changeModes = new ArrayList<>();
+    private final List<TableDataChangeMode> changeModes = new ArrayList<>();
 
     /**
      * 新建的行数据
      */
-    private List<ObservableList<StringProperty>> newRows = new ArrayList<>();
+    private final List<ObservableList<StringProperty>> newRows = new ArrayList<>();
 
     /**
      * 当前表数据是否改变
      */
-    private BooleanProperty changeStatus = new SimpleBooleanProperty();
+    private final BooleanProperty changeStatus = new SimpleBooleanProperty();
 
 
     public TableDataView() {
         //禁用排序
         setSortPolicy(callback -> null);
+        //启用选择单元格功能
+        getSelectionModel().setCellSelectionEnabled(true);
+        getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
 
