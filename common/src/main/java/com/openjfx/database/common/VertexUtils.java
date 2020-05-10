@@ -3,6 +3,7 @@ package com.openjfx.database.common;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.file.FileSystem;
+import io.vertx.core.json.JsonObject;
 
 /**
  * vertx toolkit 工具类
@@ -43,5 +44,15 @@ public class VertexUtils {
 
     public static EventBus eventBus() {
         return VERTX.eventBus();
+    }
+
+    /**
+     * by event send message
+     *
+     * @param address Eventbus address;
+     * @param message message content
+     */
+    public static void send(final String address, final JsonObject message) {
+        VERTX.eventBus().send(address, message);
     }
 }

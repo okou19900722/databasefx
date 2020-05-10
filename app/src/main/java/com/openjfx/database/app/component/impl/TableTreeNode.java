@@ -38,21 +38,21 @@ public class TableTreeNode extends BaseTreeNode<String> {
      */
     private final String database;
 
-    private final JsonObject params = new JsonObject();
-
     public TableTreeNode(String database, String tableName, ConnectionParam param) {
         super(param, ICON_IMAGE);
 
         this.database = database;
+
+        var params = new JsonObject();
 
         params.put(Constants.UUID, getUuid());
         params.put(TABLE_NAME, database + "." + tableName);
 
         setValue(tableName);
 
-        MenuItem sqlMenu = new MenuItem("生成SQL");
-        MenuItem design = new MenuItem("设计表");
-        MenuItem delete = new MenuItem("删除");
+        var sqlMenu = new MenuItem("生成SQL");
+        var design = new MenuItem("设计表");
+        var delete = new MenuItem("删除");
 
         sqlMenu.setOnAction(e -> new SQLGenStage(params));
         design.setOnAction(e -> new DesignTableStage(params));

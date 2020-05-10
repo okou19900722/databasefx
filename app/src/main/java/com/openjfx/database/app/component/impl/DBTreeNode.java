@@ -98,6 +98,6 @@ public class DBTreeNode extends BaseTreeNode<String> {
         message.put(ACTION, MainTabPane.EventBusAction.REMOVE_MANY);
         message.put(FLAG, getUuid());
         //移出当前数据库相关的Tab
-        VertexUtils.eventBus().send(MainTabPane.EVENT_BUS_ADDRESS, message);
+        VertexUtils.send(MainTabPane.EVENT_BUS_ADDRESS, message);
     }
 }

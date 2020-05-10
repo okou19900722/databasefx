@@ -121,12 +121,11 @@ public class TableDataCell extends TableCell<ObservableList<StringProperty>, Str
     @Override
     public void commitEdit(String newValue) {
         String oldValue = getItem();
+        var colIndex = getTableView().getEditingCell().getColumn();
+        var rowIndex = getTableRow().getIndex();
+
         //值变化
         if (!oldValue.equals(newValue)) {
-
-            var colIndex = getTableView().getEditingCell().getColumn();
-            var rowIndex = getTableRow().getIndex();
-
             var dataView = (TableDataView) getTableView();
 
             var optional = dataView.getChangeModel(rowIndex, colIndex);
@@ -153,6 +152,9 @@ public class TableDataCell extends TableCell<ObservableList<StringProperty>, Str
         //更新值
         updateItem(newValue, false);
         super.commitEdit(newValue);
+        //聚焦当前tableCell
+        getTableView().requestFocus();
+        getTableView().getSelectionModel().select(rowIndex, getTableColumn());
 
     }
 

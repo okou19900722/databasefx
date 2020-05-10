@@ -46,7 +46,7 @@ public class TableDataView extends TableView<ObservableList<StringProperty>> {
         setSortPolicy(callback -> null);
         //启用选择单元格功能
         getSelectionModel().setCellSelectionEnabled(true);
-        getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        //暂时不支持多选
     }
 
 
@@ -89,7 +89,7 @@ public class TableDataView extends TableView<ObservableList<StringProperty>> {
     }
 
     public Optional<TableDataChangeMode> getChangeModel(int rowIndex, int columnIndex) {
-        String key = rowIndex + "_" + columnIndex;
+        var key = rowIndex + "_" + columnIndex;
         Optional<TableDataChangeMode> optional = Optional.empty();
         for (TableDataChangeMode changeMode : changeModes) {
             if (changeMode.getId().equals(key)) {

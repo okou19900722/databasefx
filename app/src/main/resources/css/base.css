@@ -3,8 +3,13 @@
     -fx-font-family: "Source Han Serif CN Light";
 }
 
-.table-column {
+.table-view {
+    -fx-background-color: transparent;
+}
+
+.table-view .table-column {
     -fx-alignment: center-left;
+    /*-fx-min-width: 200px;*/
 }
 
 .table-view .scroll-bar:vertical, .tree-view .scroll-bar:vertical {

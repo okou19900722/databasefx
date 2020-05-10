@@ -1,6 +1,7 @@
 package com.openjfx.database.mysql.impl;
 
 import com.openjfx.database.DQL;
+import com.openjfx.database.DataConvert;
 import com.openjfx.database.model.TableColumnMeta;
 import com.openjfx.database.mysql.PageHelper;
 import io.vertx.core.Future;
@@ -16,6 +17,8 @@ import static com.openjfx.database.common.config.StringConstants.NULL;
 public class DQLImpl implements DQL {
 
     private MySQLPool client;
+
+    private final DataConvert dataConvert = new SimpleMysqlDataConvert();
 
     public DQLImpl(MySQLPool client) {
         this.client = client;
@@ -81,23 +84,14 @@ public class DQLImpl implements DQL {
     }
 
     @Override
-    public Future<List<Object[]>> query(String table, int pageIndex, int pageSize) {
+    public Future<List<String[]>> query(String table, int pageIndex, int pageSize) {
         String sql = "SELECT * FROM " + table + " LIMIT ?,?";
         int a = PageHelper.getInitPage(pageIndex, pageSize);
         Tuple tuple = Tuple.of(a, pageSize);
-        Promise<List<Object[]>> promise = Promise.promise();
+        Promise<List<String[]>> promise = Promise.promise();
         client.preparedQuery(sql, tuple).onSuccess(rows -> {
-            List<Object[]> dd = new ArrayList<>();
-            for (Row row : rows) {
-                int size = row.size();
-                Object[] obj = new Object[size];
-                for (int i = 0; i < size; i++) {
-                    Object b = row.getValue(i);
-                    obj[i] = Objects.isNull(b) ? NULL : b;
-                }
-                dd.add(obj);
-            }
-            promise.complete(dd);
+            var list = dataConvert.toConvert(rows);
+            promise.complete(list);
         }).onFailure(promise::fail);
         return promise.future();
     }
@@ -127,22 +121,13 @@ public class DQLImpl implements DQL {
     }
 
     @Override
-    public Future<Map<List<String>, List<Object[]>>> executeSql(String sql) {
+    public Future<Map<List<String>, List<String[]>>> executeSql(String sql) {
         var future = client.query(sql);
-        var promise = Promise.<Map<List<String>, List<Object[]>>>promise();
+        var promise = Promise.<Map<List<String>, List<String[]>>>promise();
         future.onSuccess(rows -> {
             var columns = rows.columnsNames();
-            List<Object[]> dd = new ArrayList<>();
-            for (Row row : rows) {
-                int size = row.size();
-                Object[] obj = new Object[size];
-                for (int i = 0; i < size; i++) {
-                    Object b = row.getValue(i);
-                    obj[i] = Objects.isNull(b) ? NULL : b;
-                }
-                dd.add(obj);
-            }
-            Map<List<String>, List<Object[]>> map = new HashMap<>();
+            var dd = dataConvert.toConvert(rows);
+            var map = new HashMap<List<String>, List<String[]>>();
             map.put(columns, dd);
             promise.complete(map);
         });

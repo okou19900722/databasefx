@@ -45,7 +45,7 @@ public interface DQL {
      * @param table     表名
      * @return 返回查询结果
      */
-    Future<List<Object[]>> query(String table, int pageIndex, int pageSize);
+    Future<List<String[]>> query(String table, int pageIndex, int pageSize);
 
     /**
      * 统计目标表的数量
@@ -68,6 +68,6 @@ public interface DQL {
      * @param sql sql语句
      * @return 返回结果
      */
-    Future<Map<List<String>, List<Object[]>>> executeSql(String sql);
+    Future<Map<List<String>, List<String[]>>> executeSql(String sql);
 
 }

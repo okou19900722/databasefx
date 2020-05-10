@@ -1,0 +1,10 @@
+.search-popup {
+    -fx-background-color: #FFFFFF;
+    -fx-spacing: 15px;
+    -fx-alignment: center;
+    -fx-padding: 5px 10px;
+}
+
+.jfx-button {
+    -fx-padding: 0;
+}

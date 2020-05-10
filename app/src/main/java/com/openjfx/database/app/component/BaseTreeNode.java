@@ -29,7 +29,7 @@ import java.util.List;
 public abstract class BaseTreeNode<T> extends TreeItem<T> {
 
     /**
-     * 加载状态,防止重复加载 true表示加载中 false表示不再
+     * 加载状态,防止重复加载 true表示加载中 false不在加载中
      */
     private final BooleanProperty loading = new SimpleBooleanProperty();
 

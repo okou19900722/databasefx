@@ -165,7 +165,7 @@ public class DatabaseFxController extends BaseController {
                 initDbList();
                 var message = new JsonObject();
                 message.put(ACTION, MainTabPane.EventBusAction.CLEAR);
-                VertexUtils.eventBus().send(MainTabPane.EVENT_BUS_ADDRESS, message);
+                VertexUtils.send(MainTabPane.EVENT_BUS_ADDRESS, message);
             }
         }
     }

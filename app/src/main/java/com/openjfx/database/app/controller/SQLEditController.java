@@ -43,7 +43,9 @@ import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
  * @since 1.0
  */
 public class SQLEditController extends BaseController<JsonObject> {
-    //大写关键字
+    /**
+     * 大写关键字
+     */
     private static final String[] UPPER_KEYWORD = new String[]{
             "ADD",
             "ALL",
@@ -71,7 +73,9 @@ public class SQLEditController extends BaseController<JsonObject> {
             "RIGHT",
             "LIMIT"
     };
-    //小写关键字
+    /**
+     * 小写关键字
+     */
     private static final String[] LOW_KEYWORD = Arrays.stream(UPPER_KEYWORD).map(String::toLowerCase).toArray(String[]::new);
 
     private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", UPPER_KEYWORD) + String.join("|", LOW_KEYWORD) + ")\\b";
@@ -218,7 +222,7 @@ public class SQLEditController extends BaseController<JsonObject> {
     public void executeSqlQuery(String sql) {
         var future = client.getDql().executeSql(sql);
         future.onSuccess(rs -> {
-            for (Map.Entry<List<String>, List<Object[]>> entry : rs.entrySet()) {
+            for (Map.Entry<List<String>, List<String[]>> entry : rs.entrySet()) {
                 var columns = entry.getKey();
                 var data = entry.getValue();
                 //创建列
@@ -236,7 +240,7 @@ public class SQLEditController extends BaseController<JsonObject> {
             var columnName = "affected rows";
             createColumn(Collections.singletonList(columnName));
             //新增列数据
-            createData(Collections.singletonList(new Object[]{rs}));
+            createData(Collections.singletonList(new String[]{rs.toString()}));
         });
         future.onFailure(t -> DialogUtils.showErrorDialog(t, "更新失败"));
     }
@@ -262,17 +266,13 @@ public class SQLEditController extends BaseController<JsonObject> {
         }
     }
 
-    private void createData(List<Object[]> data) {
-        List<ObservableList<StringProperty>> list = FXCollections.observableArrayList();
-
-        for (var objects : data) {
-            ObservableList<StringProperty> item = FXCollections.observableArrayList();
-
-            for (Object object : objects) {
-                String val = object.toString();
+    private void createData(List<String[]> data) {
+        var list = FXCollections.<ObservableList<StringProperty>>observableArrayList();
+        for (var row : data) {
+            var item = FXCollections.<StringProperty>observableArrayList();
+            for (var val : row) {
                 item.add(new SimpleStringProperty(val));
             }
-
             list.add(item);
         }
         Platform.runLater(() -> {

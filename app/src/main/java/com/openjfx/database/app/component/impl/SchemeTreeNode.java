@@ -4,9 +4,12 @@ package com.openjfx.database.app.component.impl;
 import com.openjfx.database.DDL;
 import com.openjfx.database.DQL;
 import com.openjfx.database.app.component.BaseTreeNode;
+import com.openjfx.database.app.component.MainTabPane;
 import com.openjfx.database.app.config.Constants;
+import com.openjfx.database.app.controller.DatabaseFxController;
 import com.openjfx.database.app.stage.SQLEditStage;
 import com.openjfx.database.app.utils.DialogUtils;
+import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.model.ConnectionParam;
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
@@ -22,6 +25,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
+import static com.openjfx.database.app.config.Constants.ACTION;
+import static com.openjfx.database.app.config.Constants.FLAG;
 import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
 
 /**
@@ -34,46 +39,64 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
 
     private static final Image ICON_IMAGE = getLocalImage(20, 20, "db_icon.png");
 
+    private final String scheme;
+
     public SchemeTreeNode(String scheme, ConnectionParam param) {
         super(param, ICON_IMAGE);
+        this.scheme = scheme;
 
         setValue(scheme);
 
         var flush = new MenuItem("刷新");
+        var close = new MenuItem("关闭");
         var deleteMenu = new MenuItem("删除");
         var sqlEditor = new MenuItem("SQL编辑器");
 
 
-        addMenus(flush, sqlEditor, deleteMenu);
+        addMenus(flush, close, sqlEditor, deleteMenu);
 
         flush.setOnAction(e -> flush());
 
         deleteMenu.setOnAction(event -> {
-            //删除scheme
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setContentText("你确定要删除" + scheme + "?");
-            Optional<ButtonType> optional = alert.showAndWait();
-            optional.ifPresent(buttonType -> {
-                //确定删除
-                if (buttonType == ButtonType.OK) {
-                    DDL dml = DATABASE_SOURCE.getDataBaseSource(getUuid()).getDdl();
-                    Future<Void> future = dml.dropDatabase(scheme);
-                    future.onSuccess(r -> {
-                        //删除当前节点
-                        getParent().getChildren().remove(this);
-                        //移出缓存数据
-                        DATABASE_SOURCE.close(getUuid());
-                    });
-                    future.onFailure(t -> DialogUtils.showErrorDialog(t, "删除schema失败"));
-                }
-            });
+            var result = DialogUtils.showAlertConfirm("你确定要删除" + scheme + "?");
+            if (result) {
+                var dml = DATABASE_SOURCE.getDataBaseSource(getUuid()).getDdl();
+                var future = dml.dropDatabase(scheme);
+                future.onSuccess(r -> {
+                    closeOpenTab();
+                    //delete current node from parent node
+                    getParent().getChildren().remove(this);
+                    //remove cached database pool
+                    DATABASE_SOURCE.close(getUuid());
+                });
+                future.onFailure(t -> DialogUtils.showErrorDialog(t, "删除schema失败"));
+            }
         });
+
+        //close scheme->close relative tab
+        close.setOnAction(e -> {
+            setExpanded(false);
+            getChildren().clear();
+            closeOpenTab();
+        });
+
+        //open sql editor
         sqlEditor.setOnAction(e -> {
             var json = new JsonObject();
             json.put(Constants.UUID, param.getUuid());
             json.put(Constants.SCHEME, getValue());
             new SQLEditStage(json);
         });
+    }
+
+    /**
+     * by event bus notify {@link MainTabPane} close current scheme relative tab
+     */
+    private void closeOpenTab() {
+        var message = new JsonObject();
+        message.put(ACTION, MainTabPane.EventBusAction.REMOVE_MANY);
+        message.put(FLAG, getUuid() + "_" + scheme);
+        VertexUtils.send(MainTabPane.EVENT_BUS_ADDRESS, message);
     }
 
     @Override

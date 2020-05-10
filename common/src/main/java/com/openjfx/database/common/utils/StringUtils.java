@@ -1,5 +1,8 @@
 package com.openjfx.database.common.utils;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 /**
@@ -27,5 +30,10 @@ public class StringUtils {
      */
     public static boolean nonEmpty(String target) {
         return !isEmpty(target);
+    }
+
+    public static String localDateTimeToStr(LocalDateTime dateTime, String pattern) {
+        var format = DateTimeFormatter.ofPattern(pattern);
+        return dateTime.format(format);
     }
 }

@@ -6,12 +6,14 @@ import com.openjfx.database.DML;
 import com.openjfx.database.TableColumnMetaHelper;
 import com.openjfx.database.app.TableDataHelper;
 import com.openjfx.database.app.component.BaseTab;
+import com.openjfx.database.app.component.SearchPopup;
 import com.openjfx.database.app.component.TableDataCell;
 import com.openjfx.database.app.component.TableDataView;
 import com.openjfx.database.app.enums.NotificationType;
 import com.openjfx.database.app.model.impl.TableTabModel;
 import com.openjfx.database.app.utils.AssetUtils;
 import com.openjfx.database.app.utils.DialogUtils;
+import com.openjfx.database.app.utils.ScreenUtils;
 import com.openjfx.database.base.AbstractDataBasePool;
 import com.openjfx.database.common.utils.StringUtils;
 import com.openjfx.database.model.TableColumnMeta;
@@ -21,6 +23,8 @@ import io.vertx.core.Promise;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -32,10 +36,14 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.stage.Popup;
+import javafx.stage.Screen;
+import javafx.stage.Window;
 
 import java.util.*;
 
 import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
+import static com.openjfx.database.app.utils.AssetUtils.getCssStyle;
 import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
 import static com.openjfx.database.common.config.StringConstants.NULL;
 
@@ -98,6 +106,8 @@ public class TableTab extends BaseTab<TableTabModel> {
 
     private final List<TableColumnMeta> metas = new ArrayList<>();
     private final Label totalLabel = new Label("0行数据");
+
+    private final SearchPopup searchPopup = new SearchPopup();
     /**
      * 当前表的key值
      */
@@ -201,23 +211,34 @@ public class TableTab extends BaseTab<TableTabModel> {
             tableView.addDeleteItem(item);
         });
 
-        //注册保存快捷键
+        //register shortcuts
         getTabPane().addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             var tabPane = getTabPane();
-            //如果变动的不是当前选中的tab不发生改变
+            if (Objects.isNull(tabPane)) {
+                return;
+            }
+
+            //If the changed tab is not the currently selected tab, it will not be changed
             var selectItem = tabPane.getSelectionModel();
             if (Objects.isNull(selectItem) || selectItem.getSelectedItem() != this) {
                 return;
             }
-            //触发保存事件
+
+            //fire sve event
             if (event.isControlDown() && event.getCode() == KeyCode.S) {
                 event.consume();
                 checkChange(false);
             }
-            //搜索表格内的数据
+            //search data in current table
             if (event.isControlDown() && event.getCode() == KeyCode.F && !tableView.getItems().isEmpty()) {
+                var window = tabPane.getScene().getWindow();
+                searchPopup.defaultShowStrategy(window);
             }
         });
+
+        searchPopup.textChange(((observable, oldValue, newValue) -> {
+            //todo according by a strategy search data
+        }));
 
         borderPane.setCenter(tableView);
         borderPane.setBottom(bottomBox);
@@ -273,23 +294,18 @@ public class TableTab extends BaseTab<TableTabModel> {
         //清空之前的数据
         Platform.runLater(() -> tableView.getItems().clear());
         //加载数据
-        Future<List<Object[]>> future = pool.getDql().query(model.getTable(), pageIndex, pageSize);
+        var future = pool.getDql().query(model.getTable(), pageIndex, pageSize);
         future.onSuccess(rs -> {
             if (rs.isEmpty()) {
                 Platform.runLater(() -> tableView.setPlaceholder(null));
                 return;
             }
-
-            List<ObservableList<StringProperty>> list = FXCollections.observableArrayList();
-
-            for (Object[] objects : rs) {
-                ObservableList<StringProperty> item = FXCollections.observableArrayList();
-
-                for (Object object : objects) {
-                    String val = object.toString();
+            var list = FXCollections.<ObservableList<StringProperty>>observableArrayList();
+            for (var values : rs) {
+                var item = FXCollections.<StringProperty>observableArrayList();
+                for (var val : values) {
                     item.add(new SimpleStringProperty(val));
                 }
-
                 list.add(item);
             }
 
@@ -298,7 +314,6 @@ public class TableTab extends BaseTab<TableTabModel> {
                 tableView.refresh();
                 tableView.resetChange();
             });
-
             countDataNumber();
         });
         future.onFailure(t -> DialogUtils.showErrorDialog(t, "加载数据失败"));
