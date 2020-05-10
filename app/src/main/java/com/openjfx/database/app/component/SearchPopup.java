@@ -72,15 +72,22 @@ public class SearchPopup extends Popup {
 
     }
 
+    /**
+     * register input text change callback.
+     *
+     * @param handler callback handler
+     */
     public void textChange(final SingleResultHandler<Integer, String> handler) {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (getIndexProperty() != -1) {
                 setIndexProperty(-1);
             }
-            if (newValue != null) {
+            if (newValue != null && newValue.length() > 0) {
                 var number = handler.handler(newValue);
                 searchMax = number;
-                label.setText(number + "result");
+                label.setText(number + "条结果");
+            } else {
+                label.setText("0条结果");
             }
         });
     }
