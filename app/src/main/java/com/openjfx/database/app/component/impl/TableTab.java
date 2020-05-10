@@ -10,10 +10,12 @@ import com.openjfx.database.app.component.SearchPopup;
 import com.openjfx.database.app.component.TableDataCell;
 import com.openjfx.database.app.component.TableDataView;
 import com.openjfx.database.app.enums.NotificationType;
+import com.openjfx.database.app.model.TableSearchResultModel;
 import com.openjfx.database.app.model.impl.TableTabModel;
 import com.openjfx.database.app.utils.AssetUtils;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.app.utils.ScreenUtils;
+import com.openjfx.database.app.utils.TableDataUtils;
 import com.openjfx.database.base.AbstractDataBasePool;
 import com.openjfx.database.common.utils.StringUtils;
 import com.openjfx.database.model.TableColumnMeta;
@@ -36,14 +38,10 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.stage.Popup;
-import javafx.stage.Screen;
-import javafx.stage.Window;
 
 import java.util.*;
 
 import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
-import static com.openjfx.database.app.utils.AssetUtils.getCssStyle;
 import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
 import static com.openjfx.database.common.config.StringConstants.NULL;
 
@@ -108,6 +106,8 @@ public class TableTab extends BaseTab<TableTabModel> {
     private final Label totalLabel = new Label("0行数据");
 
     private final SearchPopup searchPopup = new SearchPopup();
+
+    private final List<TableSearchResultModel> searchList = new ArrayList<>();
     /**
      * 当前表的key值
      */
@@ -236,9 +236,28 @@ public class TableTab extends BaseTab<TableTabModel> {
             }
         });
 
-        searchPopup.textChange(((observable, oldValue, newValue) -> {
-            //todo according by a strategy search data
-        }));
+        searchPopup.textChange(keyword -> {
+            var items = tableView.getItems();
+            var temp = TableDataUtils.findWithStr(items, keyword);
+            searchList.clear();
+            searchList.addAll(temp);
+            //select first a cell
+            if (searchList.size() > 0) {
+                searchPopup.setIndexProperty(0);
+            }
+            return searchList.size();
+        });
+
+        searchPopup.indexPropertyProperty().addListener((observable, oldValue, newValue) -> {
+            var index = newValue.intValue();
+            if (index == -1) {
+                return;
+            }
+            var model = searchList.get(index);
+            var columns = tableView.getColumns();
+            var column = columns.get(model.getColumnIndex());
+            tableView.getSelectionModel().select(model.getRowIndex(), column);
+        });
 
         borderPane.setCenter(tableView);
         borderPane.setBottom(bottomBox);

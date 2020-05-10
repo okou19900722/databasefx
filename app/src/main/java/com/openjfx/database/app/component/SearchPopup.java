@@ -2,7 +2,10 @@ package com.openjfx.database.app.component;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
+import com.openjfx.database.common.SingleResultHandler;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -24,11 +27,16 @@ public class SearchPopup extends Popup {
     private final static Image CLOSE_ICON = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "close.png");
 
     private final JFXTextField textField = new JFXTextField();
+    private final Label label = new Label("0 result");
+
+    private final SimpleIntegerProperty indexProperty = new SimpleIntegerProperty(-1);
+
+    private int searchMax = 0;
 
 
     public SearchPopup() {
         var hBox = new HBox();
-        var label = new Label("0 result");
+
         var up = new JFXButton();
         var down = new JFXButton();
         var close = new JFXButton();
@@ -49,10 +57,32 @@ public class SearchPopup extends Popup {
 
         close.setOnAction(e -> hide());
 
+        up.setOnAction(e -> {
+            var index = getIndexProperty();
+            if (index >= 1) {
+                setIndexProperty(--index);
+            }
+        });
+        down.setOnAction(e -> {
+            var index = getIndexProperty();
+            if (index < searchMax - 1) {
+                setIndexProperty(++index);
+            }
+        });
+
     }
 
-    public void textChange(final ChangeListener<String> handler) {
-        textField.textProperty().addListener(handler);
+    public void textChange(final SingleResultHandler<Integer, String> handler) {
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (getIndexProperty() != -1) {
+                setIndexProperty(-1);
+            }
+            if (newValue != null) {
+                var number = handler.handler(newValue);
+                searchMax = number;
+                label.setText(number + "result");
+            }
+        });
     }
 
     /**
@@ -65,5 +95,17 @@ public class SearchPopup extends Popup {
         var xp = x + w - 20;
         var yp = y + 70;
         show(window, xp, yp);
+    }
+
+    public int getIndexProperty() {
+        return indexProperty.get();
+    }
+
+    public SimpleIntegerProperty indexPropertyProperty() {
+        return indexProperty;
+    }
+
+    public void setIndexProperty(int indexProperty) {
+        this.indexProperty.set(indexProperty);
     }
 }
