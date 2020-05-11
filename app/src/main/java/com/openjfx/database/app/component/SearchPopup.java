@@ -16,6 +16,12 @@ import javafx.scene.layout.Priority;
 import static com.openjfx.database.app.utils.AssetUtils.getCssStyle;
 import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
 
+/**
+ * <p>This component provides basic search function, search completion keyword callback and up and down coefficient callback</p>
+ *
+ * @author yangkui
+ * @since 1.0
+ */
 public class SearchPopup extends HBox {
 
     private static final double ICON_WIDTH = 0x14;
