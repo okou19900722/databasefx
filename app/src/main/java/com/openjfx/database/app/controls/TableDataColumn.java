@@ -13,7 +13,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-import java.util.List;
 
 import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
 

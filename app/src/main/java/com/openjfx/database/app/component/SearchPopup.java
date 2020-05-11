@@ -1,21 +1,22 @@
 package com.openjfx.database.app.component;
 
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXTextField;
 import com.openjfx.database.common.Handler;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.stage.Popup;
-import javafx.stage.Window;
+import javafx.scene.layout.Priority;
 
 import static com.openjfx.database.app.utils.AssetUtils.getCssStyle;
 import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
 
-public class SearchPopup extends Popup {
+public class SearchPopup extends HBox {
 
     private static final double ICON_WIDTH = 0x14;
     private static final double ICON_HEIGHT = 0x14;
@@ -24,7 +25,7 @@ public class SearchPopup extends Popup {
     private final static Image DOWN_ICON = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "down_icon.png");
     private final static Image CLOSE_ICON = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "close.png");
 
-    private final JFXTextField textField = new JFXTextField();
+    private final TextField textField = new TextField();
     private final Label label = new Label("0 result");
 
     private final SimpleIntegerProperty indexProperty = new SimpleIntegerProperty(-1);
@@ -33,27 +34,38 @@ public class SearchPopup extends Popup {
 
 
     public SearchPopup() {
-        var hBox = new HBox();
-
         var up = new JFXButton();
         var down = new JFXButton();
         var close = new JFXButton();
+        var lBox = new HBox();
+        var rBox = new HBox();
 
         close.setGraphic(new ImageView(CLOSE_ICON));
         up.setGraphic(new ImageView(UP_ICON));
         down.setGraphic(new ImageView(DOWN_ICON));
 
-        hBox.setAlignment(Pos.CENTER);
-        hBox.getChildren().addAll(textField, label, up, down, close);
+        setAlignment(Pos.CENTER);
+        lBox.getChildren().addAll(textField, label, up, down);
+        rBox.getChildren().addAll(close);
 
-        hBox.getStyleClass().add("search-popup");
-        getContent().add(hBox);
-        setAutoFix(true);
-        setAutoHide(true);
+        HBox.setHgrow(textField, Priority.ALWAYS);
 
-        hBox.getStylesheets().add(getCssStyle("search_popup.css"));
+        lBox.prefWidthProperty().bind(widthProperty().multiply(0.7));
+        rBox.prefWidthProperty().bind(widthProperty().multiply(0.3));
 
-        close.setOnAction(e -> hide());
+        lBox.getStyleClass().add("left-box");
+        rBox.getStyleClass().add("right-box");
+
+        getChildren().addAll(lBox, rBox);
+
+        getStyleClass().add("search-popup");
+
+        getStylesheets().add(getCssStyle("search_popup.css"));
+
+        close.setOnAction(e -> {
+            var borderPane = (BorderPane) getParent();
+            borderPane.setTop(null);
+        });
 
         up.setOnAction(e -> {
             var index = getIndexProperty();
@@ -67,7 +79,12 @@ public class SearchPopup extends Popup {
                 setIndexProperty(++index);
             }
         });
-
+        textField.setOnKeyPressed(e -> {
+            //hidden search box
+            if (e.getCode() == KeyCode.ESCAPE) {
+                close.fire();
+            }
+        });
     }
 
     /**
@@ -90,17 +107,6 @@ public class SearchPopup extends Popup {
         });
     }
 
-    /**
-     * default show strategy
-     */
-    public void defaultShowStrategy(final Window window) {
-        var x = window.getX();
-        var y = window.getY();
-        var w = window.getWidth();
-        var xp = x + w - 20;
-        var yp = y + 70;
-        show(window, xp, yp);
-    }
 
     public int getIndexProperty() {
         return indexProperty.get();

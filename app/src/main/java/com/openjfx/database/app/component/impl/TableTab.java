@@ -36,6 +36,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 
 import java.util.*;
 
@@ -229,8 +230,7 @@ public class TableTab extends BaseTab<TableTabModel> {
             }
             //search data in current table
             if (event.isControlDown() && event.getCode() == KeyCode.F && !tableView.getItems().isEmpty()) {
-                var window = tabPane.getScene().getWindow();
-                searchPopup.defaultShowStrategy(window);
+                borderPane.setTop(searchPopup);
             }
         });
 

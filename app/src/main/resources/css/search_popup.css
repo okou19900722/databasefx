@@ -5,6 +5,14 @@
     -fx-padding: 5px 10px;
 }
 
-.jfx-button {
-    -fx-padding: 0;
+.search-popup HBox {
+    -fx-spacing: 10px;
+}
+
+.search-popup .left-box {
+    -fx-alignment: center-left;
+}
+
+.search-popup .right-box {
+    -fx-alignment: center-right;
 }
