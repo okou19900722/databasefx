@@ -23,7 +23,9 @@ import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
  * @since 1.0
  */
 public class SearchPopup extends HBox {
-
+    /**
+     * icon size
+     */
     private static final double ICON_WIDTH = 0x14;
     private static final double ICON_HEIGHT = 0x14;
 
