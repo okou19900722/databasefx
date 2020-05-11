@@ -7,7 +7,6 @@ import com.openjfx.database.app.component.MainTabPane;
 import com.openjfx.database.app.stage.DesignTableStage;
 import com.openjfx.database.app.stage.SQLGenStage;
 import com.openjfx.database.app.utils.DialogUtils;
-import com.openjfx.database.app.utils.FXStringUtils;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.model.ConnectionParam;
 import io.vertx.core.json.JsonObject;
@@ -66,8 +65,9 @@ public class TableTreeNode extends BaseTreeNode<String> {
 
             future.onSuccess(ar -> {
                 var message = new JsonObject();
+                var flag = getUuid() + "_" + database + "_" + tableName;
                 message.put(ACTION, MainTabPane.EventBusAction.REMOVE);
-                message.put(FLAG, FXStringUtils.getTableTabUUID(getUuid(), database, tableName));
+                message.put(FLAG, flag);
                 VertexUtils.eventBus().send(MainTabPane.EVENT_BUS_ADDRESS, message);
                 Platform.runLater(() -> getParent().getChildren().remove(this));
             });
