@@ -1,8 +1,8 @@
-package com.openjfx.database.app.component.impl;
+package com.openjfx.database.app.controls.impl;
 
 import com.openjfx.database.app.DatabaseFX;
 import com.openjfx.database.app.config.Constants;
-import com.openjfx.database.app.component.BaseTreeNode;
+import com.openjfx.database.app.controls.BaseTreeNode;
 import com.openjfx.database.app.component.MainTabPane;
 import com.openjfx.database.app.stage.DesignTableStage;
 import com.openjfx.database.app.stage.SQLGenStage;

@@ -2,7 +2,7 @@ package com.openjfx.database.app.controller;
 
 import com.openjfx.database.mysql.JSqlParserHelper;
 import com.openjfx.database.app.BaseController;
-import com.openjfx.database.app.component.TableDataCell;
+import com.openjfx.database.app.controls.TableDataCell;
 import com.openjfx.database.app.config.Constants;
 import com.openjfx.database.app.enums.NotificationType;
 import com.openjfx.database.app.utils.DialogUtils;

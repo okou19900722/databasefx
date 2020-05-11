@@ -1,4 +1,4 @@
-package com.openjfx.database.app.component;
+package com.openjfx.database.app.controls;
 
 import com.openjfx.database.app.model.TableDataChangeMode;
 import com.openjfx.database.app.utils.TableCellUtils;

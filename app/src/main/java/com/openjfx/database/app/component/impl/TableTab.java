@@ -7,14 +7,13 @@ import com.openjfx.database.TableColumnMetaHelper;
 import com.openjfx.database.app.TableDataHelper;
 import com.openjfx.database.app.component.BaseTab;
 import com.openjfx.database.app.component.SearchPopup;
-import com.openjfx.database.app.component.TableDataCell;
-import com.openjfx.database.app.component.TableDataView;
+import com.openjfx.database.app.controls.TableDataCell;
+import com.openjfx.database.app.controls.TableDataView;
 import com.openjfx.database.app.enums.NotificationType;
 import com.openjfx.database.app.model.TableSearchResultModel;
 import com.openjfx.database.app.model.impl.TableTabModel;
 import com.openjfx.database.app.utils.AssetUtils;
 import com.openjfx.database.app.utils.DialogUtils;
-import com.openjfx.database.app.utils.ScreenUtils;
 import com.openjfx.database.app.utils.TableDataUtils;
 import com.openjfx.database.base.AbstractDataBasePool;
 import com.openjfx.database.common.utils.StringUtils;
@@ -25,8 +24,6 @@ import io.vertx.core.Promise;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -68,7 +65,7 @@ public class TableTab extends BaseTab<TableTabModel> {
     private static final Image SUBMIT_ICON = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "save_icon.png");
     private static final Image DELETE_ICON = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "delete_icon.png");
     private static final Image FLAG_IMAGE = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "point.png");
-    /**
+    /*
      * css样式路径
      */
     private static final String STYLE_SHEETS = "table_tab.css";
@@ -295,8 +292,7 @@ public class TableTab extends BaseTab<TableTabModel> {
     }
 
     private void createColumn(final int columnIndex, String title) {
-        TableColumn<ObservableList<StringProperty>, String> column = new TableColumn<>();
-        column.setText(title);
+        var column = new TableColumn<ObservableList<StringProperty>, String>(title);
         column.setCellValueFactory(cellDataFeatures -> {
             ObservableList<StringProperty> values = cellDataFeatures.getValue();
             if (columnIndex >= values.size()) {

@@ -1,6 +1,6 @@
-package com.openjfx.database.app.component.impl;
+package com.openjfx.database.app.controls.impl;
 
-import com.openjfx.database.app.component.BaseTreeNode;
+import com.openjfx.database.app.controls.BaseTreeNode;
 import com.openjfx.database.app.config.DbPreference;
 
 import com.openjfx.database.app.component.MainTabPane;
