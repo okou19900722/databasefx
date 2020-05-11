@@ -11,7 +11,7 @@ package com.openjfx.database.common;
  * @since 1.0
  */
 @FunctionalInterface
-public interface SingleResultHandler<R, D> {
+public interface Handler<R, D> {
     /**
      * that method use have return value and pass param
      *

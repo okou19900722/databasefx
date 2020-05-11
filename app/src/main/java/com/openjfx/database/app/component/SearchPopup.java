@@ -2,10 +2,8 @@ package com.openjfx.database.app.component;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
-import com.openjfx.database.common.SingleResultHandler;
+import com.openjfx.database.common.Handler;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -77,7 +75,7 @@ public class SearchPopup extends Popup {
      *
      * @param handler callback handler
      */
-    public void textChange(final SingleResultHandler<Integer, String> handler) {
+    public void textChange(final Handler<Integer, String> handler) {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (getIndexProperty() != -1) {
                 setIndexProperty(-1);
