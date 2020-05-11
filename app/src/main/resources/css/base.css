@@ -9,7 +9,6 @@
 
 .table-view .table-column {
     -fx-alignment: center-left;
-    /*-fx-min-width: 200px;*/
 }
 
 .table-view .scroll-bar:vertical, .tree-view .scroll-bar:vertical {

@@ -108,7 +108,7 @@ public class TableDataCell extends TableCell<ObservableList<StringProperty>, Str
             if (textField == null) {
                 textField = TableCellUtils.createTextField(this, getConverter());
             }
-            TableCellUtils.startEdit(this, getConverter(), null, null, textField);
+            TableCellUtils.startEdit(this,converter.get(),null,null,textField);
         }
     }
 

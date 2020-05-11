@@ -1,0 +1,8 @@
+.grid-pane {
+    -fx-background-color: black;
+    -fx-opacity: 0.8;
+    -fx-border-radius: 10px;
+    -fx-padding: 5px;
+    -fx-hgap: 10px;
+    -fx-vgap: 10px;
+}
