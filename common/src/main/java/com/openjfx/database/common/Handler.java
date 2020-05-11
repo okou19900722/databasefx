@@ -15,6 +15,7 @@ public interface Handler<R, D> {
     /**
      * that method use have return value and pass param
      *
+     *
      * @param d pass param
      * @return return fix type result
      */

@@ -14,6 +14,7 @@ import com.openjfx.database.app.model.TableSearchResultModel;
 import com.openjfx.database.app.model.impl.TableTabModel;
 import com.openjfx.database.app.utils.AssetUtils;
 import com.openjfx.database.app.utils.DialogUtils;
+import com.openjfx.database.app.utils.TableColumnUtils;
 import com.openjfx.database.app.utils.TableDataUtils;
 import com.openjfx.database.base.AbstractDataBasePool;
 import com.openjfx.database.common.utils.StringUtils;
@@ -272,15 +273,15 @@ public class TableTab extends BaseTab<TableTabModel> {
         Future<List<TableColumnMeta>> future = pool.getDql().showColumns(model.getTable());
         future.onSuccess(metas ->
         {
-            var i = 0;
-            for (TableColumnMeta meta : metas) {
-                createColumn(i, meta.getField());
-                i++;
-            }
             if (this.metas.size() > 0) {
                 this.metas.clear();
             }
             this.metas.addAll(metas);
+
+            //create column
+            var columns = TableColumnUtils.createTableDataColumn(metas);
+            Platform.runLater(() -> tableView.getColumns().addAll(columns));
+            //get key
             var optional = TableColumnMetaHelper.getTableKey(metas);
             if (optional.isPresent()) {
                 tableView.setEditable(true);
