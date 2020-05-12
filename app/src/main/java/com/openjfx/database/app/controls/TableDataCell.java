@@ -28,7 +28,8 @@ import static com.openjfx.database.common.config.StringConstants.NULL;
  */
 public class TableDataCell extends TableCell<ObservableList<StringProperty>, String> {
 
-    private TextField textField;
+    //    private TextField textField;
+    private TableTextField textField;
 
     /**
      * 空值样式
@@ -72,7 +73,7 @@ public class TableDataCell extends TableCell<ObservableList<StringProperty>, Str
                 || Objects.isNull(getTableRow())) {
             return;
         }
-        TableCellUtils.updateItem(this, getConverter(), null, null, textField);
+        TableCellUtils.updateItem(this, textField);
 
         if (item.equals(NULL)) {
             addClass(NULL_STYLE);
@@ -105,17 +106,18 @@ public class TableDataCell extends TableCell<ObservableList<StringProperty>, Str
         super.startEdit();
 
         if (isEditing()) {
+            var column = (TableDataColumn) getTableColumn();
             if (textField == null) {
-                textField = TableCellUtils.createTextField(this, getConverter());
+                textField = TableCellUtils.createTextField(this, column.getMeta());
             }
-            TableCellUtils.startEdit(this,converter.get(),null,null,textField);
+            TableCellUtils.startEdit(this, textField);
         }
     }
 
     @Override
     public void cancelEdit() {
         super.cancelEdit();
-        TableCellUtils.cancelEdit(this, getConverter(), null);
+        TableCellUtils.cancelEdit(this, null);
     }
 
     @Override

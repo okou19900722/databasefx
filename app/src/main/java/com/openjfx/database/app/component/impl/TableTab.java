@@ -104,7 +104,7 @@ public class TableTab extends BaseTab<TableTabModel> {
     private final List<TableColumnMeta> metas = new ArrayList<>();
     private final Label totalLabel = new Label("0行数据");
 
-    private final SearchPopup searchPopup = new SearchPopup();
+    private final SearchPopup searchPopup = SearchPopup.complexPopup();
 
     private final List<TableSearchResultModel> searchList = new ArrayList<>();
     /**

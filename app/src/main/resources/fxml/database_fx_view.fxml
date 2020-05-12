@@ -40,9 +40,11 @@
     </top>
     <center>
         <SplitPane fx:id="splitPane">
-            <TreeView fx:id="treeView" showRoot="false">
-                <TreeItem fx:id="treeItemRoot"/>
-            </TreeView>
+            <VBox fx:id="lBox">
+                <TreeView fx:id="treeView" showRoot="false">
+                    <TreeItem fx:id="treeItemRoot"/>
+                </TreeView>
+            </VBox>
             <MainTabPane fx:id="tabPane"/>
         </SplitPane>
     </center>

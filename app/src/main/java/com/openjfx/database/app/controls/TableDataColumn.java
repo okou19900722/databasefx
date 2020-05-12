@@ -1,5 +1,6 @@
 package com.openjfx.database.app.controls;
 
+import com.openjfx.database.DataTypeHelper;
 import com.openjfx.database.app.skin.TableColumnTooltipSkin;
 import com.openjfx.database.model.TableColumnMeta;
 import javafx.beans.property.ObjectProperty;
@@ -27,13 +28,6 @@ public class TableDataColumn extends TableColumn<ObservableList<StringProperty>,
      * database table column meta data
      */
     private final TableColumnMeta meta;
-
-    private static final String[] NUMBER = new String[]{
-            "tinyint", "smallint", "mediumint", "int", "bigint"
-    };
-    private static final String[] DATETIME = new String[]{
-            "DATETIME", "TIMESTAMP", "DATE", "TIME", "YEAR"
-    };
 
     private static final Image LETTER_ICON = getLocalImage(18, 18, "letter-icon.png");
     private static final Image NUMBER_ICON = getLocalImage(18, 18, "number-icon.png");
@@ -72,12 +66,12 @@ public class TableDataColumn extends TableColumn<ObservableList<StringProperty>,
     }
 
     private void initLabel() {
-
         var label = new Label();
+        var type = meta.getType();
         final ImageView imageView;
-        if (isFixType(DATETIME)) {
+        if (DataTypeHelper.dateTime(type)) {
             imageView = new ImageView(TIME_ICON);
-        } else if (isFixType(NUMBER)) {
+        } else if (DataTypeHelper.number(type)) {
             imageView = new ImageView(NUMBER_ICON);
         } else {
             imageView = new ImageView(LETTER_ICON);
@@ -87,13 +81,7 @@ public class TableDataColumn extends TableColumn<ObservableList<StringProperty>,
         label.setTooltip(new TableColumnTooltip(meta));
     }
 
-    private boolean isFixType(final String[] ss) {
-        var type = meta.getType().toLowerCase();
-        for (String s : ss) {
-            if (type.startsWith(s.toLowerCase())) {
-                return true;
-            }
-        }
-        return false;
+    public TableColumnMeta getMeta() {
+        return meta;
     }
 }

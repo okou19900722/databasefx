@@ -3,15 +3,19 @@ package com.openjfx.database.app.component;
 import com.jfoenix.controls.JFXButton;
 import com.openjfx.database.common.Handler;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 
 import static com.openjfx.database.app.utils.AssetUtils.getCssStyle;
 import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
@@ -40,8 +44,49 @@ public class SearchPopup extends HBox {
 
     private int searchMax = 0;
 
+    private EventHandler<ActionEvent> closeHandler;
 
-    public SearchPopup() {
+    /**
+     * <p>The display forms of search components are divided into simple and complex</p>
+     *
+     * @author yangkui
+     * @since 1.0
+     */
+    private enum SearchPopupModel {
+        /**
+         * <p>Simple mode only includes simple search box and control composition</p>
+         */
+        SIMPLE,
+        /**
+         * <p></>In addition, it also has regular and other advanced syntax search display</p>
+         */
+        COMPLEX
+    }
+
+    /**
+     * Create a simple search box
+     *
+     * @return SearchPopup instance
+     */
+    public static SearchPopup simplePopup() {
+        return new SearchPopup(SearchPopupModel.SIMPLE);
+    }
+
+    /**
+     * Create a  complex search box
+     *
+     * @return SearchPopup instance
+     */
+    public static SearchPopup complexPopup() {
+        return new SearchPopup(SearchPopupModel.COMPLEX);
+    }
+
+    /**
+     * Private methods do not allow external calls
+     *
+     * @param model Search box presentation
+     */
+    private SearchPopup(SearchPopupModel model) {
         var up = new JFXButton();
         var down = new JFXButton();
         var close = new JFXButton();
@@ -53,13 +98,15 @@ public class SearchPopup extends HBox {
         down.setGraphic(new ImageView(DOWN_ICON));
 
         setAlignment(Pos.CENTER);
-        lBox.getChildren().addAll(textField, label, up, down);
+        lBox.getChildren().add(textField);
+        if (model == SearchPopupModel.COMPLEX) {
+            lBox.getChildren().addAll(label, up, down);
+        }
         rBox.getChildren().addAll(close);
 
         HBox.setHgrow(textField, Priority.ALWAYS);
 
-        lBox.prefWidthProperty().bind(widthProperty().multiply(0.7));
-        rBox.prefWidthProperty().bind(widthProperty().multiply(0.3));
+        HBox.setHgrow(lBox, Priority.ALWAYS);
 
         lBox.getStyleClass().add("left-box");
         rBox.getStyleClass().add("right-box");
@@ -71,8 +118,16 @@ public class SearchPopup extends HBox {
         getStylesheets().add(getCssStyle("search_popup.css"));
 
         close.setOnAction(e -> {
-            var borderPane = (BorderPane) getParent();
-            borderPane.setTop(null);
+            var root = getParent();
+            if (root instanceof BorderPane) {
+                ((BorderPane) root).setTop(null);
+            }
+            if (root instanceof VBox) {
+                ((VBox) root).getChildren().remove(this);
+            }
+            if (closeHandler != null) {
+                closeHandler.handle(e);
+            }
         });
 
         up.setOnAction(e -> {
@@ -115,6 +170,15 @@ public class SearchPopup extends HBox {
         });
     }
 
+    /**
+     * Register events that start when certain special keys are pressed
+     *
+     * @param value event handler
+     */
+    public void setSearchOnKeyPressed(EventHandler<? super KeyEvent> value) {
+        textField.setOnKeyPressed(value);
+    }
+
 
     public int getIndexProperty() {
         return indexProperty.get();
@@ -126,5 +190,14 @@ public class SearchPopup extends HBox {
 
     public void setIndexProperty(int indexProperty) {
         this.indexProperty.set(indexProperty);
+    }
+
+    /**
+     * register close event
+     *
+     * @param closeHandler handler body
+     */
+    public void setCloseHandler(EventHandler<ActionEvent> closeHandler) {
+        this.closeHandler = closeHandler;
     }
 }

@@ -2,6 +2,7 @@ package com.openjfx.database.app.controller;
 
 import com.openjfx.database.app.BaseController;
 import com.openjfx.database.app.component.BaseTab;
+import com.openjfx.database.app.component.SearchPopup;
 import com.openjfx.database.app.config.Constants;
 import com.openjfx.database.app.component.MainTabPane;
 import com.openjfx.database.app.component.impl.TableTab;
@@ -16,6 +17,7 @@ import com.openjfx.database.app.model.impl.TableTabModel;
 import com.openjfx.database.app.stage.AboutStage;
 import com.openjfx.database.app.stage.CreateConnectionStage;
 import com.openjfx.database.app.utils.DialogUtils;
+import com.openjfx.database.app.utils.TreeDataUtils;
 import com.openjfx.database.common.VertexUtils;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
@@ -25,6 +27,9 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -47,7 +52,10 @@ public class DatabaseFxController extends BaseController {
     private MenuBar menuBar;
 
     @FXML
-    private TreeView treeView;
+    private VBox lBox;
+
+    @FXML
+    private TreeView<String> treeView;
 
     @FXML
     private TreeItem<String> treeItemRoot;
@@ -57,6 +65,19 @@ public class DatabaseFxController extends BaseController {
 
     @FXML
     private SplitPane splitPane;
+    /**
+     * search popup
+     */
+    private final SearchPopup searchPopup = SearchPopup.simplePopup();
+    /**
+     * search result list
+     */
+    private List<Integer> searchList = new ArrayList<>();
+    /**
+     * search select index
+     */
+    private int selectIndex = 0;
+
     /**
      * EVENT-BUS 地址
      */
@@ -87,6 +108,7 @@ public class DatabaseFxController extends BaseController {
 
         var menu = new ContextMenu();
         treeView.setContextMenu(menu);
+        VBox.setVgrow(treeView, Priority.ALWAYS);
 
 
         treeView.setOnContextMenuRequested(e -> {
@@ -100,6 +122,9 @@ public class DatabaseFxController extends BaseController {
         treeView.setOnMouseClicked(e -> {
             if (e.getClickCount() >= 2) {
                 var selectedItem = treeView.getSelectionModel().getSelectedItem();
+                if (selectedItem == null) {
+                    return;
+                }
                 if (!(selectedItem instanceof TableTreeNode)) {
                     ((BaseTreeNode) selectedItem).init();
                 } else {
@@ -110,6 +135,31 @@ public class DatabaseFxController extends BaseController {
                 }
             }
         });
+
+        treeView.setOnKeyPressed(event -> {
+            //search data in current tree view
+            if (event.isControlDown() && event.getCode() == KeyCode.F) {
+                lBox.getChildren().add(searchPopup);
+            }
+        });
+        searchPopup.textChange(keyword -> {
+            var cc = treeView.getRoot().getChildren();
+            selectIndex = 0;
+            searchList = TreeDataUtils.searchWithStr(cc, keyword);
+            return searchList.size();
+        });
+        searchPopup.setSearchOnKeyPressed(event -> {
+            //Skip to next search result
+            if (event.getCode() == KeyCode.ENTER && !searchList.isEmpty()) {
+                treeView.getSelectionModel().select(selectIndex);
+                selectIndex++;
+            }
+        });
+        searchPopup.setCloseHandler(event -> {
+            searchList.clear();
+            selectIndex = 0;
+        });
+
         tabPane.getTabs().addListener((ListChangeListener<Tab>) c -> {
             var tabs = tabPane.getTabs();
             var n = tabs.stream().map(it -> (BaseTab) it)
