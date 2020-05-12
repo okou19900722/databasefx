@@ -1,6 +1,7 @@
 package com.openjfx.database.app.skin;
 
 import com.openjfx.database.app.controls.TableDataColumn;
+import com.openjfx.database.common.utils.StringUtils;
 import com.openjfx.database.model.TableColumnMeta;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -33,7 +34,7 @@ public class TableColumnTooltipSkin implements Skin<TableDataColumn.TableColumnT
 
         var field = columnMeta.getField();
         var type = columnMeta.getType();
-        var key = Objects.isNull(columnMeta.getKey()) ? "false" : "true";
+        var key = StringUtils.isEmpty(columnMeta.getKey()) ? "FALSE" : "TRUE";
         var defValue = columnMeta.getDefault();
         var comment = columnMeta.getComment();
         var isNull = columnMeta.getNull();
