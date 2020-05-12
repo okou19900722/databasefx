@@ -1,5 +1,5 @@
 * {
-    -fx-font-size: 16px;
+    -fx-font-size: 15px;
     -fx-font-family: "Source Han Serif CN Light";
 }
 
@@ -9,6 +9,18 @@
 
 .table-view .table-column {
     -fx-alignment: center-left;
+}
+
+.table-view .table-row-cell:even {
+    -fx-background: #ffffff;
+}
+
+.table-view .table-row-cell:odd {
+    -fx-background: #f6f6f6;
+}
+
+.table-view .table-row-cell:empty {
+    -fx-background: white;
 }
 
 .table-view .scroll-bar:vertical, .tree-view .scroll-bar:vertical {

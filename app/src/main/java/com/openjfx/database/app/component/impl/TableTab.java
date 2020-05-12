@@ -70,7 +70,7 @@ public class TableTab extends BaseTab<TableTabModel> {
     /*
      * css样式路径
      */
-    private static final String STYLE_SHEETS = "table_tab.css";
+    private static final String STYLE_SHEETS = "css/table_tab.css";
     /**********************************************************
      *                       连接池信息                         *
      **********************************************************/
@@ -151,7 +151,7 @@ public class TableTab extends BaseTab<TableTabModel> {
 
         flush.setOnAction(e -> checkChange(true));
 
-        borderPane.getStylesheets().add(AssetUtils.getCssStyle(STYLE_SHEETS));
+        borderPane.getStylesheets().add(STYLE_SHEETS);
 
         submit.setOnAction(e -> checkChange(false));
 

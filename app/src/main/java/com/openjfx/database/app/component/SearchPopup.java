@@ -17,7 +17,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
-import static com.openjfx.database.app.utils.AssetUtils.getCssStyle;
 import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
 
 /**
@@ -27,6 +26,10 @@ import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
  * @since 1.0
  */
 public class SearchPopup extends HBox {
+    /**
+     * style sheet
+     */
+    private final static String STYLE_SHEET = "css/search_popup.css";
     /**
      * icon size
      */
@@ -115,7 +118,7 @@ public class SearchPopup extends HBox {
 
         getStyleClass().add("search-popup");
 
-        getStylesheets().add(getCssStyle("search_popup.css"));
+        getStylesheets().add(STYLE_SHEET);
 
         close.setOnAction(e -> {
             var root = getParent();

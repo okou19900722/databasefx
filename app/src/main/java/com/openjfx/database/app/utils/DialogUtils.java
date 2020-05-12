@@ -8,12 +8,9 @@ import javafx.scene.control.ButtonType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.controlsfx.control.Notifications;
-import org.controlsfx.dialog.ExceptionDialog;
-
-import java.util.Optional;
 
 /**
- * 显示对话框
+ * application dialog utils
  *
  * @author yangkui
  * @since 1.0
@@ -23,33 +20,33 @@ public class DialogUtils {
     private final static Logger LOGGER = LogManager.getLogger();
 
     /**
-     * 显示错误对话框
+     * show error dialog
      *
-     * @param title     对话框顶部信息
-     * @param throwable 错误信息
+     * @param title     header title of dialog
+     * @param throwable error info
      */
     public static void showErrorDialog(Throwable throwable, String title) {
         LOGGER.error(throwable.getMessage(), throwable);
+        throwable.printStackTrace();
         Platform.runLater(() -> {
-            ExceptionDialog dialog = new ExceptionDialog(throwable);
-            dialog.setTitle(title);
-            dialog.setHeaderText("异常堆栈信息：");
-            dialog.setResizable(false);
-            dialog.getDialogPane().getStylesheets().add(AssetUtils.BASE_STYLE);
-            dialog.show();
+            var alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText(title);
+            alert.setContentText(throwable.getMessage());
+            alert.getDialogPane().getStylesheets().add("css/base.css");
+            alert.show();
         });
     }
 
     /**
-     * 显示通知
+     * show notification
      *
-     * @param text 通知内容
-     * @param pos  通知显示位置
-     * @param type 通知类型
+     * @param text notification content
+     * @param pos  {@link Pos} notification show position
+     * @param type {@link NotificationType} notification type
      */
     public static void showNotification(String text, Pos pos, NotificationType type) {
         Platform.runLater(() -> {
-            Notifications notifications = Notifications.create();
+            var notifications = Notifications.create();
             notifications.position(pos);
             notifications.text(text);
             switch (type) {
@@ -72,30 +69,30 @@ public class DialogUtils {
     }
 
     /**
-     * 显示确认对话框
+     * show confirm message
      *
-     * @param message 消息内容
-     * @return 返回确认结果, 如果点击ok则返回true 否则返回false
-     * @apiNote 调用该方法得在Fx ui线程之中
+     * @param message message content
+     * @return <p>return the confirmation result.If you click OK,
+     * it will return true. Otherwise, it will return false<p/>
      */
     public static boolean showAlertConfirm(String message) {
         var alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setContentText(message);
-        alert.getDialogPane().getStylesheets().add(AssetUtils.BASE_STYLE);
+        alert.getDialogPane().getStylesheets().add("css/base.css");
         var optional = alert.showAndWait();
         return optional.isPresent() && optional.get() == ButtonType.OK;
     }
 
     /**
-     * 显示对话框信息
+     * show dialog message
      *
-     * @param message 消息内容
+     * @param message message content
      */
     public static void showAlertInfo(String message) {
         var alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("消息");
         alert.setContentText(message);
-        alert.getDialogPane().getStylesheets().add(AssetUtils.BASE_STYLE);
+        alert.getDialogPane().getStylesheets().add("css/base.css");
         alert.showAndWait();
     }
 }

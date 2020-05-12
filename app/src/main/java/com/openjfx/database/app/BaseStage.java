@@ -85,7 +85,7 @@ public class BaseStage<D> extends Stage {
         }
         scene = new Scene(root);
         //添加全局样式
-        scene.getStylesheets().add(AssetUtils.getCssStyle("base.css"));
+        scene.getStylesheets().add("css/base.css");
         controller = loader.getController();
         controller.setStage(this);
     }
