@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * 数据库节点base类
+ * Database node base class
  *
  * @param <T> value type
  * @author yangkui
@@ -29,34 +29,34 @@ import java.util.List;
 public abstract class BaseTreeNode<T> extends TreeItem<T> {
 
     /**
-     * 加载状态,防止重复加载 true表示加载中 false不在加载中
+     * Loading state, prevent repeated loading true means false is not in loading
      */
     private final BooleanProperty loading = new SimpleBooleanProperty();
 
     /**
-     * 连接参数
+     * Connection parameters
      */
     protected final ConnectionParam param;
 
     /**
-     * 初始化子节点时调用
+     * Called when a child node is initialized
      */
     public abstract void init();
 
     /**
-     * 菜单列表
+     * Menu list
      */
     protected List<MenuItem> menus = new ArrayList<>();
 
     /**
-     * 加载进度信息
+     * Load progress information
      */
     private final ProgressIndicator indicator = new ProgressIndicator();
 
     /**
-     * 节点构造器
+     * Node constructor
      *
-     * @param param 链接参数
+     * @param param Link parameters
      */
     public BaseTreeNode(ConnectionParam param, Image image) {
         this.param = param;
@@ -70,7 +70,7 @@ public abstract class BaseTreeNode<T> extends TreeItem<T> {
         stackPane.setAlignment(Pos.CENTER);
         stackPane.getChildren().addAll(indicator, icon);
         setGraphic(stackPane);
-        //检测状态变化
+        //Detect status changes
         loading.addListener((observable, oldValue, newValue) ->
                 Platform.runLater(() ->
                         {
@@ -86,10 +86,10 @@ public abstract class BaseTreeNode<T> extends TreeItem<T> {
     }
 
     /**
-     * 初始化失败
+     * initialization failed
      *
-     * @param throwable 异常信息
-     * @param message   错误提示信息
+     * @param throwable Exception information
+     * @param message   Error message
      */
     protected void initFailed(Throwable throwable, String message) {
         DialogUtils.showErrorDialog(throwable, message);
@@ -105,7 +105,7 @@ public abstract class BaseTreeNode<T> extends TreeItem<T> {
     }
 
     /**
-     * 刷新
+     * flush
      */
     public void flush() {
         Platform.runLater(() -> {

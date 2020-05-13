@@ -8,6 +8,7 @@ import javafx.scene.control.ButtonType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.controlsfx.control.Notifications;
+import org.controlsfx.dialog.ExceptionDialog;
 
 /**
  * application dialog utils
@@ -29,11 +30,12 @@ public class DialogUtils {
         LOGGER.error(throwable.getMessage(), throwable);
         throwable.printStackTrace();
         Platform.runLater(() -> {
-            var alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText(title);
-            alert.setContentText(throwable.getMessage());
-            alert.getDialogPane().getStylesheets().add("css/base.css");
-            alert.show();
+            var exceptionDialog = new ExceptionDialog(throwable);
+            var pane = exceptionDialog.getDialogPane();
+            pane.getStylesheets().add("css/base.css");
+            exceptionDialog.setHeaderText(title);
+            exceptionDialog.setTitle("Exception detail");
+            exceptionDialog.show();
         });
     }
 

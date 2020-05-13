@@ -20,7 +20,7 @@ import static com.openjfx.database.app.config.Constants.*;
 import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
 
 /**
- * 数据库子节点
+ * Database child node
  *
  * @author yangkui
  * @since 1.0
@@ -57,11 +57,11 @@ public class DBTreeNode extends BaseTreeNode<String> {
         deleteMenu.setOnAction(e -> {
             var r = DialogUtils.showAlertConfirm("确定要删除连接?");
             if (r) {
-                //删除磁盘缓存
+                //Delete disk cache
                 DbPreference.deleteConnect(getUuid());
-                //删除内存缓存
+                //Delete memory cache
                 DATABASE_SOURCE.close(getUuid());
-                //删除当前节点
+                //Delete current node
                 getParent().getChildren().remove(this);
                 removeAllTab();
             }
@@ -78,7 +78,7 @@ public class DBTreeNode extends BaseTreeNode<String> {
         if (!getChildren().isEmpty()) {
             getChildren().clear();
         }
-        //开始连接数据库
+        //Start connecting to database
         var pool = DATABASE_SOURCE.createPool(param);
         var future = pool.getDql().showDatabase();
         future.onSuccess(sc ->
@@ -97,7 +97,7 @@ public class DBTreeNode extends BaseTreeNode<String> {
         var message = new JsonObject();
         message.put(ACTION, MainTabPane.EventBusAction.REMOVE_MANY);
         message.put(FLAG, getUuid());
-        //移出当前数据库相关的Tab
+        //Move out the tabs related to the current database
         VertexUtils.send(MainTabPane.EVENT_BUS_ADDRESS, message);
     }
 }
