@@ -1,25 +1,23 @@
 package com.openjfx.database.app.controls;
 
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXDatePicker;
-import com.jfoenix.controls.JFXDialog;
 import com.openjfx.database.DataTypeHelper;
 import com.openjfx.database.common.Handler;
 import com.openjfx.database.model.TableColumnMeta;
 import javafx.beans.property.StringProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+
+import java.util.function.UnaryOperator;
 
 import static com.openjfx.database.app.utils.AssetUtils.*;
+import static com.openjfx.database.common.config.StringConstants.NULL;
 
 /**
  * customer table TextField
@@ -30,12 +28,12 @@ import static com.openjfx.database.app.utils.AssetUtils.*;
 public class TableTextField extends HBox {
 
     private static final Image EXTENSION_ICON = getLocalImage(20, 20, "extension-icon.png");
-    private static final Image DATETIME_ICON = getLocalImage(20, 20, "time-icon.png");
-
 
     private final TextField textField = new TextField();
 
     private final StringProperty text = textField.textProperty();
+
+    private final InputType inputType;
 
     private enum InputType {
         /**
@@ -55,30 +53,25 @@ public class TableTextField extends HBox {
 
     public TableTextField(final String text, final TableColumnMeta meta) {
         final var extension = new JFXButton();
-        setAlignment(Pos.CENTER);
         setText(text);
-        setSpacing(0);
         HBox.setHgrow(textField, Priority.ALWAYS);
         getChildren().addAll(textField, extension);
+
         if (DataTypeHelper.dateTime(meta.getType())) {
-            extension.setGraphic(new ImageView(DATETIME_ICON));
+            inputType = InputType.DATETIME;
+        } else if (DataTypeHelper.number(meta.getType())) {
+            inputType = InputType.NUMBER;
         } else {
-            extension.setGraphic(new ImageView(EXTENSION_ICON));
+            inputType = InputType.STRING;
         }
+
+        extension.setGraphic(new ImageView(EXTENSION_ICON));
         extension.setOnAction(event -> {
-            var type = meta.getType();
-            if (DataTypeHelper.dateTime(type)) {
-                return;
-            }
-            var inputType = InputType.STRING;
-            if (DataTypeHelper.number(type)) {
-                inputType = InputType.NUMBER;
-            }
-            var dialog = new InputDialog(text, inputType);
-            textField.textProperty().bind(dialog.textProperty());
-            dialog.showAndWait();
-            textField.textProperty().unbind();
+            var dialog = new InputDialog(text);
+            var optional = dialog.showAndWait();
+            optional.ifPresent(textField::setText);
         });
+        registerFormatter(textField);
         //add css class
         getStyleClass().add("table-text-field");
         getStylesheets().add("css/table-text-field.css");
@@ -108,39 +101,65 @@ public class TableTextField extends HBox {
         return text.get();
     }
 
-    public StringProperty textProperty() {
-        return text;
+    /**
+     * Number formatting handler, which is used to restrict the input of data type number
+     */
+    private final UnaryOperator<TextFormatter.Change> numberFilter = change -> {
+        var text = change.getText();
+        var pattern = "([0-9]|.)*";
+        if (text.matches(pattern)) {
+            return change;
+        }
+        return null;
+    };
+    /**
+     * Time date type input string verification
+     */
+    private final UnaryOperator<TextFormatter.Change> dateTimeFilter = change -> {
+        var text = change.getText();
+        var divStr = ":";
+        var pattern = "[0-9]*";
+        if (text.matches(pattern) || divStr.equals(text)) {
+            return change;
+        }
+        return null;
+    };
+
+
+    /**
+     * Register TextFormatter uniformly
+     *
+     * @param control target control
+     */
+    private void registerFormatter(final TextInputControl control) {
+        final var dateTimeFormat = new TextFormatter<>(dateTimeFilter);
+        final var numberFormatter = new TextFormatter<>(numberFilter);
+        if (inputType == InputType.NUMBER) {
+            control.setTextFormatter(numberFormatter);
+        }
+        if (inputType == InputType.DATETIME) {
+            control.setTextFormatter(dateTimeFormat);
+        }
     }
 
-    private static class InputDialog extends Dialog<String> {
-
-        private final TextArea textArea = new TextArea();
-
+    private class InputDialog extends TextInputDialog {
         /**
-         * @param text      target text
-         * @param inputType input type
+         * @param text target text
          */
-        public InputDialog(final String text, final InputType inputType) {
+        public InputDialog(final String text) {
             var pane = getDialogPane();
-            textArea.setText(text);
+            var textArea = new TextArea();
+            if (!text.equals(NULL)) {
+                textArea.setText(text);
+            }
+            pane.setHeader(new Label());
             textArea.setWrapText(true);
-            textArea.setOnInputMethodTextChanged(e -> {
-                var commit = e.getCommitted();
-                //only inout number
-                if (inputType == InputType.NUMBER) {
-                    var pos = e.getCaretPosition();
-                    System.out.println(pos);
-                }
-                System.out.println(commit);
-            });
+            registerFormatter(textArea);
             textArea.setPadding(Insets.EMPTY);
             pane.setContent(textArea);
             pane.setPadding(Insets.EMPTY);
             pane.getStylesheets().add("css/base.css");
-        }
-
-        public StringProperty textProperty() {
-            return textArea.textProperty();
+            setTitle("数据编辑框");
         }
     }
 }
