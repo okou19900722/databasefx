@@ -179,7 +179,7 @@ public class DatabaseFxController extends BaseController {
             }
             splitPane.setDividerPosition(0, position);
         });
-        //窗口关闭->关闭所有连接
+        //window close->close all connection
         stage.setOnCloseRequest(e -> Platform.exit());
 
         VertexUtils.eventBus().consumer(EVENT_ADDRESS, this::eventBusHandler);
@@ -274,10 +274,13 @@ public class DatabaseFxController extends BaseController {
         //更新连接信息
         if (action == EventBusAction.UPDATE_CONNECTION) {
             var nodes = treeItemRoot.getChildren();
-            nodes.stream().map(db -> ((BaseTreeNode) db))
-                    .filter(db -> db.getUuid().equals(uuid))
-                    .findAny()
-                    .ifPresent(BaseTreeNode::flush);
+            var optional = nodes.stream()
+                    .map(db -> ((BaseTreeNode<String>) db)).filter(db -> db.getUuid().equals(uuid)).findAny();
+            if (optional.isPresent()) {
+                var node = optional.get();
+                var optional1 = DbPreference.getConnectionParam(uuid);
+                optional1.ifPresent(node::setParam);
+            }
         }
     }
 

@@ -5,7 +5,9 @@ import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.model.ConnectionParam;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Pos;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressIndicator;
@@ -32,11 +34,10 @@ public abstract class BaseTreeNode<T> extends TreeItem<T> {
      * Loading state, prevent repeated loading true means false is not in loading
      */
     private final BooleanProperty loading = new SimpleBooleanProperty();
-
     /**
-     * Connection parameters
+     * Connection parameters property
      */
-    protected final ConnectionParam param;
+    protected ObjectProperty<ConnectionParam> param = new SimpleObjectProperty<>();
 
     /**
      * Called when a child node is initialized
@@ -59,7 +60,7 @@ public abstract class BaseTreeNode<T> extends TreeItem<T> {
      * @param param Link parameters
      */
     public BaseTreeNode(ConnectionParam param, Image image) {
-        this.param = param;
+        this.param.set(param);
         var icon = new ImageView(image);
         var stackPane = new StackPane();
 
@@ -97,7 +98,7 @@ public abstract class BaseTreeNode<T> extends TreeItem<T> {
     }
 
     public String getUuid() {
-        return param.getUuid();
+        return param.get().getUuid();
     }
 
     public String getServerName() {
@@ -135,8 +136,15 @@ public abstract class BaseTreeNode<T> extends TreeItem<T> {
         this.loading.set(loading);
     }
 
-
     public ConnectionParam getParam() {
+        return param.get();
+    }
+
+    public ObjectProperty<ConnectionParam> paramProperty() {
         return param;
+    }
+
+    public void setParam(ConnectionParam param) {
+        this.param.set(param);
     }
 }

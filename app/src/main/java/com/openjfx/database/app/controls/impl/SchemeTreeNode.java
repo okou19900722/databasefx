@@ -103,7 +103,7 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
         Future<List<String>> future = dcl.showTables(getValue());
         future.onSuccess(tables ->
         {
-            var tas = tables.stream().map(s -> new TableTreeNode(getValue(), s, param)).collect(Collectors.toList());
+            var tas = tables.stream().map(s -> new TableTreeNode(getValue(), s, param.get())).collect(Collectors.toList());
             Platform.runLater(() -> {
                 getChildren().addAll(tas);
                 if (tas.size() > 0) {

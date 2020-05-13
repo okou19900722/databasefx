@@ -77,17 +77,17 @@ public class CreateConnectionController extends BaseController<String> {
 
     @FXML
     private void save() {
-        ConnectionParam param = validatorParam();
+        var param = validatorParam();
         if (param == null) {
             return;
         }
         var flag = true;
+        //update connection
         if (Objects.nonNull(data)) {
-            //更新连接
             updateConnection(param);
             flag = DialogUtils.showAlertConfirm("连接已更改是否重连?");
         } else {
-            //新建连接
+            //new connection
             saveConnection(param);
             DbPreference.addConnection(param);
         }
@@ -98,9 +98,8 @@ public class CreateConnectionController extends BaseController<String> {
 
         message.put(ACTION, action);
         message.put(UUID, param.getUuid());
-        boolean a = Objects.isNull(data) && flag;
 
-        if (!flag || a) {
+        if (flag) {
             VertexUtils.eventBus().send(DatabaseFxController.EVENT_ADDRESS, message);
         }
 

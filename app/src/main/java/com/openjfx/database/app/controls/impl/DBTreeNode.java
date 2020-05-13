@@ -67,6 +67,8 @@ public class DBTreeNode extends BaseTreeNode<String> {
             }
         });
         addMenus(editMenu, lostConnectMenu, deleteMenu, flush);
+        //listener param change
+        paramProperty().addListener((observable, oldValue, newValue) -> flush());
     }
 
     @Override
@@ -79,11 +81,11 @@ public class DBTreeNode extends BaseTreeNode<String> {
             getChildren().clear();
         }
         //Start connecting to database
-        var pool = DATABASE_SOURCE.createPool(param);
+        var pool = DATABASE_SOURCE.createPool(param.get());
         var future = pool.getDql().showDatabase();
         future.onSuccess(sc ->
         {
-            var schemeTreeNodes = sc.stream().map(s -> new SchemeTreeNode(s, param)).collect(Collectors.toList());
+            var schemeTreeNodes = sc.stream().map(s -> new SchemeTreeNode(s, param.get())).collect(Collectors.toList());
             Platform.runLater(() -> getChildren().addAll(schemeTreeNodes));
             setLoading(false);
             if (!isExpanded()) {
