@@ -74,7 +74,7 @@ public class TableTreeNode extends BaseTreeNode<String> {
 
             future.onFailure(t -> DialogUtils.showErrorDialog(t, "删除表失败"));
         });
-        addMenus(sqlMenu, design, delete);
+        addMenuItem(sqlMenu, design, delete);
     }
 
     public String getDatabase() {
@@ -82,6 +82,5 @@ public class TableTreeNode extends BaseTreeNode<String> {
     }
 
     @Override
-    public void init() {
-    }
+    public void init() { }
 }

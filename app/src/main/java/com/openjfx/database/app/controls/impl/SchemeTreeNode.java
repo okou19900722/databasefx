@@ -35,19 +35,24 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
 
     private final String scheme;
 
+    private final MenuItem flush = new MenuItem("刷新");
+
+    private final MenuItem open = new MenuItem("打开数据库");
+
+    private final MenuItem close = new MenuItem("关闭数据库");
+
     public SchemeTreeNode(String scheme, ConnectionParam param) {
         super(param, ICON_IMAGE);
         this.scheme = scheme;
 
         setValue(scheme);
 
-        var flush = new MenuItem("刷新");
-        var close = new MenuItem("关闭");
-        var deleteMenu = new MenuItem("删除");
+
+        var deleteMenu = new MenuItem("删除数据库");
         var sqlEditor = new MenuItem("SQL编辑器");
 
 
-        addMenus(flush, close, sqlEditor, deleteMenu);
+        addMenuItem(open, sqlEditor, deleteMenu);
 
         flush.setOnAction(e -> flush());
 
@@ -72,7 +77,12 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
             setExpanded(false);
             getChildren().clear();
             closeOpenTab();
+            removeMenu(flush);
+            removeMenu(close);
         });
+
+        //open database scheme
+        open.setOnAction(event -> init());
 
         //open sql editor
         sqlEditor.setOnAction(e -> {
@@ -109,6 +119,9 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
                 if (tas.size() > 0) {
                     setExpanded(true);
                 }
+                addMenuItem(0, close);
+                addMenuItem(flush);
+                removeMenu(open);
             });
             setLoading(false);
         });

@@ -24,11 +24,11 @@
 }
 
 .table-view .scroll-bar:vertical, .tree-view .scroll-bar:vertical {
-    -fx-pref-width: 10px;
+    -fx-pref-width: 15px;
 }
 
 .table-view .scroll-bar:horizontal, .tree-view .scroll-bar:horizontal {
-    -fx-pref-height: 10px;
+    -fx-pref-height: 15px;
 }
 
 .tab-label, .column-drag-header .label {

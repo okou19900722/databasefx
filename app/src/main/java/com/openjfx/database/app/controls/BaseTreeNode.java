@@ -116,12 +116,44 @@ public abstract class BaseTreeNode<T> extends TreeItem<T> {
         });
     }
 
-    public List<MenuItem> getMenus() {
+    public synchronized List<MenuItem> getMenus() {
         return menus;
     }
 
-    protected void addMenus(MenuItem... menuItems) {
+    /**
+     * Batch add menu
+     *
+     * @param menuItems Add on behalf list
+     */
+    protected void addMenuItem(final MenuItem... menuItems) {
         this.menus.addAll(Arrays.asList(menuItems));
+    }
+
+    /**
+     * Add menu to specified location
+     *
+     * @param index position index
+     * @param item  Menu to be added
+     */
+    protected void addMenuItem(final int index, final MenuItem item) {
+        if (!menus.contains(item)) {
+            menus.add(index, item);
+        }
+    }
+
+    /**
+     * Add a single menu to the list
+     *
+     * @param item Menu to be added
+     */
+    protected void addMenuItem(final MenuItem item) {
+        if (!menus.contains(item)) {
+            menus.add(item);
+        }
+    }
+
+    protected void removeMenu(MenuItem item) {
+        this.menus.remove(item);
     }
 
     public boolean isLoading() {

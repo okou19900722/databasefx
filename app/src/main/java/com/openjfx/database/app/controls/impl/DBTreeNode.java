@@ -27,6 +27,12 @@ import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
  */
 public class DBTreeNode extends BaseTreeNode<String> {
 
+    private final MenuItem loseConnect = new MenuItem("断开连接");
+
+    private final MenuItem flush = new MenuItem("刷新连接");
+
+    private final MenuItem openConnect = new MenuItem("打开连接");
+
     private static final Image ICON_IMAGE = getLocalImage(
             20,
             20,
@@ -37,9 +43,8 @@ public class DBTreeNode extends BaseTreeNode<String> {
         super(param, ICON_IMAGE);
 
         var editMenu = new MenuItem("编辑");
-        var lostConnectMenu = new MenuItem("断开连接");
+
         var deleteMenu = new MenuItem("删除连接");
-        var flush = new MenuItem("刷新");
 
         setValue(param.getName());
 
@@ -47,11 +52,15 @@ public class DBTreeNode extends BaseTreeNode<String> {
 
         editMenu.setOnAction(e -> new CreateConnectionStage(getUuid()));
 
-        lostConnectMenu.setOnAction(e -> {
+        loseConnect.setOnAction(e -> {
             DATABASE_SOURCE.close(getUuid());
             getChildren().clear();
             setLoading(false);
             removeAllTab();
+            //dynamic remove MenuItem
+            removeMenu(loseConnect);
+            removeMenu(flush);
+            addMenuItem(0, openConnect);
         });
 
         deleteMenu.setOnAction(e -> {
@@ -66,7 +75,8 @@ public class DBTreeNode extends BaseTreeNode<String> {
                 removeAllTab();
             }
         });
-        addMenus(editMenu, lostConnectMenu, deleteMenu, flush);
+        openConnect.setOnAction(e -> init());
+        addMenuItem(openConnect, editMenu, deleteMenu);
         //listener param change
         paramProperty().addListener((observable, oldValue, newValue) -> flush());
     }
@@ -88,9 +98,16 @@ public class DBTreeNode extends BaseTreeNode<String> {
             var schemeTreeNodes = sc.stream().map(s -> new SchemeTreeNode(s, param.get())).collect(Collectors.toList());
             Platform.runLater(() -> getChildren().addAll(schemeTreeNodes));
             setLoading(false);
-            if (!isExpanded()) {
-                Platform.runLater(() -> setExpanded(true));
-            }
+            Platform.runLater(() -> {
+                //dynamic add MenuItem
+                addMenuItem(0, loseConnect);
+                addMenuItem(flush);
+                removeMenu(openConnect);
+                if (!isExpanded()) {
+                    setExpanded(true);
+                }
+            });
+
         });
         future.onFailure(t -> initFailed(t, "连接数据库失败"));
     }

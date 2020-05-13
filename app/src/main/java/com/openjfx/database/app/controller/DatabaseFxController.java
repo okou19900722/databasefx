@@ -108,14 +108,14 @@ public class DatabaseFxController extends BaseController {
 
         var menu = new ContextMenu();
         treeView.setContextMenu(menu);
-        VBox.setVgrow(treeView, Priority.ALWAYS);
 
+        VBox.setVgrow(treeView, Priority.ALWAYS);
 
         treeView.setOnContextMenuRequested(e -> {
             menu.getItems().clear();
             var item = treeView.getSelectionModel().getSelectedItem();
             if (item instanceof BaseTreeNode) {
-                menu.getItems().addAll(((BaseTreeNode) item).getMenus());
+                menu.getItems().addAll(((BaseTreeNode<String>) item).getMenus());
             }
         });
 
