@@ -71,7 +71,7 @@ public class DBTreeNode extends BaseTreeNode<String> {
 
     @Override
     public void init() {
-        if (getChildren().size() > 0) {
+        if (getChildren().size() > 0 || isLoading()) {
             return;
         }
         setLoading(true);
