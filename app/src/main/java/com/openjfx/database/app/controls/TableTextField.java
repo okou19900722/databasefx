@@ -160,6 +160,12 @@ public class TableTextField extends HBox {
             pane.setPadding(Insets.EMPTY);
             pane.getStylesheets().add("css/base.css");
             setTitle("数据编辑框");
+            setResultConverter(buttonType -> {
+                if (buttonType == ButtonType.CANCEL) {
+                    return text;
+                }
+                return textArea.getText();
+            });
         }
     }
 }
