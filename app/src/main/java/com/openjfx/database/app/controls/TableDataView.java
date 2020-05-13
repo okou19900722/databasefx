@@ -2,14 +2,14 @@ package com.openjfx.database.app.controls;
 
 
 import com.openjfx.database.app.model.TableDataChangeMode;
+import com.openjfx.database.app.skin.TableDataViewSkin;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.SelectionMode;
+import javafx.scene.control.Skin;
 import javafx.scene.control.TableView;
-
 import java.util.*;
 
 /**
@@ -46,7 +46,6 @@ public class TableDataView extends TableView<ObservableList<StringProperty>> {
         setSortPolicy(callback -> null);
         //启用选择单元格功能
         getSelectionModel().setCellSelectionEnabled(true);
-        //暂时不支持多选
     }
 
 
@@ -154,6 +153,11 @@ public class TableDataView extends TableView<ObservableList<StringProperty>> {
         changeModes.stream()
                 .filter(item -> item.getRowIndex() > index)
                 .forEach(item -> item.setRowIndex(item.getRowIndex() - 1));
+    }
+
+    @Override
+    protected Skin<?> createDefaultSkin() {
+        return new TableDataViewSkin(this);
     }
 
     public boolean isChangeStatus() {
