@@ -2,7 +2,6 @@ package com.openjfx.database.app.skin;
 
 import com.openjfx.database.app.controls.TableDataColumn;
 import com.openjfx.database.app.utils.UiUtils;
-import com.sun.javafx.scene.control.skin.Utils;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
@@ -36,6 +35,9 @@ public class TableDataViewSkin extends TableViewSkin<StringProperty> {
                 var list = c.getAddedSubList();
                 for (TableColumnHeader header : list) {
                     var tableColumn = (TableDataColumn) header.getTableColumn();
+                    //Disable drag
+                    header.setOnMouseDragged(null);
+                    //Calculate width
                     var label = (Label) header.getChildrenUnmodifiable().get(0);
                     var icon = (ImageView) ((Label) tableColumn.getGraphic()).getGraphic();
                     var image = icon.getImage();
