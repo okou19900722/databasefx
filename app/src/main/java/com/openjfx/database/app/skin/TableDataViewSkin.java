@@ -1,5 +1,8 @@
 package com.openjfx.database.app.skin;
 
+import com.openjfx.database.app.controls.TableDataColumn;
+import com.openjfx.database.app.utils.UiUtils;
+import com.sun.javafx.scene.control.skin.Utils;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
@@ -10,8 +13,8 @@ import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.skin.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
-import javafx.scene.text.Font;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,11 +35,13 @@ public class TableDataViewSkin extends TableViewSkin<StringProperty> {
             if (c.wasAdded()) {
                 var list = c.getAddedSubList();
                 for (TableColumnHeader header : list) {
-                    var tableColumn = header.getTableColumn();
-                    tableColumn.setMaxWidth(200);
-                    var text = tableColumn.getText();
+                    var tableColumn = (TableDataColumn) header.getTableColumn();
                     var label = (Label) header.getChildrenUnmodifiable().get(0);
-                    label.setPrefWidth(300);
+                    var icon = (ImageView) ((Label) tableColumn.getGraphic()).getGraphic();
+                    var image = icon.getImage();
+                    var width = UiUtils.computeTextWidth(label);
+                    var minWidth = width + image.getWidth();
+                    tableColumn.setMinWidth(minWidth);
                 }
             }
         }
