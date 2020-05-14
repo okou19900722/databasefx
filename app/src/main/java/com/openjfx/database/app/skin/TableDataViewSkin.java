@@ -29,6 +29,9 @@ public class TableDataViewSkin extends TableViewSkin<StringProperty> {
     private final TableHeaderRow headerAlias;
     private Parent placeholderRegionAlias;
     private final ChangeListener<Boolean> visibleListener = (src, ov, nv) -> visibleChanged(nv);
+    /**
+     * Listen for changes in TableColumnHeader
+     */
     private final ListChangeListener<TableColumnHeader> tableColumnHeaderListChangeListener = (c) -> {
         while (c.next()) {
             if (c.wasAdded()) {
