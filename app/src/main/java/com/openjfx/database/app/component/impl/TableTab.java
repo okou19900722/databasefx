@@ -256,6 +256,8 @@ public class TableTab extends BaseTab<TableTabModel> {
             var column = columns.get(model.getColumnIndex());
             //scroll target row
             tableView.scrollTo(model.getRowIndex());
+            //scroll target column
+            tableView.scrollToColumnIndex(model.getColumnIndex());
             //select target column
             tableView.getSelectionModel().select(model.getRowIndex(), column);
         });
