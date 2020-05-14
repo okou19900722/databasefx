@@ -12,7 +12,6 @@ import com.openjfx.database.app.controls.TableDataView;
 import com.openjfx.database.app.enums.NotificationType;
 import com.openjfx.database.app.model.TableSearchResultModel;
 import com.openjfx.database.app.model.impl.TableTabModel;
-import com.openjfx.database.app.utils.AssetUtils;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.app.utils.TableColumnUtils;
 import com.openjfx.database.app.utils.TableDataUtils;
@@ -36,7 +35,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
 
 import java.util.*;
 
@@ -52,14 +50,9 @@ import static com.openjfx.database.common.config.StringConstants.NULL;
  * @since 1.0
  */
 public class TableTab extends BaseTab<TableTabModel> {
-    /***********************************************************
-     *                    icon size                            *
-     ***********************************************************/
     private static final double ICON_WIDTH = 0x14;
     private static final double ICON_HEIGHT = 0x14;
-    /*************************************************************************************
-     *                                图标信息                                             *
-     *************************************************************************************/
+
     private static final Image ADD_DATA_ICON = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "add_data.png");
     private static final Image FLUSH_ICON = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "flush_icon.png");
     private static final Image NEXT_ICON = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "next_icon.png");
@@ -67,32 +60,20 @@ public class TableTab extends BaseTab<TableTabModel> {
     private static final Image SUBMIT_ICON = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "save_icon.png");
     private static final Image DELETE_ICON = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "delete_icon.png");
     private static final Image FLAG_IMAGE = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "point.png");
-    /*
-     * css样式路径
-     */
+
     private static final String STYLE_SHEETS = "css/table_tab.css";
-    /**********************************************************
-     *                       连接池信息                         *
-     **********************************************************/
+
     private final AbstractDataBasePool pool;
     private final Label flag = new Label();
-    /**************************************************************
-     *                          布局属性                           *
-     **************************************************************/
+
     private final BorderPane borderPane = new BorderPane();
     private final TableDataView tableView = new TableDataView();
 
     private final HBox bottomBox = new HBox();
 
-    /*******************************************************************
-     *                       分页查询参数                                *
-     *******************************************************************/
-
     private int pageIndex = 1;
     private int pageSize = 100;
-    /*********************************************************************
-     *                              控制按钮                               *
-     *********************************************************************/
+
     private final JFXButton addData = new JFXButton();
     private final JFXButton flush = new JFXButton();
     private final JFXButton next = new JFXButton();
@@ -107,9 +88,8 @@ public class TableTab extends BaseTab<TableTabModel> {
     private final SearchPopup searchPopup = SearchPopup.complexPopup();
 
     private final List<TableSearchResultModel> searchList = new ArrayList<>();
-    /**
-     * 当前表的key值
-     */
+
+
     private TableColumnMeta keyMeta = null;
 
     public TableTab(TableTabModel model) {
@@ -117,11 +97,8 @@ public class TableTab extends BaseTab<TableTabModel> {
         pool = DATABASE_SOURCE.getDataBaseSource(model.getUuid());
     }
 
-    /**
-     * 初始化数据
-     */
+
     public void init() {
-        //初始化图标
         flag.setGraphic(new ImageView(FLAG_IMAGE));
         addData.setGraphic(new ImageView(ADD_DATA_ICON));
         flush.setGraphic(new ImageView(FLUSH_ICON));
@@ -188,10 +165,10 @@ public class TableTab extends BaseTab<TableTabModel> {
         });
 
         addData.setOnAction(e -> {
-            if (!canUpdate()) {
+            if (updated()) {
                 return;
             }
-            ObservableList<StringProperty> newData = FXCollections.observableArrayList();
+            var newData = FXCollections.<StringProperty>observableArrayList();
             metas.forEach(meta -> newData.add(new SimpleStringProperty(NULL)));
             tableView.addNewRow(newData);
             tableView.scrollTo(newData);
@@ -199,7 +176,7 @@ public class TableTab extends BaseTab<TableTabModel> {
         });
 
         delete.setOnAction(e -> {
-            if (!canUpdate()) {
+            if (updated()) {
                 return;
             }
             var selectIndex = tableView.getSelectionModel().getSelectedIndex();
@@ -266,13 +243,24 @@ public class TableTab extends BaseTab<TableTabModel> {
         borderPane.setBottom(bottomBox);
 
         setContent(borderPane);
+        initTable();
+    }
 
-        loadTableMeta();
+    private void initTable() {
+        var future = loadTableMeta().compose(v -> loadData()).compose(v -> countDataNumber());
+        future.onSuccess(v -> {
+            Platform.runLater(() -> {
+                tableView.refresh();
+                tableView.resetChange();
+            });
+        });
+        future.onFailure(t -> DialogUtils.showErrorDialog(t, "加载数据失败"));
     }
 
 
-    private void loadTableMeta() {
-        Future<List<TableColumnMeta>> future = pool.getDql().showColumns(model.getTable());
+    private Future<Void> loadTableMeta() {
+        var promise = Promise.<Void>promise();
+        var future = pool.getDql().showColumns(model.getTable());
         future.onSuccess(metas ->
         {
             if (this.metas.size() > 0) {
@@ -282,39 +270,28 @@ public class TableTab extends BaseTab<TableTabModel> {
 
             //create column
             var columns = TableColumnUtils.createTableDataColumn(metas);
-            Platform.runLater(() -> tableView.getColumns().addAll(columns));
+            Platform.runLater(() -> {
+                tableView.getColumns().clear();
+                tableView.getColumns().addAll(columns);
+            });
             //get key
             var optional = TableColumnMetaHelper.getTableKey(metas);
             if (optional.isPresent()) {
                 tableView.setEditable(true);
                 keyMeta = optional.get();
             }
-            loadData();
+            promise.complete();
         });
-        future.onFailure(t -> DialogUtils.showErrorDialog(t, "获取表信息失败"));
-    }
-
-    private void createColumn(final int columnIndex, String title) {
-        var column = new TableColumn<ObservableList<StringProperty>, String>(title);
-        column.setCellValueFactory(cellDataFeatures -> {
-            ObservableList<StringProperty> values = cellDataFeatures.getValue();
-            if (columnIndex >= values.size()) {
-                return new SimpleStringProperty("");
-            } else {
-                return cellDataFeatures.getValue().get(columnIndex);
-            }
-        });
-        column.setCellFactory(TableDataCell.forTableColumn());
-        Platform.runLater(() -> this.tableView.getColumns().add(column));
+        future.onFailure(promise::fail);
+        return promise.future();
     }
 
     /**
-     * 分页加载数据
+     * Paging load data
      */
-    private void loadData() {
-        //清空之前的数据
+    private Future<Void> loadData() {
         Platform.runLater(() -> tableView.getItems().clear());
-        //加载数据
+        var promise = Promise.<Void>promise();
         var future = pool.getDql().query(model.getTable(), pageIndex, pageSize);
         future.onSuccess(rs -> {
             if (rs.isEmpty()) {
@@ -332,26 +309,25 @@ public class TableTab extends BaseTab<TableTabModel> {
 
             Platform.runLater(() -> {
                 tableView.getItems().addAll(list);
-                tableView.refresh();
-                tableView.resetChange();
             });
-            countDataNumber();
+            promise.complete();
         });
-        future.onFailure(t -> DialogUtils.showErrorDialog(t, "加载数据失败"));
+        future.onFailure(promise::fail);
+        return promise.future();
     }
 
     /**
-     * 保存更改数据
+     * Save changes
      *
-     * @param isLoading 是否当前数据列表 true刷新 false不刷新
+     * @param isLoading Whether to refresh the current data list true false do not refresh
      */
     private void checkChange(boolean isLoading) {
         if (!tableView.isChangeStatus()) {
-            loadData();
+            initTable();
             return;
         }
         var result = DialogUtils.showAlertConfirm("检测到数据已经更新是否同步到数据库?");
-        //同步改数据到数据库
+        // Synchronous data change to database
         if (result) {
             var dml = DATABASE_SOURCE.getDataBaseSource(model.getUuid()).getDml();
             var future = newData(dml).compose(rs -> updateData(dml)).compose(rs -> deleteData(dml));
@@ -361,22 +337,22 @@ public class TableTab extends BaseTab<TableTabModel> {
                     tableView.resetChange();
                     tableView.refresh();
                     if (isLoading) {
-                        loadData();
+                        initTable();
                     }
                 });
             });
             future.onFailure(t -> DialogUtils.showErrorDialog(t, "更新失败"));
         } else {
             tableView.resetChange();
-            loadData();
+            initTable();
         }
     }
 
     /**
-     * 新增数据
+     * New data
      *
      * @param dml dml
-     * @return 返回新增结果
+     * @return Return new results
      */
     private Future<Integer> newData(DML dml) {
         var newRows = tableView.getNewRows();
@@ -389,7 +365,7 @@ public class TableTab extends BaseTab<TableTabModel> {
             var optional = dml.getAutoIncreaseField(metas);
             if (optional.isPresent()) {
                 int i = metas.indexOf(optional.get());
-                //成功后回调处理自增id
+                //Auto increment ID of callback processing after success
                 future.setHandler(ar -> {
                     Platform.runLater(() -> {
                         int index = tableView.getItems().indexOf(newRow);
@@ -415,20 +391,20 @@ public class TableTab extends BaseTab<TableTabModel> {
     }
 
     /**
-     * 更细数据
+     * More detailed data
      *
      * @param dml dml
-     * @return 返回更新结果
+     * @return Return update results
      */
     private Future<Integer> updateData(DML dml) {
         var change = tableView.getChangeModes();
-        //更新数据
+        //Update data
         if (change.size() > 0) {
             int keyIndex = metas.indexOf(keyMeta);
 
-            //由于异步问题可能只能走批量更新,无法走单条更新
+            //Due to asynchrony, you may only need to update in batch, but not in single update
             var values = TableDataHelper.getChangeValue(change, metas, keyIndex, tableView.getItems());
-            //异步更新数据
+            //Update data asynchronously
             return dml.batchUpdate(values, model.getTable(), metas);
         }
         return Future.succeededFuture();
@@ -448,29 +424,34 @@ public class TableTab extends BaseTab<TableTabModel> {
     }
 
 
-    private void countDataNumber() {
+    private Future<Void> countDataNumber() {
+        var promise = Promise.<Void>promise();
         var future = pool.getDql().count(model.getTable());
-        future.onSuccess(number -> Platform.runLater(() -> totalLabel.setText(number + "行数据")));
-        future.onFailure(t -> DialogUtils.showErrorDialog(t, "统计数据失败"));
+        future.onSuccess(number -> {
+            Platform.runLater(() -> totalLabel.setText(number + "行数据"));
+            promise.complete();
+        });
+        future.onFailure(promise::fail);
+        return promise.future();
     }
 
     /**
-     * 判断当前表是否能更新
+     * Determine whether the current table can be updated
      *
-     * @return true能更新 false 不能更新
+     * @return True can update false can not update
      */
-    private boolean canUpdate() {
+    private boolean updated() {
         if (Objects.isNull(keyMeta)) {
             DialogUtils.showNotification("当前设计表无Key,无法进行更新操作", Pos.TOP_CENTER, NotificationType.WARNING);
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**
-     * 动态更新Tab value
+     * Dynamically update tab value
      *
-     * @param t 是否显示完整表名 serverName+'/'+tableName
+     * @param t Show full table name or not serverName+'/'+tableName
      */
     public void updateValue(boolean t) {
         if (Objects.nonNull(getText())) {

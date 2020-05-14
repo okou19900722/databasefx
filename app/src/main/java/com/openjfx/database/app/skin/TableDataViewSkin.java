@@ -7,19 +7,40 @@ import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
-import javafx.scene.control.skin.TableHeaderRow;
-import javafx.scene.control.skin.TableViewSkin;
-import javafx.scene.control.skin.VirtualFlow;
+import javafx.scene.control.skin.*;
+import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * custom TableViewSkin
+ *
+ * @author yangkui
+ * @since 1.0
+ */
 public class TableDataViewSkin extends TableViewSkin<StringProperty> {
     private final VirtualFlow<?> flowAlias;
     private final TableHeaderRow headerAlias;
     private Parent placeholderRegionAlias;
     private final ChangeListener<Boolean> visibleListener = (src, ov, nv) -> visibleChanged(nv);
+    private final ListChangeListener<TableColumnHeader> tableColumnHeaderListChangeListener = (c) -> {
+        while (c.next()) {
+            if (c.wasAdded()) {
+                var list = c.getAddedSubList();
+                for (TableColumnHeader header : list) {
+                    var tableColumn = header.getTableColumn();
+                    tableColumn.setMaxWidth(200);
+                    var text = tableColumn.getText();
+                    var label = (Label) header.getChildrenUnmodifiable().get(0);
+                    label.setPrefWidth(300);
+                }
+            }
+        }
+    };
     /**
      * <p>
      * Listener callback from children modifications.
@@ -52,12 +73,14 @@ public class TableDataViewSkin extends TableViewSkin<StringProperty> {
         headerAlias = (TableHeaderRow) table.lookup(".column-header-background");
 
         /*
-          start with a not-empty list, placeholder not yet instantiate tso add a listener
+          start with a not-empty list, placeholder not yet instantiate to add a listener
           to the children until it will be added
          */
         if (!installPlaceholderRegion(getChildren())) {
             installChildrenListener();
         }
+
+        tableColumnFitWith();
     }
 
 
@@ -68,8 +91,7 @@ public class TableDataViewSkin extends TableViewSkin<StringProperty> {
      * @param addedSubList
      * @return true if placeholder found and installed, false otherwise.
      */
-    protected boolean installPlaceholderRegion(
-            List<? extends Node> addedSubList) {
+    protected boolean installPlaceholderRegion(List<? extends Node> addedSubList) {
         if (placeholderRegionAlias != null) {
             throw new IllegalStateException("placeholder must not be installed more than once");
         }
@@ -85,6 +107,25 @@ public class TableDataViewSkin extends TableViewSkin<StringProperty> {
         return false;
     }
 
+    private void tableColumnFitWith() {
+        var children = getChildren();
+        var optional = children.stream().filter(e -> e.getStyleClass().contains("column-header-background")).findAny();
+        if (optional.isPresent()) {
+            var stackPane = (StackPane) optional.get();
+            NestedTableColumnHeader nestedTableColumnHeader = null;
+            for (Node child : stackPane.getChildren()) {
+                if (child instanceof NestedTableColumnHeader) {
+                    nestedTableColumnHeader = (NestedTableColumnHeader) child;
+                    break;
+                }
+            }
+            if (nestedTableColumnHeader == null) {
+                throw new RuntimeException("not find nestedTableColumnHeader!!");
+            }
+            nestedTableColumnHeader.getColumnHeaders().addListener(tableColumnHeaderListChangeListener);
+        }
+    }
+
 
     protected void visibleChanged(Boolean nv) {
         if (nv) {
@@ -97,16 +138,13 @@ public class TableDataViewSkin extends TableViewSkin<StringProperty> {
     /**
      * Layout of flow unconditionally.
      */
-    protected void layoutFlow(double x, double y, double width,
-                              double height) {
+    protected void layoutFlow(double x, double y, double width, double height) {
         // super didn't layout the flow if empty- do it now
         final double baselineOffset = getSkinnable().getLayoutBounds().getHeight() / 2;
         double headerHeight = headerAlias.getHeight();
         y += headerHeight;
         double flowHeight = Math.floor(height - headerHeight);
-        layoutInArea(flowAlias, x, y,
-                width, flowHeight,
-                baselineOffset, HPos.CENTER, VPos.CENTER);
+        layoutInArea(flowAlias, x, y, width, flowHeight, baselineOffset, HPos.CENTER, VPos.CENTER);
     }
 
 
