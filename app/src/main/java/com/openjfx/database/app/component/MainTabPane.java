@@ -15,14 +15,14 @@ import java.util.stream.Collectors;
 import static com.openjfx.database.app.config.Constants.*;
 
 /**
- * 主界面TabPane
+ * Main interface tabpane
  *
  * @author yangkui
  * @since 1.0
  */
 public class MainTabPane extends TabPane {
     /**
-     * event-bus 地址
+     * event-bus address
      */
     public static final String EVENT_BUS_ADDRESS = "controls:mainTabPane";
 
@@ -33,24 +33,23 @@ public class MainTabPane extends TabPane {
 
     private void registerEventBus() {
         VertexUtils.eventBus().<JsonObject>consumer(EVENT_BUS_ADDRESS, handler -> {
-            JsonObject body = handler.body();
-            String action = body.getString(ACTION);
-            String flag = body.getString(FLAG);
-            EventBusAction busAction = EventBusAction.valueOf(action);
+            var body = handler.body();
+            var action = body.getString(ACTION);
+            var flag = body.getString(FLAG);
+            var busAction = EventBusAction.valueOf(action);
             final List<Tab> tabs = new ArrayList<>();
-            //移出一个Tab
+            //Move out a tab
             if (busAction == EventBusAction.REMOVE) {
-                this.getTabs().stream().filter(it -> ((TableTab) it)
-                        .getModel().getFlag().equals(flag)).findAny().ifPresent(tabs::add);
+                getTabs().stream().filter(it -> ((TableTab) it).getModel().getFlag().equals(flag)).findAny()
+                        .ifPresent(tabs::add);
             }
-            //移出多个Tab
+            //Move out multiple tabs
             if (busAction == EventBusAction.REMOVE_MANY) {
-                List<Tab> tt = this.getTabs().stream().filter(
-                        it -> ((TableTab) it).getModel().getFlag().startsWith(flag)
-                ).collect(Collectors.toList());
+                var tt = getTabs().stream().filter(it -> ((TableTab) it).getModel()
+                        .getFlag().startsWith(flag)).collect(Collectors.toList());
                 tabs.addAll(tt);
             }
-            //清空tab
+            //Clear tab
             if (busAction == EventBusAction.CLEAR) {
                 tabs.addAll(getTabs());
             }
@@ -61,19 +60,19 @@ public class MainTabPane extends TabPane {
     }
 
     /**
-     * 消息类型
+     * Message type
      */
     public enum EventBusAction {
         /**
-         * 移出单个Tab
+         * Move out a single tab
          */
         REMOVE,
         /**
-         * 移出指定Tab
+         * Move out of specified tab
          */
         REMOVE_MANY,
         /**
-         * 移出所有Tab
+         * Move out all tabs
          */
         CLEAR
     }
