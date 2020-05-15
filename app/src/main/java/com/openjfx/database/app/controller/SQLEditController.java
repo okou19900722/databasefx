@@ -1,5 +1,9 @@
 package com.openjfx.database.app.controller;
 
+import com.openjfx.database.app.controls.SQLEditor;
+import com.openjfx.database.app.controls.TableDataColumn;
+import com.openjfx.database.app.utils.TableCellUtils;
+import com.openjfx.database.app.utils.TableColumnUtils;
 import com.openjfx.database.mysql.JSqlParserHelper;
 import com.openjfx.database.app.BaseController;
 import com.openjfx.database.app.controls.TableDataCell;
@@ -43,70 +47,13 @@ import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
  * @since 1.0
  */
 public class SQLEditController extends BaseController<JsonObject> {
-    /**
-     * 大写关键字
-     */
-    private static final String[] UPPER_KEYWORD = new String[]{
-            "ADD",
-            "ALL",
-            "ALTER",
-            "ANALYZE",
-            "AND",
-            "AS",
-            "ASC",
-            "ASENSITIVE",
-            "BEFORE",
-            "BETWEEN",
-            "BIGINT",
-            "BINARY",
-            "SELECT",
-            "INSERT",
-            "UPDATE",
-            "DELETE",
-            "SHOW",
-            "DROP",
-            "WHERE",
-            "FROM",
-            "LIMIT",
-            "INNER",
-            "LEFT",
-            "RIGHT",
-            "LIMIT"
-    };
-    /**
-     * 小写关键字
-     */
-    private static final String[] LOW_KEYWORD = Arrays.stream(UPPER_KEYWORD).map(String::toLowerCase).toArray(String[]::new);
-
-    private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", UPPER_KEYWORD) + String.join("|", LOW_KEYWORD) + ")\\b";
-    private static final String PAREN_PATTERN = "[()]";
-    private static final String BRACE_PATTERN = "[{}]";
-    private static final String BRACKET_PATTERN = "[\\[\\]]";
-    private static final String SEMICOLON_PATTERN = ";";
-    private static final String STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\"";
-    private static final String COMMENT_PATTERN = "//[^\n]*" + "|" + "/\\*(.|\\R)*?\\*/";
-
-    private static final Pattern PATTERN = Pattern.compile(
-            "(?<KEYWORD>" + KEYWORD_PATTERN + ")"
-                    + "|(?<PAREN>" + PAREN_PATTERN + ")"
-                    + "|(?<BRACE>" + BRACE_PATTERN + ")"
-                    + "|(?<BRACKET>" + BRACKET_PATTERN + ")"
-                    + "|(?<SEMICOLON>" + SEMICOLON_PATTERN + ")"
-                    + "|(?<STRING>" + STRING_PATTERN + ")"
-                    + "|(?<COMMENT>" + COMMENT_PATTERN + ")"
-    );
-
-    @FXML
-    private CodeArea codeArea;
-
     @FXML
     private TableView<ObservableList<StringProperty>> tableView;
 
+    @FXML
+    private SQLEditor sqlEditor;
+
     private String scheme;
-    /**
-     * 创建线程池渲染高亮
-     */
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private AbstractDataBasePool client;
 
@@ -123,67 +70,13 @@ public class SQLEditController extends BaseController<JsonObject> {
 
         stage.setTitle(title);
 
-        //开启行显示
-        codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
-        codeArea.multiPlainChanges()
-                .successionEnds(Duration.ofMillis(500))
-                .supplyTask(this::computeHighlightingAsync)
-                .awaitLatest(codeArea.multiPlainChanges())
-                .filterMap(t -> {
-                    if (t.isSuccess()) {
-                        return Optional.of(t.get());
-                    } else {
-                        t.getFailure().printStackTrace();
-                        return Optional.empty();
-                    }
-                }).subscribe(this::applyHighlighting);
-        stage.setOnCloseRequest(event -> executor.shutdown());
+        stage.setOnCloseRequest(event -> sqlEditor.dispose());
     }
 
-    private Task<StyleSpans<Collection<String>>> computeHighlightingAsync() {
-        String text = codeArea.getText();
-        Task<StyleSpans<Collection<String>>> task = new Task<>() {
-            @Override
-            protected StyleSpans<Collection<String>> call() {
-                return computeHighlighting(text);
-            }
-        };
-        executor.execute(task);
-        return task;
-    }
-
-    private void applyHighlighting(StyleSpans<Collection<String>> highlighting) {
-        codeArea.setStyleSpans(0, highlighting);
-    }
-
-
-    private static StyleSpans<Collection<String>> computeHighlighting(String text) {
-        Matcher matcher = PATTERN.matcher(text);
-        int lastKwEnd = 0;
-        StyleSpansBuilder<Collection<String>> spansBuilder
-                = new StyleSpansBuilder<>();
-        while (matcher.find()) {
-            String styleClass =
-                    matcher.group("KEYWORD") != null ? "keyword" :
-                            matcher.group("PAREN") != null ? "paren" :
-                                    matcher.group("BRACE") != null ? "brace" :
-                                            matcher.group("BRACKET") != null ? "bracket" :
-                                                    matcher.group("SEMICOLON") != null ? "semicolon" :
-                                                            matcher.group("STRING") != null ? "string" :
-                                                                    matcher.group("COMMENT") != null ? "comment" :
-                                                                            null; /* never happens */
-            assert styleClass != null;
-            spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
-            spansBuilder.add(Collections.singleton(styleClass), matcher.end() - matcher.start());
-            lastKwEnd = matcher.end();
-        }
-        spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
-        return spansBuilder.create();
-    }
 
     @FXML
     public void executeSql(ActionEvent event) {
-        var str = codeArea.getText();
+        var str = sqlEditor.getText();
         if (StringUtils.isEmpty(str)) {
             DialogUtils.showNotification("sql语句不能为空", Pos.TOP_CENTER, NotificationType.WARNING);
             return;
@@ -206,7 +99,7 @@ public class SQLEditController extends BaseController<JsonObject> {
 
     @FXML
     public void copySql(ActionEvent event) {
-        var sql = codeArea.getText();
+        var sql = sqlEditor.getText();
         if (StringUtils.isEmpty(sql)) {
             DialogUtils.showNotification("sql不能为空", Pos.TOP_CENTER, NotificationType.INFORMATION);
             return;
@@ -216,18 +109,15 @@ public class SQLEditController extends BaseController<JsonObject> {
 
     @FXML
     public void clearSql(ActionEvent event) {
-        codeArea.deleteText(0, codeArea.getText().length());
+        sqlEditor.deleteText(0, sqlEditor.getText().length());
     }
 
     public void executeSqlQuery(String sql) {
+        Platform.runLater(() -> tableView.getColumns().clear());
         var future = client.getDql().executeSql(sql);
         future.onSuccess(rs -> {
             for (Map.Entry<List<String>, List<String[]>> entry : rs.entrySet()) {
-                var columns = entry.getKey();
-                var data = entry.getValue();
-                //创建列
-                createColumn(columns);
-                createData(data);
+                createData(entry.getKey(), entry.getValue());
             }
         });
         future.onFailure(t -> DialogUtils.showErrorDialog(t, "执行查询失败"));
@@ -238,35 +128,17 @@ public class SQLEditController extends BaseController<JsonObject> {
         future.onSuccess(rs -> {
             //创建列
             var columnName = "affected rows";
-            createColumn(Collections.singletonList(columnName));
-            //新增列数据
-            createData(Collections.singletonList(new String[]{rs.toString()}));
+            var fields = Collections.singletonList(columnName);
+            var values = Collections.singletonList(new String[]{rs.toString()});
+            createData(fields, values);
+
         });
         future.onFailure(t -> DialogUtils.showErrorDialog(t, "更新失败"));
     }
 
-    private void createColumn(List<String> columns) {
-        //clear exist table column
+    private void createData(List<String> fields, List<String[]> data) {
         Platform.runLater(() -> tableView.getColumns().clear());
-        for (int i = 0; i < columns.size(); i++) {
-            var title = columns.get(i);
-            TableColumn<ObservableList<StringProperty>, String> column = new TableColumn<>();
-            column.setText(title);
-            final var j = i;
-            column.setCellValueFactory(cellDataFeatures -> {
-                ObservableList<StringProperty> values = cellDataFeatures.getValue();
-                if (j >= values.size()) {
-                    return new SimpleStringProperty("");
-                } else {
-                    return cellDataFeatures.getValue().get(j);
-                }
-            });
-            column.setCellFactory(TableDataCell.forTableColumn());
-            Platform.runLater(() -> tableView.getColumns().add(column));
-        }
-    }
-
-    private void createData(List<String[]> data) {
+        var columns = TableColumnUtils.createTableDataColumnWithField(fields);
         var list = FXCollections.<ObservableList<StringProperty>>observableArrayList();
         for (var row : data) {
             var item = FXCollections.<StringProperty>observableArrayList();
@@ -276,6 +148,7 @@ public class SQLEditController extends BaseController<JsonObject> {
             list.add(item);
         }
         Platform.runLater(() -> {
+            tableView.getColumns().addAll(columns);
             tableView.getItems().clear();
             tableView.getItems().addAll(list);
             tableView.refresh();

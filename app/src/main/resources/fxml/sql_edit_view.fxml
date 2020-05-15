@@ -10,6 +10,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.control.Tooltip?>
 <?import com.openjfx.database.app.controls.TableDataView?>
+<?import com.openjfx.database.app.controls.SQLEditor?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.openjfx.database.app.controller.SQLEditController"
@@ -64,7 +65,7 @@
     </left>
     <center>
         <SplitPane orientation="VERTICAL">
-            <CodeArea fx:id="codeArea" wrapText="true"/>
+            <SQLEditor fx:id="sqlEditor"/>
             <TableDataView fx:id="tableView"/>
         </SplitPane>
     </center>
