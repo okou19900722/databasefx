@@ -32,7 +32,7 @@ public class TableDataColumn extends TableColumn<ObservableList<StringProperty>,
     private static final Image LETTER_ICON = getLocalImage(18, 18, "letter-icon.png");
     private static final Image NUMBER_ICON = getLocalImage(18, 18, "number-icon.png");
     private static final Image TIME_ICON = getLocalImage(18, 18, "time-icon.png");
-
+    private static final Image UNKNOWN_ICON = getLocalImage(18, 18, "unknown-icon.png");
 
     public TableDataColumn(TableColumnMeta meta) {
         this.meta = meta;
@@ -78,7 +78,7 @@ public class TableDataColumn extends TableColumn<ObservableList<StringProperty>,
         var type = meta.getType();
         final ImageView imageView;
         if (type == null) {
-            imageView = new ImageView();
+            imageView = new ImageView(UNKNOWN_ICON);
         } else if (DataTypeHelper.dateTime(type)) {
             imageView = new ImageView(TIME_ICON);
         } else if (DataTypeHelper.number(type)) {

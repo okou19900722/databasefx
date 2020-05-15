@@ -66,7 +66,7 @@
     <center>
         <SplitPane orientation="VERTICAL">
             <SQLEditor fx:id="sqlEditor"/>
-            <TableDataView fx:id="tableView"/>
+            <TableDataView fx:id="tableView" editable="true"/>
         </SplitPane>
     </center>
 </BorderPane>

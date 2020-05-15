@@ -23,9 +23,11 @@ public class DataTypeHelper {
     }
 
     private static boolean isFixType(final String[] ss, final String type) {
-        for (String s : ss) {
-            if (type.toUpperCase().startsWith(s)) {
-                return true;
+        if (type != null) {
+            for (String s : ss) {
+                if (type.toUpperCase().startsWith(s)) {
+                    return true;
+                }
             }
         }
         return false;
