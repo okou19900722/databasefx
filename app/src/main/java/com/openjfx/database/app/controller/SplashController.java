@@ -77,7 +77,7 @@ public class SplashController extends BaseController {
         });
     }
 
-    private void init0() throws InterruptedException {
+    private void init0() throws Exception {
         AssetUtils.loadAllFont();
         updateProgress("初始化中....", 0);
         Thread.sleep(250);
