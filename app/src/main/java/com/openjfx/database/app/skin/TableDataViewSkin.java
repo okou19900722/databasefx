@@ -16,6 +16,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -42,10 +43,17 @@ public class TableDataViewSkin extends TableViewSkin<StringProperty> {
                     header.setOnMouseDragged(null);
                     //Calculate width
                     var label = (Label) header.getChildrenUnmodifiable().get(0);
-                    var icon = (ImageView) ((Label) tableColumn.getGraphic()).getGraphic();
-                    var image = icon.getImage();
+                    var graphicWidth = 0.0;
+                    var graphic = tableColumn.getGraphic();
+                    //Calculate graphics width
+                    if (Objects.nonNull(graphic)) {
+                        var icon = (ImageView) ((Label) tableColumn.getGraphic()).getGraphic();
+                        var image = icon.getImage();
+                        graphicWidth = image == null ? icon.getFitWidth() : image.getWidth();
+                    }
+
                     var width = UiUtils.computeTextWidth(label);
-                    var minWidth = width + image.getWidth();
+                    var minWidth = width + graphicWidth;
                     tableColumn.setMinWidth(minWidth);
                 }
             }

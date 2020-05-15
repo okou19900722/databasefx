@@ -44,6 +44,13 @@ public class TableColumnMeta {
      */
     private String Comment;
 
+    public TableColumnMeta() {
+    }
+
+    public TableColumnMeta(final String field) {
+        this.setField(field);
+    }
+
     public String getField() {
         return Field;
     }

@@ -5,7 +5,6 @@ import com.openjfx.database.app.config.Constants;
 import com.openjfx.database.app.controls.BaseTreeNode;
 import com.openjfx.database.app.component.MainTabPane;
 import com.openjfx.database.app.stage.DesignTableStage;
-import com.openjfx.database.app.stage.SQLGenStage;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.model.ConnectionParam;
@@ -49,11 +48,10 @@ public class TableTreeNode extends BaseTreeNode<String> {
 
         setValue(tableName);
 
-        var sqlMenu = new MenuItem("生成SQL");
         var design = new MenuItem("设计表");
         var delete = new MenuItem("删除");
 
-        sqlMenu.setOnAction(e -> new SQLGenStage(params));
+
         design.setOnAction(e -> new DesignTableStage(params));
         delete.setOnAction(e -> {
             var result = DialogUtils.showAlertConfirm("确定要删除" + tableName + "表?");
@@ -74,7 +72,7 @@ public class TableTreeNode extends BaseTreeNode<String> {
 
             future.onFailure(t -> DialogUtils.showErrorDialog(t, "删除表失败"));
         });
-        addMenuItem(sqlMenu, design, delete);
+        addMenuItem(design, delete);
     }
 
     public String getDatabase() {
@@ -82,5 +80,6 @@ public class TableTreeNode extends BaseTreeNode<String> {
     }
 
     @Override
-    public void init() { }
+    public void init() {
+    }
 }

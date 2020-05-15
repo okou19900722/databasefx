@@ -40,6 +40,14 @@ public class TableDataColumn extends TableColumn<ObservableList<StringProperty>,
         setText(meta.getField());
     }
 
+    public TableDataColumn(final String field) {
+        var m = new TableColumnMeta();
+        m.setField(field);
+        this.meta = m;
+        initLabel();
+        setText(field);
+    }
+
     public static final class TableColumnTooltip extends Tooltip {
         private final ObjectProperty<TableColumnMeta> tableColumnMetaObjectProperty = new SimpleObjectProperty<>();
 
@@ -69,7 +77,9 @@ public class TableDataColumn extends TableColumn<ObservableList<StringProperty>,
         var label = new Label();
         var type = meta.getType();
         final ImageView imageView;
-        if (DataTypeHelper.dateTime(type)) {
+        if (type == null) {
+            imageView = new ImageView();
+        } else if (DataTypeHelper.dateTime(type)) {
             imageView = new ImageView(TIME_ICON);
         } else if (DataTypeHelper.number(type)) {
             imageView = new ImageView(NUMBER_ICON);

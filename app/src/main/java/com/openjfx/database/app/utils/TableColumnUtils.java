@@ -7,6 +7,7 @@ import javafx.beans.property.SimpleStringProperty;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * TableColumn utils
@@ -39,5 +40,12 @@ public class TableColumnUtils {
             columns.add(column);
         }
         return columns;
+    }
+
+    public static List<TableDataColumn> createTableDataColumnWithField(final List<String> columns) {
+
+        var list = columns.stream().map(TableColumnMeta::new).collect(Collectors.toList());
+        return createTableDataColumn(list);
+
     }
 }
