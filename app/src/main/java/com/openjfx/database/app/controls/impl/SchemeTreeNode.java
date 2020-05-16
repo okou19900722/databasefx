@@ -79,6 +79,7 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
             closeOpenTab();
             removeMenu(flush);
             removeMenu(close);
+            addMenuItem(0, open);
         });
 
         //open database scheme
@@ -109,8 +110,8 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
             return;
         }
         setLoading(true);
-        DQL dcl = DATABASE_SOURCE.getDataBaseSource(getUuid()).getDql();
-        Future<List<String>> future = dcl.showTables(getValue());
+        var dcl = DATABASE_SOURCE.getDataBaseSource(getUuid()).getDql();
+        var future = dcl.showTables(getValue());
         future.onSuccess(tables ->
         {
             var tas = tables.stream().map(s -> new TableTreeNode(getValue(), s, param.get())).collect(Collectors.toList());
