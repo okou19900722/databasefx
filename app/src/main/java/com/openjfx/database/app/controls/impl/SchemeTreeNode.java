@@ -1,7 +1,6 @@
 package com.openjfx.database.app.controls.impl;
 
 
-import com.openjfx.database.DQL;
 import com.openjfx.database.app.controls.BaseTreeNode;
 import com.openjfx.database.app.component.MainTabPane;
 import com.openjfx.database.app.config.Constants;
@@ -9,13 +8,11 @@ import com.openjfx.database.app.stage.SQLEditStage;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.model.ConnectionParam;
-import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;

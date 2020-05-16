@@ -9,7 +9,7 @@ To build DatabaseFX, execute the following command:
 ```
 gradlew build
 ```
-To run the main demo, execute the following command:
+To run the product, execute the following command:
 ```
 gradlew run
 ```
