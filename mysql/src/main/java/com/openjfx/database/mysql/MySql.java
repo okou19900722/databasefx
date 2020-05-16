@@ -8,7 +8,6 @@ import com.openjfx.database.model.ConnectionParam;
 import com.openjfx.database.mysql.impl.MysqlPoolImpl;
 import io.vertx.core.json.JsonObject;
 
-import java.util.Objects;
 
 /**
  * mysql数据库连接池管理

@@ -65,10 +65,7 @@ public class SQLEditController extends BaseController<JsonObject> {
 
         stage.setTitle(title);
 
-        stage.setOnCloseRequest(event -> {
-            DATABASE_SOURCE.close(uuid);
-            sqlEditor.dispose();
-        });
+        stage.setOnCloseRequest(event -> DATABASE_SOURCE.close(uuid));
     }
 
 

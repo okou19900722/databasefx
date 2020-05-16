@@ -1,10 +1,14 @@
 package com.openjfx.database.app.controls;
 
+import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
+import org.reactfx.Subscription;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -68,45 +72,25 @@ public class SQLEditor extends CodeArea {
                     + "|(?<SEMICOLON>" + SEMICOLON_PATTERN + ")"
                     + "|(?<STRING>" + STRING_PATTERN + ")"
                     + "|(?<COMMENT>" + COMMENT_PATTERN + ")");
-    /**
-     * 创建线程池渲染高亮
-     */
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     public SQLEditor() {
         setWrapText(true);
-        //开启行显示
+
         setParagraphGraphicFactory(LineNumberFactory.get(this));
-        multiPlainChanges()
-                .successionEnds(Duration.ofMillis(500))
-                .supplyTask(this::computeHighlightingAsync)
-                .awaitLatest(this.multiPlainChanges())
-                .filterMap(t -> {
-                    if (t.isSuccess()) {
-                        return Optional.of(t.get());
-                    } else {
-                        t.getFailure().printStackTrace();
-                        return Optional.empty();
-                    }
-                }).subscribe(this::applyHighlighting);
-    }
 
-    private Task<StyleSpans<Collection<String>>> computeHighlightingAsync() {
-        String text = getText();
-        Task<StyleSpans<Collection<String>>> task = new Task<>() {
-            @Override
-            protected StyleSpans<Collection<String>> call() {
-                return computeHighlighting(text);
+        this.multiPlainChanges().successionEnds(Duration.ofMillis(500))
+                .subscribe(ignore -> this.setStyleSpans(0, computeHighlighting(this.getText())));
+
+        final Pattern whiteSpace = Pattern.compile("^\\s+");
+        addEventFilter(KeyEvent.KEY_PRESSED, kE -> {
+            if (kE.getCode() == KeyCode.ENTER) {
+                int caretPosition = getCaretPosition();
+                int currentParagraph = getCurrentParagraph();
+                Matcher m0 = whiteSpace.matcher(getParagraph(currentParagraph - 1).getSegments().get(0));
+                insertText(caretPosition, m0.group());
             }
-        };
-        executor.execute(task);
-        return task;
+        });
     }
-
-    private void applyHighlighting(StyleSpans<Collection<String>> highlighting) {
-        setStyleSpans(0, highlighting);
-    }
-
 
     private static StyleSpans<Collection<String>> computeHighlighting(String text) {
         Matcher matcher = PATTERN.matcher(text);
@@ -135,11 +119,5 @@ public class SQLEditor extends CodeArea {
     public void setText(final String text) {
         clear();
         insertText(0, text);
-    }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        executor.shutdown();
     }
 }
