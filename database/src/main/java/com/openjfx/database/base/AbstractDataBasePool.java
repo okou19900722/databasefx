@@ -25,6 +25,8 @@ public class AbstractDataBasePool {
     protected SQLGenerator generator;
 
     protected Pool pool;
+
+    protected DataConvert dataConvert;
     /**
      * connection param
      */
@@ -54,6 +56,14 @@ public class AbstractDataBasePool {
 
     public SQLGenerator getGenerator() {
         return generator;
+    }
+
+    public DataConvert getDataConvert() {
+        return dataConvert;
+    }
+
+    public Pool getPool() {
+        return pool;
     }
 
     /**
