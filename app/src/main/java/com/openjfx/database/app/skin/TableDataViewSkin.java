@@ -38,7 +38,7 @@ public class TableDataViewSkin extends TableViewSkin<StringProperty> {
             if (c.wasAdded()) {
                 var list = c.getAddedSubList();
                 for (TableColumnHeader header : list) {
-                    var tableColumn = (TableDataColumn) header.getTableColumn();
+                    var tableColumn = header.getTableColumn();
                     //Disable drag
                     header.setOnMouseDragged(null);
                     //Calculate width

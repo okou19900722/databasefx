@@ -18,6 +18,7 @@ public class MysqlPoolImpl extends AbstractDataBasePool {
         dml = new DMLImpl(pool);
         generator = new SQLGeneratorImpl(pool);
         dataConvert = new SimpleMysqlDataConvert();
+        dataCharset = new MysqlCharset();
     }
 
 

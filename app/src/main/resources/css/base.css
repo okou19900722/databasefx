@@ -107,3 +107,12 @@
 .tree-view .tree-cell:selected, .table-view .table-cell:selected {
     -fx-background-color: #3962EF;
 }
+
+.split-pane {
+    -fx-background-color: #ffffff;
+}
+
+.split-pane-divider {
+    -fx-pref-width: 5px;
+    -fx-background-color: #f5f5f5;
+}

@@ -27,6 +27,9 @@ public class AbstractDataBasePool {
     protected Pool pool;
 
     protected DataConvert dataConvert;
+
+    protected DataCharset dataCharset;
+
     /**
      * connection param
      */
@@ -64,6 +67,10 @@ public class AbstractDataBasePool {
 
     public Pool getPool() {
         return pool;
+    }
+
+    public DataCharset getDataCharset() {
+        return dataCharset;
     }
 
     /**

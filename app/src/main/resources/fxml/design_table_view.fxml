@@ -1,94 +1,209 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<?import javafx.scene.layout.*?>
 
+<?import java.net.URL?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TableColumn?>
-<?import java.net.URL?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ChoiceBox?>
-<?import com.jfoenix.controls.JFXButton?>
+<?import com.openjfx.database.app.controls.SQLEditor?>
+<?import com.openjfx.database.app.controls.DesignTableView?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.openjfx.database.app.controller.DesignTableController"
-            prefHeight="400.0" prefWidth="600.0">
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.openjfx.database.app.controller.DesignTableController">
     <stylesheets>
         <URL value="@/css/design_table.css"/>
+        <URL value="@/css/base.css"/>
     </stylesheets>
     <top>
-        <HBox styleClass="top-box">
-            <JFXButton text="新建">
+        <HBox BorderPane.alignment="CENTER" styleClass="top-box" fx:id="topBox">
+            <Button text="保存" userData="all_0">
                 <graphic>
                     <ImageView>
-                        <Image url="@/assets/images/build_icon.png" requestedWidth="20" requestedHeight="20"
+                        <Image url="@/assets/images/design_save_icon.png" requestedHeight="18" requestedWidth="18"
                                smooth="true"/>
                     </ImageView>
                 </graphic>
-            </JFXButton>
-            <JFXButton text="保存">
+            </Button>
+            <Button text="添加字段" userData="0_1">
                 <graphic>
                     <ImageView>
-                        <Image url="@/assets/images/save_icon.png" requestedWidth="20" requestedHeight="20"
+                        <Image url="@/assets/images/design_add_icon.png" requestedHeight="18" requestedWidth="18"
                                smooth="true"/>
                     </ImageView>
                 </graphic>
-            </JFXButton>
-            <JFXButton text="另存为">
+            </Button>
+            <Button text="插入字段" userData="0_2">
                 <graphic>
                     <ImageView>
-                        <Image url="@/assets/images/resave_icon.png" requestedWidth="20" requestedHeight="20"
+                        <Image url="@/assets/images/design_insert_icon.png" requestedHeight="18" requestedWidth="18"
                                smooth="true"/>
                     </ImageView>
                 </graphic>
-            </JFXButton>
+            </Button>
+            <Button text="删除字段" userData="0_3">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/assets/images/design_delete_icon.png" requestedHeight="18" requestedWidth="18"
+                               smooth="true"/>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button text="主键" userData="0_4">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/assets/images/key_icon.png" requestedHeight="18" requestedWidth="18"
+                               smooth="true"/>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button text="上移" userData="0_5,3_4">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/assets/images/design_up_icon.png" requestedHeight="18" requestedWidth="18"
+                               smooth="true"/>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button text="下移" userData="0_6,3_5">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/assets/images/design_down_icon.png" requestedHeight="18" requestedWidth="18"
+                               smooth="true"/>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button text="添加索引" userData="1_1">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/assets/images/add_index_icon.png" requestedHeight="18" requestedWidth="18"
+                               smooth="true"/>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button text="删除索引" userData="1_2">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/assets/images/remove_index_icon.png" requestedHeight="18" requestedWidth="18"
+                               smooth="true"/>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button text="添加外键" userData="2_1">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/assets/images/extension-key_icon.png" requestedHeight="18" requestedWidth="18"
+                               smooth="true"/>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button text="删除外键" userData="2_2">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/assets/images/remove_extension_icon.png" requestedHeight="18" requestedWidth="18"
+                               smooth="true"/>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button text="添加触发器" userData="3_1">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/assets/images/trigger_icon.png" requestedHeight="18" requestedWidth="18"
+                               smooth="true"/>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button text="插入触发器" userData="3_2">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/assets/images/insert_trigger_icon.png" requestedHeight="18"
+                               requestedWidth="18"
+                               smooth="true"/>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button text="删除触发器" userData="3_3">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/assets/images/delete_trigger_icon.png" requestedHeight="18" requestedWidth="18"
+                               smooth="true"/>
+                    </ImageView>
+                </graphic>
+            </Button>
         </HBox>
     </top>
     <center>
-        <TabPane>
-            <Tab text="表结构" closable="false">
-                <VBox>
-                    <TableView fx:id="designTable" VBox.vgrow="ALWAYS">
+        <SplitPane dividerPositions="0.7046979865771812" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0"
+                   BorderPane.alignment="CENTER">
+            <TabPane fx:id="tabPane">
+                <Tab text="字段">
+                    <DesignTableView>
                         <columns>
-                            <TableColumn text="字段名" userData="Field"/>
-                            <TableColumn text="数据类型" userData="Type"/>
-                            <TableColumn text="键" userData="Key"/>
-                            <TableColumn text="非空" userData="Null"/>
-                            <TableColumn text="字符编码" userData="Collation"/>
-                            <TableColumn text="默认值" userData="Default"/>
-                            <TableColumn text="额外的" userData="Extra"/>
-                            <TableColumn text="注释" userData="Comment"/>
+                            <TableColumn text="名"/>
+                            <TableColumn text="类型"/>
+                            <TableColumn text="长度"/>
+                            <TableColumn text="小数点"/>
+                            <TableColumn text="null"/>
+                            <TableColumn text="键"/>
+                            <TableColumn text="注释"/>
                         </columns>
-                    </TableView>
-                    <VBox styleClass="column-attr">
-                        <HBox>
-                            <Label text="默认:"/>
-                            <ChoiceBox fx:id="defaultBox"/>
-                        </HBox>
-                        <HBox>
-                            <Label text="注释:"/>
-                            <TextField fx:id="commentField"/>
-                        </HBox>
-                        <HBox>
-                            <Label text="字符集:"/>
-                            <ChoiceBox fx:id="charsetBox"/>
-                        </HBox>
-                        <HBox>
-                            <Label text="排序规则:"/>
-                            <ChoiceBox fx:id="sortRegular"/>
-                        </HBox>
-                    </VBox>
-                </VBox>
-            </Tab>
-            <Tab text="DDL" closable="false">
-                <TextArea editable="false" fx:id="ddlTextArea"/>
-            </Tab>
-        </TabPane>
+                    </DesignTableView>
+                </Tab>
+                <Tab text="索引">
+                    <DesignTableView>
+                        <columns>
+                            <TableColumn text="名"/>
+                            <TableColumn text="字段"/>
+                            <TableColumn text="类型"/>
+                            <TableColumn text="方法"/>
+                            <TableColumn text="注释"/>
+                        </columns>
+                    </DesignTableView>
+                </Tab>
+                <Tab text="外键">
+                    <DesignTableView>
+                        <columns>
+                            <TableColumn text="名"/>
+                            <TableColumn text="字段"/>
+                            <TableColumn text="被引用数据库"/>
+                            <TableColumn text="被引用表(父)"/>
+                            <TableColumn text="删除时"/>
+                            <TableColumn text="更新时"/>
+                        </columns>
+                    </DesignTableView>
+                </Tab>
+                <Tab text="触发器">
+                    <DesignTableView>
+                        <columns>
+                            <TableColumn text="名"/>
+                            <TableColumn text="字段"/>
+                            <TableColumn text="被引用数据库"/>
+                            <TableColumn text="被引用表(父)"/>
+                            <TableColumn text="删除时"/>
+                            <TableColumn text="更新时"/>
+                        </columns>
+                    </DesignTableView>
+                </Tab>
+                <Tab text="选项">
+
+                </Tab>
+                <Tab text="注释">
+                    <TextArea/>
+                </Tab>
+                <Tab text="SQL预览">
+                    <SQLEditor/>
+                </Tab>
+
+            </TabPane>
+            <VBox prefHeight="200.0" prefWidth="100.0"/>
+        </SplitPane>
     </center>
 </BorderPane>

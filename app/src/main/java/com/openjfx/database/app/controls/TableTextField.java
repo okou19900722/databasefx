@@ -118,8 +118,9 @@ public class TableTextField extends HBox {
     private final UnaryOperator<TextFormatter.Change> dateTimeFilter = change -> {
         var text = change.getText();
         var divStr = ":";
+        var divStr1 = "-";
         var pattern = "[0-9]*";
-        if (text.matches(pattern) || divStr.equals(text)) {
+        if (text.matches(pattern) || divStr.equals(text) || text.equals(divStr1)) {
             return change;
         }
         return null;

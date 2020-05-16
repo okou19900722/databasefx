@@ -8,10 +8,6 @@
     -fx-background-color: #f5f5f5;
 }
 
-.split-pane-divider {
-    -fx-pref-width: 5px;
-}
-
 .menu-bar {
     -fx-background-color: #fafafa;
 }
