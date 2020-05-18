@@ -1,5 +1,6 @@
 package com.openjfx.database.base;
 
+import com.openjfx.database.DataCharset;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.model.ConnectionParam;
 import org.apache.logging.log4j.LogManager;
@@ -24,6 +25,10 @@ public abstract class AbstractDatabaseSource {
      * Heartbeat ID
      */
     protected Long timerId;
+    /**
+     * data charset
+     */
+    protected DataCharset charset;
 
     /**
      * Get database connection pool according to UUID
@@ -94,5 +99,9 @@ public abstract class AbstractDatabaseSource {
             LOGGER.error(t.getMessage(), t);
             pool.close();
         });
+    }
+
+    public DataCharset getCharset() {
+        return charset;
     }
 }

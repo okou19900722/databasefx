@@ -5,6 +5,7 @@ import com.openjfx.database.base.AbstractDatabaseSource;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.model.ConnectionParam;
 
+import com.openjfx.database.mysql.impl.MysqlCharset;
 import com.openjfx.database.mysql.impl.MysqlPoolImpl;
 import io.vertx.core.json.JsonObject;
 
@@ -17,7 +18,9 @@ import io.vertx.core.json.JsonObject;
  */
 public class MySql extends AbstractDatabaseSource {
 
+
     public MySql() {
+        charset = new MysqlCharset();
         heartBeat();
     }
 

@@ -4,10 +4,13 @@ import com.fasterxml.jackson.databind.deser.impl.PropertyValue;
 import com.openjfx.database.DDL;
 import com.openjfx.database.DQL;
 import com.openjfx.database.app.BaseController;
+import com.openjfx.database.app.controls.DesignTableView;
+import com.openjfx.database.app.model.DesignTableModel;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.model.TableColumnMeta;
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
+import javafx.beans.property.Property;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -18,6 +21,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
+import javafx.util.Callback;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,11 +44,16 @@ public class DesignTableController extends BaseController<JsonObject> {
     @FXML
     private HBox topBox;
 
+    @FXML
+    private DesignTableView<DesignTableModel> fieldTable;
+
 
     private final List<Button> actionList = new ArrayList<>();
 
     @Override
     public void init() {
+        intiTable(fieldTable, DesignTableModel.class);
+        fieldTable.getItems().add(new DesignTableModel());
         for (Tab tab : tabPane.getTabs()) {
             tab.setClosable(false);
         }
@@ -61,6 +70,16 @@ public class DesignTableController extends BaseController<JsonObject> {
             var index = newValue.intValue();
             tabSelectChange(index);
         });
+    }
+
+    private <T> void intiTable(DesignTableView<T> tableView, Class<T> t) {
+        var fields = t.getDeclaredFields();
+        var tableColumns = tableView.getColumns();
+        for (int i = 0; i < fields.length; i++) {
+            var field = fields[i];
+            var column = tableColumns.get(i);
+            column.setCellValueFactory(new PropertyValueFactory<>(field.getName()));
+        }
     }
 
     private void tabSelectChange(int index) {

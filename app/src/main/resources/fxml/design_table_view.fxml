@@ -2,7 +2,6 @@
 
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -145,13 +144,14 @@
                    BorderPane.alignment="CENTER">
             <TabPane fx:id="tabPane">
                 <Tab text="字段">
-                    <DesignTableView>
+                    <DesignTableView fx:id="fieldTable">
                         <columns>
                             <TableColumn text="名"/>
                             <TableColumn text="类型"/>
                             <TableColumn text="长度"/>
                             <TableColumn text="小数点"/>
                             <TableColumn text="null"/>
+                            <TableColumn text="虚拟"/>
                             <TableColumn text="键"/>
                             <TableColumn text="注释"/>
                         </columns>

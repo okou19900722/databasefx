@@ -1,5 +1,9 @@
-.root {
+.root, .text-field {
     -fx-background-color: #ffffff;
+}
+
+.table-view .table-column .table-cell {
+    -fx-alignment: center;
 }
 
 .top-box, .top-box .button {

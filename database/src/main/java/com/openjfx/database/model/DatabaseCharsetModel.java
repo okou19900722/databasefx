@@ -36,9 +36,6 @@ public class DatabaseCharsetModel {
 
     @Override
     public String toString() {
-        return "DatabaseCharsetModel{" +
-                "charset='" + charset + '\'' +
-                ", collations=" + collations +
-                '}';
+        return getCharset();
     }
 }
