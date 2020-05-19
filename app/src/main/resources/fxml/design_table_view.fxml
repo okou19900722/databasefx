@@ -140,8 +140,7 @@
         </HBox>
     </top>
     <center>
-        <SplitPane dividerPositions="0.7046979865771812" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0"
-                   BorderPane.alignment="CENTER">
+        <SplitPane dividerPositions="0.7" orientation="VERTICAL" BorderPane.alignment="CENTER" fx:id="splitPane">
             <TabPane fx:id="tabPane">
                 <Tab text="字段">
                     <DesignTableView fx:id="fieldTable">
@@ -203,7 +202,6 @@
                 </Tab>
 
             </TabPane>
-            <VBox prefHeight="200.0" prefWidth="100.0"/>
         </SplitPane>
     </center>
 </BorderPane>

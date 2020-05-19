@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.deser.impl.PropertyValue;
 import com.openjfx.database.DDL;
 import com.openjfx.database.DQL;
 import com.openjfx.database.app.BaseController;
+import com.openjfx.database.app.component.DesignOptionBox;
 import com.openjfx.database.app.controls.DesignTableView;
 import com.openjfx.database.app.model.DesignTableModel;
 import com.openjfx.database.app.utils.DialogUtils;
@@ -47,6 +48,8 @@ public class DesignTableController extends BaseController<JsonObject> {
     @FXML
     private DesignTableView<DesignTableModel> fieldTable;
 
+    @FXML
+    private SplitPane splitPane;
 
     private final List<Button> actionList = new ArrayList<>();
 
@@ -70,6 +73,7 @@ public class DesignTableController extends BaseController<JsonObject> {
             var index = newValue.intValue();
             tabSelectChange(index);
         });
+        splitPane.getItems().add(new DesignOptionBox(null, DesignOptionBox.FieldDataType.STRING));
     }
 
     private <T> void intiTable(DesignTableView<T> tableView, Class<T> t) {

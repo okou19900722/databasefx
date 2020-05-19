@@ -19,7 +19,7 @@ public class DesignTableModel {
     /**
      * field type
      */
-    private DataTypeCheckBox fieldType = new DataTypeCheckBox(DatabaseFX.DATABASE_SOURCE.getCharset());
+    private DataTypeCheckBox fieldType = new DataTypeCheckBox();
     /**
      * field length
      */

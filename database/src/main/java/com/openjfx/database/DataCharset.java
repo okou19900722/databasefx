@@ -19,4 +19,12 @@ public interface DataCharset {
      * @return return charset list
      */
     List<DatabaseCharsetModel> getDatabaseCharset();
+
+    /**
+     * by charset name get relation collation list
+     *
+     * @param charsetName charset name
+     * @return return charset collation
+     */
+    List<String> getCharsetCollations(final String charsetName);
 }
