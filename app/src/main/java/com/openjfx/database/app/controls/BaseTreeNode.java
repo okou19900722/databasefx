@@ -116,7 +116,7 @@ public abstract class BaseTreeNode<T> extends TreeItem<T> {
         });
     }
 
-    public synchronized List<MenuItem> getMenus() {
+    public List<MenuItem> getMenus() {
         return menus;
     }
 
