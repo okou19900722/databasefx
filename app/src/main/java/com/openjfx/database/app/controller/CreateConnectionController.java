@@ -113,7 +113,7 @@ public class CreateConnectionController extends BaseController<String> {
         var d = password.getText();
         var e = name.getText();
 
-        if (isEmpty(a) || isEmpty(b) || isEmpty(c) || isEmpty(d)) {
+        if (isEmpty(a) || isEmpty(b) || isEmpty(c)) {
             showNotification("参数不全", Pos.TOP_CENTER, NotificationType.WARNING);
             return null;
         }
