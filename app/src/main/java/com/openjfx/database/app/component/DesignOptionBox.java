@@ -15,7 +15,6 @@ public class DesignOptionBox extends VBox {
     private final EditChoiceBox<String> defaultBox = new EditChoiceBox<>();
     private final EditChoiceBox<String> charsetBox = new EditChoiceBox<>();
     private final EditChoiceBox<String> collationBox = new EditChoiceBox<>();
-    private final CheckBox checkBox = new CheckBox();
     private final CheckBox incrementCheck = new CheckBox();
 
     private final JsonObject json;
