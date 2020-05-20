@@ -50,4 +50,9 @@ public class MysqlCharset implements DataCharset {
         }
         return List.of();
     }
+
+    @Override
+    public List<String> getCharset() {
+        return CHARSETS.stream().map(DatabaseCharsetModel::getCharset).collect(Collectors.toList());
+    }
 }

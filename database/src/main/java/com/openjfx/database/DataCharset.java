@@ -27,4 +27,11 @@ public interface DataCharset {
      * @return return charset collation
      */
     List<String> getCharsetCollations(final String charsetName);
+
+    /**
+     * get current database support charset
+     *
+     * @return return charset list
+     */
+    List<String> getCharset();
 }

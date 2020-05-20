@@ -1,6 +1,8 @@
 package com.openjfx.database.app.skin;
 
 import com.openjfx.database.app.controls.EditChoiceBox;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.skin.ChoiceBoxSkin;
@@ -30,10 +32,16 @@ public class EditChoiceBoxSkin<T> extends ChoiceBoxSkin<T> {
         //listener ChoiceBox select change
         control.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
             var index = newValue.intValue();
+            if (index == -1) {
+                return;
+            }
             var item = control.getItems().get(index);
             textField.setText(item.toString());
         });
         //openButton click synchronized text to control
         openButton.setOnMouseClicked(e -> control.setText(textField.getText()));
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            control.setText(newValue);
+        });
     }
 }

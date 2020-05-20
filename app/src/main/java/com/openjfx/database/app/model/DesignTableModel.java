@@ -1,9 +1,12 @@
 package com.openjfx.database.app.model;
 
-import com.openjfx.database.app.DatabaseFX;
-import com.openjfx.database.app.controls.DataTypeCheckBox;
+import com.openjfx.database.app.controls.EditChoiceBox;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
+
+import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
 
 /**
  * design table model
@@ -19,7 +22,7 @@ public class DesignTableModel {
     /**
      * field type
      */
-    private DataTypeCheckBox fieldType = new DataTypeCheckBox();
+    private EditChoiceBox<String> fieldType = new EditChoiceBox<>();
     /**
      * field length
      */
@@ -44,6 +47,23 @@ public class DesignTableModel {
      * field mark
      */
     private TextField mark = new TextField();
+    /**
+     * charset property
+     */
+    private final StringProperty charset = new SimpleStringProperty();
+
+    public DesignTableModel() {
+        fieldType.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+            var index = newValue.intValue();
+            if (index == -1) {
+                return;
+            }
+            var item = fieldType.getItems().get(index);
+            charset.set(item);
+        });
+        var charset = DATABASE_SOURCE.getCharset().getCharset();
+        fieldType.getItems().addAll(charset);
+    }
 
     public TextField getField() {
         return field;
@@ -53,11 +73,11 @@ public class DesignTableModel {
         this.field = field;
     }
 
-    public DataTypeCheckBox getFieldType() {
+    public EditChoiceBox<String> getFieldType() {
         return fieldType;
     }
 
-    public void setFieldType(DataTypeCheckBox fieldType) {
+    public void setFieldType(EditChoiceBox<String> fieldType) {
         this.fieldType = fieldType;
     }
 
@@ -107,5 +127,17 @@ public class DesignTableModel {
 
     public void setMark(TextField mark) {
         this.mark = mark;
+    }
+
+    public String getCharset() {
+        return charset.get();
+    }
+
+    public StringProperty charsetProperty() {
+        return charset;
+    }
+
+    public void setCharset(String charset) {
+        this.charset.set(charset);
     }
 }

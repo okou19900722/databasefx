@@ -1,12 +1,15 @@
 package com.openjfx.database.app.component;
 
-import com.openjfx.database.app.controls.DataTypeCheckBox;
+import com.openjfx.database.DataCharset;
 import com.openjfx.database.app.controls.EditChoiceBox;
+import com.openjfx.database.model.DatabaseCharsetModel;
 import io.vertx.core.json.JsonObject;
+import javafx.collections.FXCollections;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
+
+import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
 
 public class DesignOptionBox extends VBox {
 
@@ -30,6 +33,10 @@ public class DesignOptionBox extends VBox {
     }
 
     private JsonObject json;
+    /**
+     * database source
+     */
+    private final DataCharset dataCharset = DATABASE_SOURCE.getCharset();
 
     public DesignOptionBox(final JsonObject cc, final FieldDataType type) {
         this.json = cc;
@@ -53,11 +60,11 @@ public class DesignOptionBox extends VBox {
 
         var grid = new GridPane();
         var defaultLabel = new Label("默认值:");
-        var choiceBox = new DataTypeCheckBox();
+        var choiceBox = new EditChoiceBox<String>();
         var charsetLabel = new Label("字符集:");
-        var charsetBox = new EditChoiceBox<>();
+        var charsetBox = new EditChoiceBox<String>();
         var collationLabel = new Label("排序规则:");
-        var collationBox = new EditChoiceBox<>();
+        var collationBox = new EditChoiceBox<String>();
         var checkBox = new CheckBox();
         var binaryLabel = new Label("二进制");
         var hBox = new HBox();
@@ -74,6 +81,27 @@ public class DesignOptionBox extends VBox {
         grid.setVgap(10);
         grid.getRowConstraints().add(new RowConstraints());
         grid.getColumnConstraints().add(new ColumnConstraints());
+
+        choiceBox.getItems().addAll("", "EMPTY STRINGING");
+
+        charsetBox.getItems().addAll(dataCharset.getCharset());
+
+        charsetBox.textProperty().addListener((observable, oldValue, newValue) -> {
+            var text = charsetBox.getText();
+            var items = charsetBox.getItems();
+            for (String charset : items) {
+                if (charset.equals(text)) {
+                    charsetBox.getSelectionModel().select(charset);
+                    var collations = dataCharset.getCharsetCollations(text);
+                    var ob = FXCollections.observableList(collations);
+                    collationBox.setItems(ob);
+                    if (ob.size() > 0) {
+                        collationBox.getSelectionModel().select(0);
+                    }
+                    break;
+                }
+            }
+        });
 
         this.getChildren().add(grid);
     }

@@ -15,6 +15,7 @@ import javafx.beans.property.Property;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
@@ -56,16 +57,16 @@ public class DesignTableController extends BaseController<JsonObject> {
     @Override
     public void init() {
         intiTable(fieldTable, DesignTableModel.class);
-        fieldTable.getItems().add(new DesignTableModel());
         for (Tab tab : tabPane.getTabs()) {
             tab.setClosable(false);
         }
         var i = 0;
         for (Node child : topBox.getChildren()) {
+            var button = (Button) child;
             if (i != 0) {
-                var button = (Button) child;
                 actionList.add(button);
             }
+            button.setOnAction(e -> listAction(button.getUserData().toString()));
             i++;
         }
         tabSelectChange(0);
@@ -73,13 +74,35 @@ public class DesignTableController extends BaseController<JsonObject> {
             var index = newValue.intValue();
             tabSelectChange(index);
         });
-        splitPane.getItems().add(new DesignOptionBox(null, DesignOptionBox.FieldDataType.STRING));
+        //listener fieldTable select change
+        fieldTable.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+            var oIndex = oldValue.intValue();
+            var index = newValue.intValue();
+            //unbind last listener
+            if (oIndex != -1) {
+                var oItem = fieldTable.getItems().get(oIndex);
+                oItem.charsetProperty().unbind();
+            }
+            if (index == -1) {
+                return;
+            }
+            var item = fieldTable.getItems().get(index);
+
+            item.charsetProperty().addListener((observable1, oldCharset, newCharset) -> {
+                var box = new DesignOptionBox(null, DesignOptionBox.FieldDataType.STRING);
+                var items = splitPane.getItems();
+                if (items.size() > 1) {
+                    items.remove(1);
+                }
+                items.add(box);
+            });
+        });
     }
 
     private <T> void intiTable(DesignTableView<T> tableView, Class<T> t) {
         var fields = t.getDeclaredFields();
         var tableColumns = tableView.getColumns();
-        for (int i = 0; i < fields.length; i++) {
+        for (int i = 0; i < tableColumns.size(); i++) {
             var field = fields[i];
             var column = tableColumns.get(i);
             column.setCellValueFactory(new PropertyValueFactory<>(field.getName()));
@@ -106,6 +129,15 @@ public class DesignTableController extends BaseController<JsonObject> {
                     }
                 }
             }
+        }
+    }
+
+    private void listAction(final String ij) {
+        if ("0_1".equals(ij)) {
+            var model = new DesignTableModel();
+            var items = fieldTable.getItems();
+            items.add(model);
+            fieldTable.getSelectionModel().select(items.size() - 1);
         }
     }
 }
