@@ -4,7 +4,7 @@ import com.openjfx.database.base.AbstractDataBasePool;
 import io.vertx.mysqlclient.MySQLPool;
 
 /**
- * 封装MysqlPool类
+ * Encapsulate mysql pool class
  *
  * @author yangkui
  * @since 1.0
