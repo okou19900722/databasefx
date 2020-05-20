@@ -39,3 +39,15 @@
 .design-table-option {
     -fx-padding: 10px;
 }
+
+.table-view .table-row-cell:even {
+    -fx-background: #FFFFFF !important;
+}
+
+.table-view .table-row-cell:odd {
+    -fx-background: #FFFFFF !important;
+}
+
+.table-view .table-cell {
+    -fx-padding: 0;
+}

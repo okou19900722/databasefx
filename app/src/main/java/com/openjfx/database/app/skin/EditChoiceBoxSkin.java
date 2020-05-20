@@ -38,10 +38,16 @@ public class EditChoiceBoxSkin<T> extends ChoiceBoxSkin<T> {
             var item = control.getItems().get(index);
             textField.setText(item.toString());
         });
-        //openButton click synchronized text to control
-        openButton.setOnMouseClicked(e -> control.setText(textField.getText()));
+
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             control.setText(newValue);
+        });
+        //listener control text property change
+        control.textProperty().addListener((observable, oldValue, newValue) -> {
+            var text = textField.getText();
+            if (!text.equals(newValue)) {
+                textField.setText(newValue);
+            }
         });
     }
 }

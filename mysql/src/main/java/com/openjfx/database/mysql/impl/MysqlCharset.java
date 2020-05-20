@@ -55,4 +55,19 @@ public class MysqlCharset implements DataCharset {
     public List<String> getCharset() {
         return CHARSETS.stream().map(DatabaseCharsetModel::getCharset).collect(Collectors.toList());
     }
+
+    @Override
+    public boolean number(String charset) {
+        return false;
+    }
+
+    @Override
+    public boolean string(String charset) {
+        return false;
+    }
+
+    @Override
+    public boolean datetime(String charset) {
+        return false;
+    }
 }

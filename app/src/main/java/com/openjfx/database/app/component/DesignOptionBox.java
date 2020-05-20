@@ -2,7 +2,6 @@ package com.openjfx.database.app.component;
 
 import com.openjfx.database.DataCharset;
 import com.openjfx.database.app.controls.EditChoiceBox;
-import com.openjfx.database.model.DatabaseCharsetModel;
 import io.vertx.core.json.JsonObject;
 import javafx.collections.FXCollections;
 import javafx.scene.control.CheckBox;
@@ -13,76 +12,37 @@ import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
 
 public class DesignOptionBox extends VBox {
 
-    public enum FieldDataType {
-        /**
-         * data type is string
-         */
-        STRING,
-        /**
-         * data type is number
-         */
-        NUMBER,
-        /**
-         * data type is date-time
-         */
-        DATETIME,
-        /**
-         * data type is binary
-         */
-        BINARY
-    }
+    private final EditChoiceBox<String> defaultBox = new EditChoiceBox<>();
+    private final EditChoiceBox<String> charsetBox = new EditChoiceBox<>();
+    private final EditChoiceBox<String> collationBox = new EditChoiceBox<>();
+    private final CheckBox checkBox = new CheckBox();
+    private final CheckBox incrementCheck = new CheckBox();
 
-    private JsonObject json;
+    private final JsonObject json;
     /**
      * database source
      */
     private final DataCharset dataCharset = DATABASE_SOURCE.getCharset();
 
-    public DesignOptionBox(final JsonObject cc, final FieldDataType type) {
+    public DesignOptionBox(final JsonObject cc) {
         this.json = cc;
-        if (type == FieldDataType.STRING) {
-            buildString();
-        }
-        if (type == FieldDataType.NUMBER) {
-            buildNumber();
-        }
-        if (type == FieldDataType.BINARY) {
-            buildBinary();
-        }
-        if (type == FieldDataType.DATETIME) {
-            buildDateTime();
-        }
 
-        getStyleClass().add("design-table-option");
-    }
-
-    private void buildString() {
-
-        var grid = new GridPane();
-        var defaultLabel = new Label("默认值:");
-        var choiceBox = new EditChoiceBox<String>();
-        var charsetLabel = new Label("字符集:");
-        var charsetBox = new EditChoiceBox<String>();
-        var collationLabel = new Label("排序规则:");
-        var collationBox = new EditChoiceBox<String>();
-        var checkBox = new CheckBox();
-        var binaryLabel = new Label("二进制");
-        var hBox = new HBox();
-        hBox.setSpacing(10);
-        hBox.getChildren().addAll(checkBox, binaryLabel);
-
-
-        grid.addRow(0, defaultLabel, choiceBox);
-        grid.addRow(1, charsetLabel, charsetBox);
-        grid.addRow(2, collationLabel, collationBox);
-        grid.addRow(3, hBox);
+        Label autoIncrement = new Label("自增");
+        GridPane grid = new GridPane();
+        grid.addRow(0, autoIncrement, incrementCheck);
+        Label defaultLabel = new Label("默认值:");
+        grid.addRow(1, defaultLabel, defaultBox);
+        Label charsetLabel = new Label("字符集:");
+        grid.addRow(2, charsetLabel, charsetBox);
+        Label collationLabel = new Label("排序规则:");
+        grid.addRow(3, collationLabel, collationBox);
 
         grid.setHgap(10);
         grid.setVgap(10);
         grid.getRowConstraints().add(new RowConstraints());
         grid.getColumnConstraints().add(new ColumnConstraints());
 
-        choiceBox.getItems().addAll("", "EMPTY STRINGING");
+        defaultBox.getItems().addAll("", "EMPTY STRINGING");
 
         charsetBox.getItems().addAll(dataCharset.getCharset());
 
@@ -104,17 +64,35 @@ public class DesignOptionBox extends VBox {
         });
 
         this.getChildren().add(grid);
+        initValue();
+
+        getStyleClass().add("design-table-option");
     }
 
-    private void buildNumber() {
-
+    private void initValue() {
+        if (json == null) {
+            return;
+        }
+        System.out.println(json);
+        var autoIncrement = json.getBoolean("autoIncrement", false);
+        var defaultValue = json.getString("defaultValue", "");
+        var charset = json.getString("charset", "");
+        var collation = json.getString("collation", "");
+        this.charsetBox.setText(charset);
+        this.collationBox.setText(collation);
+        this.incrementCheck.setSelected(autoIncrement);
+        this.defaultBox.setText(defaultValue);
     }
 
-    private void buildDateTime() {
+    public JsonObject getJsonResult() {
+        var json = new JsonObject();
 
+        json.put("autoIncrement", incrementCheck.isSelected());
+        json.put("defaultValue", defaultBox.getText());
+        json.put("charset", charsetBox.getText());
+        json.put("collation", collationBox.getText());
+
+        return json;
     }
 
-    private void buildBinary() {
-
-    }
 }

@@ -4,7 +4,6 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
 
 
 <?import java.net.URL?>
@@ -24,7 +23,7 @@
     </stylesheets>
     <top>
         <HBox BorderPane.alignment="CENTER" styleClass="top-box" fx:id="topBox">
-            <Button text="保存" userData="all_0">
+            <Button text="保存" userData="0_0">
                 <graphic>
                     <ImageView>
                         <Image url="@/assets/images/design_save_icon.png" requestedHeight="18" requestedWidth="18"
@@ -200,7 +199,6 @@
                 <Tab text="SQL预览">
                     <SQLEditor/>
                 </Tab>
-
             </TabPane>
         </SplitPane>
     </center>

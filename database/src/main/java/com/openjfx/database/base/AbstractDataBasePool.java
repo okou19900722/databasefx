@@ -8,15 +8,13 @@ import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.SqlConnection;
 
 /**
- * 封装数据库管理连接池
+ * Encapsulate database management connection pool
  *
  * @author yangkui
  * @since 1.0
  */
 public class AbstractDataBasePool {
-    /*********************************
-     *          数据库语言             *
-     *********************************/
+    //database language
     protected DDL ddl;
     protected DCL dcl;
     protected DML dml;

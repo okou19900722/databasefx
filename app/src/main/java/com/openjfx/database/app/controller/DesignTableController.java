@@ -1,36 +1,24 @@
 package com.openjfx.database.app.controller;
 
-import com.fasterxml.jackson.databind.deser.impl.PropertyValue;
-import com.openjfx.database.DDL;
-import com.openjfx.database.DQL;
 import com.openjfx.database.app.BaseController;
 import com.openjfx.database.app.component.DesignOptionBox;
+import com.openjfx.database.app.config.Constants;
 import com.openjfx.database.app.controls.DesignTableView;
 import com.openjfx.database.app.model.DesignTableModel;
-import com.openjfx.database.app.utils.DialogUtils;
-import com.openjfx.database.model.TableColumnMeta;
-import io.vertx.core.Future;
+import com.openjfx.database.base.AbstractDataBasePool;
 import io.vertx.core.json.JsonObject;
-import javafx.beans.property.Property;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
-import javafx.util.Callback;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
-import static com.openjfx.database.app.config.Constants.*;
 
 /**
  * 设计表控制器
@@ -52,11 +40,14 @@ public class DesignTableController extends BaseController<JsonObject> {
     @FXML
     private SplitPane splitPane;
 
+    private AbstractDataBasePool pool;
+
     private final List<Button> actionList = new ArrayList<>();
 
     @Override
     public void init() {
         intiTable(fieldTable, DesignTableModel.class);
+        initDataTable();
         for (Tab tab : tabPane.getTabs()) {
             tab.setClosable(false);
         }
@@ -81,21 +72,20 @@ public class DesignTableController extends BaseController<JsonObject> {
             //unbind last listener
             if (oIndex != -1) {
                 var oItem = fieldTable.getItems().get(oIndex);
-                oItem.charsetProperty().unbind();
+                var item = (DesignOptionBox) splitPane.getItems().get(1);
+                oItem.setJson(item.getJsonResult());
             }
             if (index == -1) {
                 return;
             }
             var item = fieldTable.getItems().get(index);
 
-            item.charsetProperty().addListener((observable1, oldCharset, newCharset) -> {
-                var box = new DesignOptionBox(null, DesignOptionBox.FieldDataType.STRING);
-                var items = splitPane.getItems();
-                if (items.size() > 1) {
-                    items.remove(1);
-                }
-                items.add(box);
-            });
+            var box = new DesignOptionBox(item.getJson());
+            var items = splitPane.getItems();
+            if (items.size() > 1) {
+                items.remove(1);
+            }
+            items.add(box);
         });
     }
 
@@ -132,7 +122,30 @@ public class DesignTableController extends BaseController<JsonObject> {
         }
     }
 
+    private void initDataTable() {
+
+        var uuid = data.getString(Constants.UUID);
+        var tableName = data.getString(Constants.TABLE_NAME, "");
+        if ("".equals(tableName)) {
+            return;
+        }
+        pool = DATABASE_SOURCE.getDataBaseSource(uuid);
+        var future = pool.getDql().showColumns(tableName);
+        future.onSuccess(rs -> {
+            var list = DesignTableModel.build(rs);
+            Platform.runLater(() -> fieldTable.setItems(FXCollections.observableList(list)));
+        });
+        future.onFailure(Throwable::printStackTrace);
+    }
+
     private void listAction(final String ij) {
+        //save
+        if ("0_0".equals(ij)) {
+            for (DesignTableModel item : fieldTable.getItems()) {
+                System.out.println(item);
+            }
+        }
+        //new create  row
         if ("0_1".equals(ij)) {
             var model = new DesignTableModel();
             var items = fieldTable.getItems();

@@ -19,6 +19,12 @@ public class EditChoiceBox<T> extends ChoiceBox<T> {
      */
     private final StringProperty text = new SimpleStringProperty("");
 
+    private final static String DEFAULT_STYLE_CLASS = "edit-choice-box";
+
+    public EditChoiceBox() {
+        getStyleClass().add(DEFAULT_STYLE_CLASS);
+    }
+
     @Override
     protected Skin<?> createDefaultSkin() {
         return new EditChoiceBoxSkin<>(this);
