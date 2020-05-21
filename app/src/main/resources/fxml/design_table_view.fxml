@@ -15,6 +15,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
+<?import com.openjfx.database.app.component.DesignOptionBox?>
 <BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.openjfx.database.app.controller.DesignTableController">
     <stylesheets>
@@ -139,7 +140,7 @@
         </HBox>
     </top>
     <center>
-        <SplitPane dividerPositions="0.7" orientation="VERTICAL" BorderPane.alignment="CENTER" fx:id="splitPane">
+        <SplitPane dividerPositions="0.8" orientation="VERTICAL" BorderPane.alignment="CENTER" fx:id="splitPane">
             <TabPane fx:id="tabPane">
                 <Tab text="字段">
                     <DesignTableView fx:id="fieldTable">
@@ -200,6 +201,7 @@
                     <SQLEditor/>
                 </Tab>
             </TabPane>
+            <DesignOptionBox fx:id="box"/>
         </SplitPane>
     </center>
 </BorderPane>

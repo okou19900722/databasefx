@@ -1,5 +1,7 @@
 package com.openjfx.database;
 
+import com.openjfx.database.model.TableColumnMeta;
+
 import java.util.List;
 
 /**
@@ -13,4 +15,20 @@ public interface DataType {
      * @return return data type list
      */
     List<String> getDataTypeList();
+
+    /**
+     * according by {@link TableColumnMeta#getType()} get data type
+     *
+     * @param type data type
+     * @return return type string
+     */
+    String getDataType(final String type);
+
+    /**
+     * according by {@link TableColumnMeta#getType()} get data length
+     *
+     * @param type data type
+     * @return return data type
+     */
+    int getDataTypeLength(final String type);
 }

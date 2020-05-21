@@ -17,15 +17,12 @@ public class DesignOptionBox extends VBox {
     private final EditChoiceBox<String> collationBox = new EditChoiceBox<>();
     private final CheckBox incrementCheck = new CheckBox();
 
-    private final JsonObject json;
     /**
      * database source
      */
     private final DataCharset dataCharset = DATABASE_SOURCE.getCharset();
 
-    public DesignOptionBox(final JsonObject cc) {
-        this.json = cc;
-
+    public DesignOptionBox() {
         Label autoIncrement = new Label("自增");
         GridPane grid = new GridPane();
         grid.addRow(0, autoIncrement, incrementCheck);
@@ -63,16 +60,14 @@ public class DesignOptionBox extends VBox {
         });
 
         this.getChildren().add(grid);
-        initValue();
 
         getStyleClass().add("design-table-option");
     }
 
-    private void initValue() {
+    public void updateValue(JsonObject json) {
         if (json == null) {
             return;
         }
-        System.out.println(json);
         var autoIncrement = json.getBoolean("autoIncrement", false);
         var defaultValue = json.getString("defaultValue", "");
         var charset = json.getString("charset", "");

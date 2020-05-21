@@ -1,12 +1,9 @@
 package com.openjfx.database.app.skin;
 
 import com.openjfx.database.app.controls.EditChoiceBox;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.skin.ChoiceBoxSkin;
-import javafx.scene.layout.StackPane;
 
 /**
  * simple impl edit choice-box skin
@@ -22,7 +19,6 @@ public class EditChoiceBoxSkin<T> extends ChoiceBoxSkin<T> {
     public EditChoiceBoxSkin(EditChoiceBox<T> control) {
         super(control);
         var label = (Label) getChildren().get(0);
-        var openButton = (StackPane) getChildren().get(1);
         label.setGraphic(textField);
         label.setGraphicTextGap(0);
         //forbid text show in label
@@ -39,12 +35,16 @@ public class EditChoiceBoxSkin<T> extends ChoiceBoxSkin<T> {
             textField.setText(item.toString());
         });
 
-        textField.textProperty().addListener((observable, oldValue, newValue) -> {
-            control.setText(newValue);
-        });
+//        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+//            control.setText(newValue);
+//        });
         //listener control text property change
         control.textProperty().addListener((observable, oldValue, newValue) -> {
             var text = textField.getText();
+            if (newValue == null) {
+                textField.setText("");
+                return;
+            }
             if (!text.equals(newValue)) {
                 textField.setText(newValue);
             }

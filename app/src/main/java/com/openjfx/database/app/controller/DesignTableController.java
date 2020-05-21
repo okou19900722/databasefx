@@ -40,9 +40,13 @@ public class DesignTableController extends BaseController<JsonObject> {
     @FXML
     private SplitPane splitPane;
 
+    @FXML
+    private DesignOptionBox box;
+
     private AbstractDataBasePool pool;
 
     private final List<Button> actionList = new ArrayList<>();
+
 
     @Override
     public void init() {
@@ -79,13 +83,16 @@ public class DesignTableController extends BaseController<JsonObject> {
                 return;
             }
             var item = fieldTable.getItems().get(index);
+            box.updateValue(item.getJson());
+        });
 
-            var box = new DesignOptionBox(item.getJson());
-            var items = splitPane.getItems();
-            if (items.size() > 1) {
-                items.remove(1);
+        stage.widthProperty().addListener((observable, oldValue, newValue) -> {
+            var t = 800;
+            var position = 0.7;
+            if (newValue.doubleValue() > t) {
+                position = 0.8;
             }
-            items.add(box);
+            splitPane.setDividerPosition(0, position);
         });
     }
 
@@ -123,7 +130,6 @@ public class DesignTableController extends BaseController<JsonObject> {
     }
 
     private void initDataTable() {
-
         var uuid = data.getString(Constants.UUID);
         var tableName = data.getString(Constants.TABLE_NAME, "");
         if ("".equals(tableName)) {

@@ -140,19 +140,18 @@ public class DesignTableModel {
         model.getNullable().setSelected("NO".equals(meta.getNull()));
         model.getMark().setText(meta.getComment());
         model.getKey().setSelected("PRI".equals(meta.getKey()));
-        var type = meta.getType();
 
-        var index = type.indexOf("(");
-        if (index != -1) {
-            var tt = type.substring(0, index);
-            var length = type.substring(index + 1, type.length() - 1);
-            model.getFieldType().setText(tt);
-            model.getFieldLength().setText(length);
-        }
+        var type = meta.getType();
+        var charset = DATABASE_SOURCE.getCharset();
+        var dataType = DATABASE_SOURCE.getDataType();
+        model.getFieldType().setText(dataType.getDataType(type));
+        model.getFieldLength().setText(Integer.valueOf(dataType.getDataTypeLength(type)).toString());
+
         var json = new JsonObject();
         json.put("defaultValue", meta.getDefault());
         json.put("collation", meta.getCollation());
-        json.put("charset", meta.getPrivileges());
+        json.put("charset", charset.getCharset(meta.getCollation()));
+        json.put("autoIncrement", meta.getExtra().contains("auto_increment"));
         model.setJson(json);
         return model;
     }

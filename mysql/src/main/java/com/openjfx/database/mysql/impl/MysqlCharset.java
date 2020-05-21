@@ -32,13 +32,13 @@ public class MysqlCharset implements DataCharset {
     }
 
     @Override
-    public int getCharsetLength(String charset) {
-        return 0;
-    }
-
-    @Override
-    public List<DatabaseCharsetModel> getDatabaseCharset() {
-        return CHARSETS;
+    public String getCharset(String collation) {
+        var optional = CHARSETS.stream().filter(m -> m.getCollations().contains(collation)).findAny();
+        if (optional.isEmpty()) {
+            return "";
+        } else {
+            return optional.get().getCharset();
+        }
     }
 
     @Override
@@ -54,20 +54,5 @@ public class MysqlCharset implements DataCharset {
     @Override
     public List<String> getCharset() {
         return CHARSETS.stream().map(DatabaseCharsetModel::getCharset).collect(Collectors.toList());
-    }
-
-    @Override
-    public boolean number(String charset) {
-        return false;
-    }
-
-    @Override
-    public boolean string(String charset) {
-        return false;
-    }
-
-    @Override
-    public boolean datetime(String charset) {
-        return false;
     }
 }

@@ -28,6 +28,26 @@ public class MysqlDataType implements DataType {
     }
 
     @Override
+    public String getDataType(String type) {
+        var index = type.indexOf("(");
+        var tty = type;
+        if (index != -1) {
+            tty = type.substring(0, index);
+        }
+        return tty;
+    }
+
+    @Override
+    public int getDataTypeLength(String type) {
+        var index = type.indexOf("(");
+        var length = "0";
+        if (index != -1) {
+            length = type.substring(index + 1, type.length() - 1);
+        }
+        return Integer.parseInt(length);
+    }
+
+    @Override
     public List<String> getDataTypeList() {
         return DATA_TYPE;
     }
