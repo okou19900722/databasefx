@@ -1,7 +1,7 @@
 package com.openjfx.database.app.controls;
 
 import com.jfoenix.controls.JFXButton;
-import com.openjfx.database.DataTypeHelper;
+import com.openjfx.database.DataType;
 import com.openjfx.database.common.Handler;
 import com.openjfx.database.model.TableColumnMeta;
 import javafx.beans.property.StringProperty;
@@ -16,6 +16,7 @@ import javafx.scene.layout.Priority;
 
 import java.util.function.UnaryOperator;
 
+import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
 import static com.openjfx.database.app.utils.AssetUtils.*;
 import static com.openjfx.database.common.config.StringConstants.NULL;
 
@@ -33,23 +34,7 @@ public class TableTextField extends HBox {
 
     private final StringProperty text = textField.textProperty();
 
-    private final InputType inputType;
-
-    private enum InputType {
-        /**
-         * String
-         */
-        STRING,
-        /**
-         * number
-         */
-        NUMBER,
-        /**
-         * datetime
-         */
-        DATETIME
-    }
-
+    private final DataType.DataTypeEnum inputType;
 
     public TableTextField(final String text, final TableColumnMeta meta) {
         final var extension = new JFXButton();
@@ -57,12 +42,15 @@ public class TableTextField extends HBox {
         HBox.setHgrow(textField, Priority.ALWAYS);
         getChildren().addAll(textField, extension);
 
-        if (DataTypeHelper.dateTime(meta.getType())) {
-            inputType = InputType.DATETIME;
-        } else if (DataTypeHelper.number(meta.getType())) {
-            inputType = InputType.NUMBER;
+        var dataType = DATABASE_SOURCE.getDataType();
+        var type = dataType.getDataType(meta.getType());
+
+        if (dataType.isCategory(type, DataType.DataTypeEnum.DATETIME)) {
+            inputType = DataType.DataTypeEnum.DATETIME;
+        } else if (dataType.isCategory(type, DataType.DataTypeEnum.NUMBER)) {
+            inputType = DataType.DataTypeEnum.NUMBER;
         } else {
-            inputType = InputType.STRING;
+            inputType = DataType.DataTypeEnum.STRING;
         }
 
         extension.setGraphic(new ImageView(EXTENSION_ICON));
@@ -135,10 +123,10 @@ public class TableTextField extends HBox {
     private void registerFormatter(final TextInputControl control) {
         final var dateTimeFormat = new TextFormatter<>(dateTimeFilter);
         final var numberFormatter = new TextFormatter<>(numberFilter);
-        if (inputType == InputType.NUMBER) {
+        if (inputType == DataType.DataTypeEnum.NUMBER) {
             control.setTextFormatter(numberFormatter);
         }
-        if (inputType == InputType.DATETIME) {
+        if (inputType == DataType.DataTypeEnum.DATETIME) {
             control.setTextFormatter(dateTimeFormat);
         }
     }
