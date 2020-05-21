@@ -12,19 +12,12 @@ import java.util.List;
  */
 public interface DataCharset {
     /**
-     * obtain give charset length
+     * according by collation get relation charset
      *
-     * @param charset give charset
-     * @return return charset length
+     * @param collation collation
+     * @return return charset
      */
-    int getCharsetLength(String charset);
-
-    /**
-     * obtain current database support charset
-     *
-     * @return return charset list
-     */
-    List<DatabaseCharsetModel> getDatabaseCharset();
+    String getCharset(final String collation);
 
     /**
      * by charset name get relation collation list
@@ -40,28 +33,4 @@ public interface DataCharset {
      * @return return charset list
      */
     List<String> getCharset();
-
-    /**
-     * Determine whether the current type is a numeric type
-     *
-     * @param charset target charset
-     * @return is number?
-     */
-    boolean number(final String charset);
-
-    /**
-     * Determine whether the current type is string type
-     *
-     * @param charset target charset
-     * @return is string?
-     */
-    boolean string(final String charset);
-
-    /**
-     * Determine whether the current type is time type
-     *
-     * @param charset target charset
-     * @return is time type？
-     */
-    boolean datetime(final String charset);
 }
