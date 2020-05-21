@@ -2,9 +2,13 @@ package com.openjfx.database.mysql.impl;
 
 import com.openjfx.database.DataType;
 import com.openjfx.database.common.VertexUtils;
+import com.openjfx.database.model.DataTypeModel;
+import io.vertx.core.json.JsonObject;
 
+import javax.print.DocFlavor;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * mysql data type
@@ -14,7 +18,7 @@ import java.util.List;
  */
 public class MysqlDataType implements DataType {
 
-    private final static List<String> DATA_TYPE = new ArrayList<>();
+    private final static List<DataTypeModel> DATA_TYPE = new ArrayList<>();
 
     static {
         var fs = VertexUtils.getFileSystem();
@@ -22,8 +26,9 @@ public class MysqlDataType implements DataType {
         var array = buffer.toJsonArray();
         //order by charset name first letter
         for (Object o : array) {
-            var type = (String) o;
-            DATA_TYPE.add(type);
+            var type = (JsonObject) o;
+            var model = type.mapTo(DataTypeModel.class);
+            DATA_TYPE.add(model);
         }
     }
 
@@ -48,7 +53,21 @@ public class MysqlDataType implements DataType {
     }
 
     @Override
+    public boolean isCategory(String typeName, DataTypeEnum dataTypeEnum) {
+        boolean result = false;
+        var _typeName = typeName.toUpperCase();
+        var optional = DATA_TYPE.stream()
+                .filter(dataTypeModel -> dataTypeModel.getTypeName().equals(_typeName)).findAny();
+        if (optional.isPresent()) {
+            var dataTypeModel = optional.get();
+            var category = dataTypeModel.getCategory();
+            result = category.equals(dataTypeEnum.toString());
+        }
+        return result;
+    }
+
+    @Override
     public List<String> getDataTypeList() {
-        return DATA_TYPE;
+        return DATA_TYPE.stream().map(DataTypeModel::getTypeName).collect(Collectors.toList());
     }
 }

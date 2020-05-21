@@ -1,30 +1,106 @@
 [
-  "TINYINT",
-  "SMALLINT",
-  "MEDIUMINT",
-  "INT",
-  "BIGINT",
-  "FLOAT",
-  "DOUBLE",
-  "DECIMAL",
-  "YEAR",
-  "TIME",
-  "DATE",
-  "DATETIME",
-  "TIMESTAMP",
-  "CHAR",
-  "VARCHAR",
-  "BINARY",
-  "VARBINARY",
-  "BLOB",
-  "TEXT",
-  "ENUM",
-  "SET",
-  "BIT",
-  "BINARY",
-  "VARBINARY",
-  "TINYBLOB",
-  "BLOB",
-  "MEDIUMBLOB",
-  "LONGBLOB"
+  {
+    "typeName": "TINYINT",
+    "category": "NUMBER"
+  },
+  {
+    "typeName": "SMALLINT",
+    "category": "NUMBER"
+  },
+  {
+    "typeName": "MEDIUMINT",
+    "category": "NUMBER"
+  },
+  {
+    "typeName": "INT",
+    "category": "NUMBER"
+  },
+  {
+    "typeName": "BIGINT",
+    "category": "NUMBER"
+  },
+  {
+    "typeName": "FLOAT",
+    "category": "NUMBER"
+  },
+  {
+    "typeName": "DOUBLE",
+    "category": "NUMBER"
+  },
+  {
+    "typeName": "DECIMAL",
+    "category": "NUMBER"
+  },
+  {
+    "typeName": "YEAR",
+    "category": "DATETIME"
+  },
+  {
+    "typeName": "TIME",
+    "category": "DATETIME"
+  },
+  {
+    "typeName": "DATE",
+    "category": "DATETIME"
+  },
+  {
+    "typeName": "DATETIME",
+    "category": "DATETIME"
+  },
+  {
+    "typeName": "TIMESTAMP",
+    "category": "DATETIME"
+  },
+  {
+    "typeName": "CHAR",
+    "category": "STRING"
+  },
+  {
+    "typeName": "VARCHAR",
+    "category": "STRING"
+  },
+  {
+    "typeName": "BINARY",
+    "category": "STRING"
+  },
+  {
+    "typeName": "VARBINARY",
+    "category": "STRING"
+  },
+  {
+    "typeName": "TEXT",
+    "category": "STRING"
+  },
+  {
+    "typeName": "ENUM",
+    "category": "STRING"
+  },
+  {
+    "typeName": "SET",
+    "category": "STRING"
+  },
+  {
+    "typeName": "BIT",
+    "category": "STRING"
+  },
+  {
+    "typeName": "BINARY",
+    "category": "STRING"
+  },
+  {
+    "typeName": "VARBINARY",
+    "category": "STRING"
+  },
+  {
+    "typeName": "TINYBLOB",
+    "category": "STRING"
+  },
+  {
+    "typeName": "MEDIUMBLOB",
+    "category": "STRING"
+  },
+  {
+    "typeName": "LONGBLOB",
+    "category": "STRING"
+  }
 ]

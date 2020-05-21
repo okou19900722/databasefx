@@ -9,6 +9,12 @@ import java.util.List;
  * @since 1.0
  */
 public interface DataType {
+    enum DataTypeEnum {
+        NUMBER,
+        DATETIME,
+        STRING
+    }
+
     /**
      * obtain current database support data type
      *
@@ -31,4 +37,13 @@ public interface DataType {
      * @return return data type
      */
     int getDataTypeLength(final String type);
+
+    /**
+     * Judge whether a type is classified
+     *
+     * @param typeName     target type name
+     * @param dataTypeEnum target category
+     * @return If the input target classification returns true, otherwise it returns false
+     */
+    boolean isCategory(String typeName, DataTypeEnum dataTypeEnum);
 }

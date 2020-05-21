@@ -1,6 +1,6 @@
 package com.openjfx.database.app.controls;
 
-import com.openjfx.database.DataTypeHelper;
+import com.openjfx.database.DataType;
 import com.openjfx.database.app.skin.TableColumnTooltipSkin;
 import com.openjfx.database.model.TableColumnMeta;
 import javafx.beans.property.ObjectProperty;
@@ -15,6 +15,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 
+import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
 import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
 
 /**
@@ -79,12 +80,16 @@ public class TableDataColumn extends TableColumn<ObservableList<StringProperty>,
         final ImageView imageView;
         if (type == null) {
             imageView = new ImageView(UNKNOWN_ICON);
-        } else if (DataTypeHelper.dateTime(type)) {
-            imageView = new ImageView(TIME_ICON);
-        } else if (DataTypeHelper.number(type)) {
-            imageView = new ImageView(NUMBER_ICON);
         } else {
-            imageView = new ImageView(LETTER_ICON);
+            var dataType = DATABASE_SOURCE.getDataType();
+            var correctType = dataType.getDataType(type);
+            if (dataType.isCategory(correctType, DataType.DataTypeEnum.DATETIME)) {
+                imageView = new ImageView(TIME_ICON);
+            } else if (dataType.isCategory(correctType, DataType.DataTypeEnum.STRING)) {
+                imageView = new ImageView(LETTER_ICON);
+            } else {
+                imageView = new ImageView(NUMBER_ICON);
+            }
         }
         label.setGraphic(imageView);
         setGraphic(label);
