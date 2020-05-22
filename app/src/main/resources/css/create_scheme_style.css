@@ -1,0 +1,18 @@
+.edit-choice-box {
+    -fx-pref-width: 300px;
+}
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: #F5F5F5;
+}
+
+.grid-pane {
+    -fx-padding: 10px;
+    -fx-background-color: #FFFFFF;
+}
+
+.bottom-box {
+    -fx-spacing: 10px;
+    -fx-padding: 5px 10px;
+    -fx-alignment: center-right;
+}

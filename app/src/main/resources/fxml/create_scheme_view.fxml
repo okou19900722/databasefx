@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tab?>
+<?import com.openjfx.database.app.controls.SQLEditor?>
+<?import javafx.scene.control.Label?>
+<?import com.openjfx.database.app.controls.EditChoiceBox?>
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.openjfx.database.app.controller.CreateSchemeController">
+    <stylesheets>
+        <URL value="@/css/create_scheme_style.css"/>
+    </stylesheets>
+    <center>
+        <TabPane fx:id="tabPane">
+            <Tab text="常规">
+                <GridPane hgap="20" vgap="20" styleClass="grid-pane">
+                    <Label text="数据库名:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <EditChoiceBox GridPane.rowIndex="0" GridPane.columnIndex="1" fx:id="schemeNameBox"/>
+                    <Label text="字符集:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <EditChoiceBox GridPane.rowIndex="1" GridPane.columnIndex="1" fx:id="charsetBox"/>
+                    <Label text="排序规则:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <EditChoiceBox GridPane.rowIndex="2" GridPane.columnIndex="1" fx:id="collationBox"/>
+                </GridPane>
+            </Tab>
+            <Tab text="预览">
+                <SQLEditor fx:id="sqlEditor"/>
+            </Tab>
+        </TabPane>
+    </center>
+    <bottom>
+        <HBox styleClass="bottom-box">
+            <Button text="确定" fx:id="create">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/assets/images/create_scheme_icon.png" requestedWidth="18" requestedHeight="18"
+                               smooth="true"/>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button text="取消" fx:id="cancel">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/assets/images/create_scheme_cancel_icon.png" requestedWidth="18" requestedHeight="18"
+                               smooth="true"/>
+                    </ImageView>
+                </graphic>
+            </Button>
+        </HBox>
+    </bottom>
+
+</BorderPane>

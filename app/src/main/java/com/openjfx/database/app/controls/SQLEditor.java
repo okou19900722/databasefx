@@ -49,7 +49,12 @@ public class SQLEditor extends CodeArea {
             "INNER",
             "LEFT",
             "RIGHT",
-            "LIMIT"
+            "LIMIT",
+            "CREATE",
+            "DATABASE",
+            "CHARACTER",
+            "SET",
+            "COLLATE"
     };
     /**
      * 小写关键字

@@ -42,9 +42,9 @@ public class TableTreeNode extends BaseTreeNode<String> {
         this.database = database;
 
         var params = new JsonObject();
-
         params.put(Constants.UUID, getUuid());
-        params.put(TABLE_NAME, database + "." + tableName);
+        params.put(SCHEME, database);
+        params.put(TABLE_NAME, tableName);
 
         setValue(tableName);
 

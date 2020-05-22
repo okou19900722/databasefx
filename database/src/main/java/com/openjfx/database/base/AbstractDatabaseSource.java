@@ -2,6 +2,7 @@ package com.openjfx.database.base;
 
 import com.openjfx.database.DataCharset;
 import com.openjfx.database.DataType;
+import com.openjfx.database.SQLGenerator;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.model.ConnectionParam;
 import org.apache.logging.log4j.LogManager;
@@ -34,6 +35,11 @@ public abstract class AbstractDatabaseSource {
      * current database support data type
      */
     protected DataType dataType;
+
+    /**
+     * current database local sql generator
+     */
+    protected SQLGenerator generator;
 
     /**
      * Get database connection pool according to UUID
@@ -112,5 +118,9 @@ public abstract class AbstractDatabaseSource {
 
     public DataType getDataType() {
         return dataType;
+    }
+
+    public SQLGenerator getGenerator() {
+        return generator;
     }
 }
