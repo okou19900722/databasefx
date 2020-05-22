@@ -1,6 +1,7 @@
 package com.openjfx.database;
 
 import com.openjfx.database.model.TableColumnMeta;
+import io.vertx.core.json.JsonObject;
 
 import java.util.List;
 import java.util.concurrent.Future;
@@ -48,29 +49,13 @@ public interface SQLGenerator {
      */
     String delete(List<TableColumnMeta> metas, String tableName);
 
-
     /**
-     * 生成类型
+     * current database create scheme
      *
-     * @author yangkui
-     * @since 1.0
+     * @param name      scheme name
+     * @param charset   scheme charset
+     * @param collation scheme charset collation
+     * @return create scheme sql
      */
-    enum GeneratorType {
-        /**
-         * SELECT
-         */
-        SELECT,
-        /**
-         * INSERT
-         */
-        INSERT,
-        /**
-         * UPDATE
-         */
-        UPDATE,
-        /**
-         * DELETE
-         */
-        DELETE,
-    }
+    String createScheme(String name, String charset, String collation);
 }

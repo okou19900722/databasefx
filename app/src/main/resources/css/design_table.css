@@ -1,10 +1,5 @@
-.root, .text-field, .choice-box, .check-box {
+.root, .text-field, .check-box {
     -fx-background-color: #ffffff;
-}
-
-.choice-box {
-    -fx-border-color: #afafaf;
-    -fx-border-width: 1px;
 }
 
 .table-view .table-column .table-cell {

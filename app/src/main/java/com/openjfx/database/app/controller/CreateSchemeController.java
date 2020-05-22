@@ -1,0 +1,92 @@
+package com.openjfx.database.app.controller;
+
+import com.openjfx.database.app.BaseController;
+import com.openjfx.database.app.DatabaseFX;
+import com.openjfx.database.app.controls.EditChoiceBox;
+import com.openjfx.database.app.controls.SQLEditor;
+import com.openjfx.database.app.utils.DialogUtils;
+import com.openjfx.database.common.VertexUtils;
+import com.openjfx.database.common.utils.StringUtils;
+import io.vertx.core.json.JsonObject;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.TabPane;
+
+import static com.openjfx.database.app.config.Constants.ACTION;
+import static com.openjfx.database.app.config.Constants.UUID;
+
+/**
+ * New database stage controller
+ *
+ * @author yangkui
+ * @since 1.0
+ */
+public class CreateSchemeController extends BaseController<String> {
+    @FXML
+    private TabPane tabPane;
+    @FXML
+    private SQLEditor sqlEditor;
+
+    @FXML
+    private EditChoiceBox<String> schemeNameBox;
+
+    @FXML
+    private EditChoiceBox<String> charsetBox;
+
+    @FXML
+    private EditChoiceBox<String> collationBox;
+
+    @FXML
+    private Button cancel;
+
+    @FXML
+    private Button create;
+
+    @Override
+    public void init() {
+        var databaseSource = DatabaseFX.DATABASE_SOURCE;
+        var databaseCharset = databaseSource.getCharset();
+        var charsetList = databaseCharset.getCharset();
+        charsetBox.setItems(FXCollections.observableList(charsetList));
+        //dynamic select collation
+        charsetBox.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (StringUtils.isEmpty(newValue)) {
+                return;
+            }
+            var collations = databaseCharset.getCharsetCollations(newValue);
+            collationBox.setItems(FXCollections.observableList(collations));
+        });
+        tabPane.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+            var index = newValue.intValue();
+            if (index == 0) {
+                return;
+            }
+            var generator = databaseSource.getGenerator();
+            var name = schemeNameBox.getText();
+            var charset = charsetBox.getText();
+            var collation = collationBox.getText();
+            var sql = generator.createScheme(name, charset, collation);
+            sqlEditor.setText(sql);
+        });
+
+        cancel.setOnAction(e -> stage.close());
+
+        create.setOnAction(e -> {
+            var pool = databaseSource.getDataBaseSource(data);
+            var sql = sqlEditor.getText();
+            var future = pool.getDql().executeSql(sql);
+            future.onSuccess(rs -> {
+                //event bus notify flush scheme list
+                var msg = new JsonObject();
+                msg.put(ACTION, DatabaseFxController.EventBusAction.FLUSH_SCHEME);
+                msg.put(UUID, data);
+                VertexUtils.send(DatabaseFxController.EVENT_ADDRESS, msg);
+                //close current stage
+                Platform.runLater(stage::close);
+            });
+            future.onFailure(t -> DialogUtils.showErrorDialog(t, "创建scheme失败"));
+        });
+    }
+}

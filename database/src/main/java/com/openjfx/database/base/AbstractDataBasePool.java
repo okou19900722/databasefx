@@ -20,8 +20,6 @@ public class AbstractDataBasePool {
     protected DML dml;
     protected DQL dql;
 
-    protected SQLGenerator generator;
-
     protected Pool pool;
 
     protected DataConvert dataConvert;
@@ -53,9 +51,6 @@ public class AbstractDataBasePool {
         pool.close();
     }
 
-    public SQLGenerator getGenerator() {
-        return generator;
-    }
 
     public DataConvert getDataConvert() {
         return dataConvert;

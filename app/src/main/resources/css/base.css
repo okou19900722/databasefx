@@ -116,3 +116,12 @@
     -fx-pref-width: 5px;
     -fx-background-color: #f5f5f5;
 }
+
+.edit-choice-box, .edit-choice-box .text-field {
+    -fx-background-color: #ffffff;
+}
+
+.edit-choice-box {
+    -fx-border-color: #afafaf;
+    -fx-border-width: 1px;
+}

@@ -15,12 +15,6 @@ import java.util.List;
  */
 public class SQLGeneratorImpl implements SQLGenerator {
 
-    private MySQLPool pool;
-
-    public SQLGeneratorImpl(MySQLPool pool) {
-        this.pool = pool;
-    }
-
     @Override
     public String select(List<TableColumnMeta> metas, String tableName) {
         StringBuilder sb = new StringBuilder("SELECT ");
@@ -85,5 +79,20 @@ public class SQLGeneratorImpl implements SQLGenerator {
     @Override
     public String delete(List<TableColumnMeta> metas, String tableName) {
         return "DROP TABLE " + tableName + ";";
+    }
+
+    @Override
+    public String createScheme(String name, String charset, String collation) {
+        if (StringUtils.isEmpty(name)) {
+            return "";
+        }
+        var sql = "CREATE DATABASE `" + name + "`";
+        if (StringUtils.nonEmpty(charset)) {
+            sql += " CHARACTER SET '" + charset + "'";
+        }
+        if (StringUtils.nonEmpty(collation)) {
+            sql += " COLLATE '" + collation + "'";
+        }
+        return sql;
     }
 }

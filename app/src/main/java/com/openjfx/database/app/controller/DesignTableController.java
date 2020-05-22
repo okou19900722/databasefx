@@ -94,6 +94,21 @@ public class DesignTableController extends BaseController<JsonObject> {
             }
             splitPane.setDividerPosition(0, position);
         });
+
+        //dynamic show/hide bottom DesignOptionBox
+        tabPane.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+            var index = newValue.intValue();
+            if (index == -1) {
+                return;
+            }
+            var items = splitPane.getItems();
+            if (index != 0 && items.size() > 1) {
+                items.remove(1);
+            }
+            if (index == 0 && items.size() == 1) {
+                items.add(box);
+            }
+        });
     }
 
     private <T> void intiTable(DesignTableView<T> tableView, Class<T> t) {
@@ -131,15 +146,23 @@ public class DesignTableController extends BaseController<JsonObject> {
 
     private void initDataTable() {
         var uuid = data.getString(Constants.UUID);
-        var tableName = data.getString(Constants.TABLE_NAME, "");
-        if ("".equals(tableName)) {
+        var scheme = data.getString(Constants.SCHEME);
+        var table = data.getString(Constants.TABLE_NAME, "");
+        if ("".equals(table)) {
             return;
         }
+        var tableName = scheme + "." + table;
         pool = DATABASE_SOURCE.getDataBaseSource(uuid);
         var future = pool.getDql().showColumns(tableName);
         future.onSuccess(rs -> {
             var list = DesignTableModel.build(rs);
-            Platform.runLater(() -> fieldTable.setItems(FXCollections.observableList(list)));
+            Platform.runLater(() -> {
+                fieldTable.setItems(FXCollections.observableList(list));
+                if (list.size() > 0) {
+                    //default select first row
+                    fieldTable.getSelectionModel().select(0);
+                }
+            });
         });
         future.onFailure(Throwable::printStackTrace);
     }

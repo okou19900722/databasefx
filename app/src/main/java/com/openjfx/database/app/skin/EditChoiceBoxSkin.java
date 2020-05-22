@@ -40,7 +40,6 @@ public class EditChoiceBoxSkin<T> extends ChoiceBoxSkin<T> {
             control.setText(newValue);
         });
         control.textProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("text property setting chang....");
             var text = textField.getText();
             if (newValue == null) {
                 textField.setText("");

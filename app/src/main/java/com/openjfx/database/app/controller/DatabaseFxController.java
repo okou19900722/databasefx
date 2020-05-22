@@ -271,9 +271,9 @@ public class DatabaseFxController extends BaseController {
                 Platform.runLater(() -> treeItemRoot.getChildren().add(node));
             });
         }
+        final var nodes = treeItemRoot.getChildren();
         //更新连接信息
         if (action == EventBusAction.UPDATE_CONNECTION) {
-            var nodes = treeItemRoot.getChildren();
             var optional = nodes.stream()
                     .map(db -> ((BaseTreeNode<String>) db)).filter(db -> db.getUuid().equals(uuid)).findAny();
             if (optional.isPresent()) {
@@ -282,16 +282,28 @@ public class DatabaseFxController extends BaseController {
                 optional1.ifPresent(node::setParam);
             }
         }
+        if (action == EventBusAction.FLUSH_SCHEME) {
+            var optional = nodes.stream().map(db -> (BaseTreeNode<String>) db)
+                    .filter(db -> db.getUuid().equals(uuid)).findAny();
+            if (optional.isPresent()) {
+                var item = optional.get();
+                item.flush();
+            }
+        }
     }
 
     enum EventBusAction {
         /**
-         * 新增连接
+         * add connection
          */
         ADD_CONNECTION,
         /**
-         * 更新连接信息
+         * update connection param
          */
-        UPDATE_CONNECTION
+        UPDATE_CONNECTION,
+        /**
+         * flush scheme
+         */
+        FLUSH_SCHEME
     }
 }

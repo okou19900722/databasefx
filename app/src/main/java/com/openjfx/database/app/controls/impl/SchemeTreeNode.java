@@ -4,6 +4,7 @@ package com.openjfx.database.app.controls.impl;
 import com.openjfx.database.app.controls.BaseTreeNode;
 import com.openjfx.database.app.component.MainTabPane;
 import com.openjfx.database.app.config.Constants;
+import com.openjfx.database.app.stage.DesignTableStage;
 import com.openjfx.database.app.stage.SQLEditStage;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.common.VertexUtils;
@@ -45,11 +46,11 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
         setValue(scheme);
 
 
-        var deleteMenu = new MenuItem("删除数据库");
-        var sqlEditor = new MenuItem("SQL编辑器");
+        final var deleteMenu = new MenuItem("删除数据库");
+        final var sqlEditor = new MenuItem("SQL编辑器");
+        final var createTable = new MenuItem("新建表");
 
-
-        addMenuItem(open, sqlEditor, deleteMenu);
+        addMenuItem(open, createTable, sqlEditor, deleteMenu);
 
         flush.setOnAction(e -> flush());
 
@@ -67,6 +68,14 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
                 });
                 future.onFailure(t -> DialogUtils.showErrorDialog(t, "删除schema失败"));
             }
+        });
+
+        //show create table stage
+        createTable.setOnAction(event -> {
+            var params = new JsonObject();
+            params.put(Constants.UUID, getUuid());
+            params.put(Constants.SCHEME, scheme);
+            new DesignTableStage(params);
         });
 
         //close scheme->close relative tab

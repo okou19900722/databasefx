@@ -5,6 +5,7 @@ import com.openjfx.database.app.config.DbPreference;
 
 import com.openjfx.database.app.component.MainTabPane;
 import com.openjfx.database.app.stage.CreateConnectionStage;
+import com.openjfx.database.app.stage.CreateSchemeStage;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.model.ConnectionParam;
@@ -29,6 +30,8 @@ public class DBTreeNode extends BaseTreeNode<String> {
 
     private final MenuItem loseConnect = new MenuItem("断开连接");
 
+    private final MenuItem createScheme = new MenuItem("新建数据库");
+
     private final MenuItem flush = new MenuItem("刷新连接");
 
     private final MenuItem openConnect = new MenuItem("打开连接");
@@ -48,6 +51,8 @@ public class DBTreeNode extends BaseTreeNode<String> {
 
         setValue(param.getName());
 
+        createScheme.setOnAction(event -> new CreateSchemeStage(getUuid()));
+
         flush.setOnAction((e) -> this.flush());
 
         editMenu.setOnAction(e -> new CreateConnectionStage(getUuid()));
@@ -60,6 +65,7 @@ public class DBTreeNode extends BaseTreeNode<String> {
             //dynamic remove MenuItem
             removeMenu(loseConnect);
             removeMenu(flush);
+            removeMenu(createScheme);
             addMenuItem(0, openConnect);
         });
 
@@ -101,6 +107,7 @@ public class DBTreeNode extends BaseTreeNode<String> {
             Platform.runLater(() -> {
                 //dynamic add MenuItem
                 addMenuItem(0, loseConnect);
+                addMenuItem(1, createScheme);
                 addMenuItem(flush);
                 removeMenu(openConnect);
                 if (!isExpanded()) {
