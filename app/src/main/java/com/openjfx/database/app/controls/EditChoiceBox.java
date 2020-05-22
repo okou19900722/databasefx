@@ -21,13 +21,16 @@ public class EditChoiceBox<T> extends ChoiceBox<T> {
 
     private final static String DEFAULT_STYLE_CLASS = "edit-choice-box";
 
+    private final EditChoiceBoxSkin<T> editChoiceBoxSkin;
+
     public EditChoiceBox() {
         getStyleClass().add(DEFAULT_STYLE_CLASS);
+        editChoiceBoxSkin = new EditChoiceBoxSkin<>(this);
     }
 
     @Override
     protected Skin<?> createDefaultSkin() {
-        return new EditChoiceBoxSkin<>(this);
+        return editChoiceBoxSkin;
     }
 
     public String getText() {

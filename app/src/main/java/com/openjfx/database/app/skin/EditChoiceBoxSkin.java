@@ -35,11 +35,12 @@ public class EditChoiceBoxSkin<T> extends ChoiceBoxSkin<T> {
             textField.setText(item.toString());
         });
 
-//        textField.textProperty().addListener((observable, oldValue, newValue) -> {
-//            control.setText(newValue);
-//        });
-        //listener control text property change
+        //listener TextField change
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            control.setText(newValue);
+        });
         control.textProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println("text property setting chang....");
             var text = textField.getText();
             if (newValue == null) {
                 textField.setText("");

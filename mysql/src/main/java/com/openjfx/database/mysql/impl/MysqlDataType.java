@@ -68,6 +68,8 @@ public class MysqlDataType implements DataType {
 
     @Override
     public List<String> getDataTypeList() {
-        return DATA_TYPE.stream().map(DataTypeModel::getTypeName).collect(Collectors.toList());
+        return DATA_TYPE.stream()
+                .map(DataTypeModel::getTypeName)
+                .map(String::toLowerCase).collect(Collectors.toList());
     }
 }
