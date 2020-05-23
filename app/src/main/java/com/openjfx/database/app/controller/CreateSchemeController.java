@@ -5,6 +5,7 @@ import com.openjfx.database.app.DatabaseFX;
 import com.openjfx.database.app.controls.EditChoiceBox;
 import com.openjfx.database.app.controls.SQLEditor;
 import com.openjfx.database.app.utils.DialogUtils;
+import com.openjfx.database.base.AbstractDatabaseSource;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.common.utils.StringUtils;
 import io.vertx.core.json.JsonObject;
@@ -63,19 +64,19 @@ public class CreateSchemeController extends BaseController<String> {
             if (index == 0) {
                 return;
             }
-            var generator = databaseSource.getGenerator();
-            var name = schemeNameBox.getText();
-            var charset = charsetBox.getText();
-            var collation = collationBox.getText();
-            var sql = generator.createScheme(name, charset, collation);
+            var sql = getSql(databaseSource);
             sqlEditor.setText(sql);
         });
 
         cancel.setOnAction(e -> stage.close());
 
         create.setOnAction(e -> {
+            var sql = getSql(databaseSource);
+            if (StringUtils.isEmpty(sql)) {
+                stage.close();
+                return;
+            }
             var pool = databaseSource.getDataBaseSource(data);
-            var sql = sqlEditor.getText();
             var future = pool.getDql().executeSql(sql);
             future.onSuccess(rs -> {
                 //event bus notify flush scheme list
@@ -89,4 +90,13 @@ public class CreateSchemeController extends BaseController<String> {
             future.onFailure(t -> DialogUtils.showErrorDialog(t, "创建scheme失败"));
         });
     }
+
+    private String getSql(AbstractDatabaseSource databaseSource) {
+        var generator = databaseSource.getGenerator();
+        var name = schemeNameBox.getText();
+        var charset = charsetBox.getText();
+        var collation = collationBox.getText();
+        return generator.createScheme(name, charset, collation);
+    }
+
 }
