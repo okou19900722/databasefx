@@ -3,6 +3,7 @@ package com.openjfx.database.mysql.impl;
 import com.openjfx.database.DML;
 import com.openjfx.database.common.utils.StringUtils;
 import com.openjfx.database.model.TableColumnMeta;
+import com.openjfx.database.mysql.SQLHelper;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.mysqlclient.MySQLClient;
@@ -30,48 +31,17 @@ public class DMLImpl implements DML {
         this.client = client;
     }
 
-    @Override
-    public Future<Integer> update(Map<String, String> fields, String tableName, String key, String keyValue) {
-        StringBuilder sb = new StringBuilder("UPDATE ");
-        sb.append(tableName);
-        sb.append(" SET ");
-        Tuple tuple = Tuple.tuple();
-        int i = 0;
-        for (Map.Entry<String, String> entry : fields.entrySet()) {
-            sb.append(entry.getKey());
-            sb.append("=");
-            sb.append("?");
-            if (i != fields.size() - 1) {
-                sb.append(",");
-            }
-            tuple.addValue(entry.getValue());
-            i++;
-        }
-        sb.append(" WHERE ");
-        sb.append(key);
-        sb.append("=?");
-        tuple.addValue(keyValue);
-        String sql = sb.toString();
-        Promise<Integer> promise = Promise.promise();
-
-        client.preparedQuery(sql, tuple).onSuccess(rows -> {
-            promise.complete(1);
-        }).onFailure(promise::fail);
-        return promise.future();
-    }
 
     @Override
     public Future<Integer> batchUpdate(List<Map<String, Object[]>> items, String tableName, List<TableColumnMeta> metas) {
-        Optional<TableColumnMeta> optional = metas.stream()
-                .filter(col -> StringUtils.nonEmpty(col.getKey()))
-                .findFirst();
-        Promise<Integer> promise = Promise.promise();
+        var optional = metas.stream().filter(col -> StringUtils.nonEmpty(col.getKey())).findFirst();
+        var promise = Promise.<Integer>promise();
         if (optional.isEmpty()) {
             promise.fail("无法找到key值,故取消更新");
         } else {
-            TableColumnMeta keyMeta = optional.get();
-            String sql = getUpdateSQL(metas, keyMeta, tableName);
-            List<Tuple> tuples = new ArrayList<>();
+            var keyMeta = optional.get();
+            var sql = updateSql(metas, keyMeta, tableName);
+            var tuples = new ArrayList<Tuple>();
             for (Map<String, Object[]> item : items) {
                 Object[] t = item.get(ROW);
                 Object[] tt = toConvertData(t);
@@ -93,11 +63,12 @@ public class DMLImpl implements DML {
 
     @Override
     public Future<Long> insert(List<TableColumnMeta> metas, Object[] columns, String tableName) {
-        String sql = getInsertSQL(metas, tableName);
 
-        Promise<Long> promise = Promise.promise();
+        var sql = insertSql(metas, tableName);
 
-        Tuple tuple = Tuple.wrap(Arrays.asList(columns));
+        var promise = Promise.<Long>promise();
+
+        var tuple = Tuple.wrap(Arrays.asList(columns));
 
         client.preparedQuery(sql, tuple).onSuccess(rows -> {
             Long lastInsertId = rows.property(MySQLClient.LAST_INSERTED_ID);
@@ -108,9 +79,8 @@ public class DMLImpl implements DML {
 
     @Override
     public Future<Object> batchInsert(List<TableColumnMeta> metas, List<Object[]> rows, String tableName) {
-        String sql = getInsertSQL(metas, tableName);
-
-        List<Tuple> tuples = new ArrayList<>();
+        var sql = insertSql(metas, tableName);
+        var tuples = new ArrayList<Tuple>();
 
         for (Object[] column : rows) {
             Object[] obj = toConvertData(column);
@@ -131,7 +101,8 @@ public class DMLImpl implements DML {
     }
 
 
-    private String getInsertSQL(List<TableColumnMeta> metas, String tableName) {
+    private String insertSql(List<TableColumnMeta> metas, String table) {
+        var tableName = SQLHelper.escapeTableName(table);
         StringBuilder sb = new StringBuilder("INSERT INTO ");
         StringBuilder vs = new StringBuilder();
         sb.append(tableName);
@@ -152,7 +123,8 @@ public class DMLImpl implements DML {
         return sb.toString();
     }
 
-    public String getUpdateSQL(List<TableColumnMeta> metas, TableColumnMeta keyMeta, String tableName) {
+    public String updateSql(List<TableColumnMeta> metas, TableColumnMeta keyMeta, String table) {
+        var tableName = SQLHelper.escapeTableName(table);
         StringBuilder sb = new StringBuilder("UPDATE ");
         sb.append(tableName);
         sb.append(" SET ");
@@ -181,8 +153,9 @@ public class DMLImpl implements DML {
     }
 
     @Override
-    public Future<Integer> batchDelete(TableColumnMeta keyMeta, Object[] keyValues, String tableName) {
+    public Future<Integer> batchDelete(TableColumnMeta keyMeta, Object[] keyValues, String table) {
         var sb = new StringBuilder();
+        var tableName = SQLHelper.escapeTableName(table);
         sb.append("DELETE FROM ");
         sb.append(tableName);
         sb.append(" WHERE ");
@@ -215,11 +188,11 @@ public class DMLImpl implements DML {
     }
 
     /**
-     * 获取自增字段
+     * Get auto increment field
      */
     @Override
     public Optional<TableColumnMeta> getAutoIncreaseField(List<TableColumnMeta> metas) {
-        Optional<TableColumnMeta> optional = Optional.empty();
+        var optional = Optional.<TableColumnMeta>empty();
         for (TableColumnMeta tableColumnMeta : metas) {
             if (tableColumnMeta.getExtra().contains("auto_increment")) {
                 optional = Optional.of(tableColumnMeta);

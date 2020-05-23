@@ -14,16 +14,16 @@ import java.util.Optional;
  * @since 1.0
  */
 public interface DML {
-    /**
-     * 更新值(存在唯一标识)
-     *
-     * @param fields    字段值
-     * @param tableName 表名
-     * @param key       key值
-     * @param keyValue  keyValue
-     * @return 返回更新结果
-     */
-    Future<Integer> update(Map<String, String> fields, String tableName, String key, String keyValue);
+//    /**
+//     * 更新值(存在唯一标识)
+//     *
+//     * @param fields    字段值
+//     * @param tableName 表名
+//     * @param key       key值
+//     * @param keyValue  keyValue
+//     * @return 返回更新结果
+//     */
+//    Future<Integer> update(Map<String, String> fields, String tableName, String key, String keyValue);
 
     /**
      * 批量更新

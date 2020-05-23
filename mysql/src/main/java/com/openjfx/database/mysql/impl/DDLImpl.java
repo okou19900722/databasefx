@@ -1,6 +1,7 @@
 package com.openjfx.database.mysql.impl;
 
 import com.openjfx.database.DDL;
+import com.openjfx.database.mysql.SQLHelper;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.mysqlclient.MySQLPool;
@@ -15,9 +16,9 @@ public class DDLImpl implements DDL {
 
     @Override
     public Future<Void> dropDatabase(String database) {
-        String sql = "DROP DATABASE "+database;
+        String sql = "DROP DATABASE " + database;
         Promise<Void> promise = Promise.promise();
-        client.query(sql).onSuccess(rows->{
+        client.query(sql).onSuccess(rows -> {
             promise.complete();
         }).onFailure(promise::fail);
         return promise.future();
@@ -25,20 +26,22 @@ public class DDLImpl implements DDL {
 
     @Override
     public Future<Void> dropTable(String table) {
-        String sql = "DROP TABLE "+table;
+        var tableName = SQLHelper.escapeTableName(table);
+        String sql = "DROP TABLE " + tableName;
         System.out.println(sql);
         Promise<Void> promise = Promise.promise();
-        client.query(sql).onSuccess(rows->{
+        client.query(sql).onSuccess(rows -> {
             promise.complete();
         }).onFailure(promise::fail);
         return promise.future();
     }
 
     @Override
-    public Future<String> ddl(String tableName) {
-        String sql = "SHOW CREATE TABLE "+tableName;
+    public Future<String> ddl(String table) {
+        var tableName = SQLHelper.escapeTableName(table);
+        String sql = "SHOW CREATE TABLE " + tableName;
         Promise<String> promise = Promise.promise();
-        client.query(sql).onSuccess(rows->{
+        client.query(sql).onSuccess(rows -> {
             String ddl = "";
             for (Row row : rows) {
                 ddl = (String) row.getValue(1);

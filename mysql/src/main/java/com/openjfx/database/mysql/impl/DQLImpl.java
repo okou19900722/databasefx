@@ -4,6 +4,7 @@ import com.openjfx.database.DQL;
 import com.openjfx.database.DataConvert;
 import com.openjfx.database.model.TableColumnMeta;
 import com.openjfx.database.mysql.PageHelper;
+import com.openjfx.database.mysql.SQLHelper;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.mysqlclient.MySQLPool;
@@ -57,7 +58,9 @@ public class DQLImpl implements DQL {
 
     @Override
     public Future<List<TableColumnMeta>> showColumns(String table) {
-        String sql = "SHOW FULL COLUMNS FROM " + table;
+        var tableName = SQLHelper.escapeTableName(table);
+
+        var sql = "SHOW FULL COLUMNS FROM " + tableName;
 
         Promise<List<TableColumnMeta>> promise = Promise.promise();
 
@@ -85,7 +88,8 @@ public class DQLImpl implements DQL {
 
     @Override
     public Future<List<String[]>> query(String table, int pageIndex, int pageSize) {
-        String sql = "SELECT * FROM " + table + " LIMIT ?,?";
+        var tableName = SQLHelper.escapeTableName(table);
+        var sql = "SELECT * FROM " + tableName + " LIMIT ?,?";
         int a = PageHelper.getInitPage(pageIndex, pageSize);
         Tuple tuple = Tuple.of(a, pageSize);
         Promise<List<String[]>> promise = Promise.promise();
@@ -97,7 +101,8 @@ public class DQLImpl implements DQL {
     }
 
     @Override
-    public Future<Long> count(String tableName) {
+    public Future<Long> count(String table) {
+        var tableName = SQLHelper.escapeTableName(table);
         String sql = "SELECT COUNT(*) FROM " + tableName;
         Promise<Long> promise = Promise.promise();
         client.query(sql).onSuccess(rows -> {
