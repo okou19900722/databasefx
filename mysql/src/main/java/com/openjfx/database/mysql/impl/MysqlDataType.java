@@ -47,7 +47,7 @@ public class MysqlDataType implements DataType {
     }
 
     @Override
-    public int getDataTypeLength(String type) {
+    public String getDataTypeLength(String type) {
         var index = type.indexOf("(");
         var tIndex = type.indexOf(")");
         var length = "0";
@@ -58,7 +58,7 @@ public class MysqlDataType implements DataType {
                 length = length.substring(0, i);
             }
         }
-        return Integer.parseInt(length);
+        return length;
     }
 
     @Override
@@ -73,6 +73,21 @@ public class MysqlDataType implements DataType {
             result = category.equals(dataTypeEnum.toString());
         }
         return result;
+    }
+
+    @Override
+    public String getDataFieldDecimalPoint(String fieldType) {
+        var index = fieldType.indexOf("(");
+        var tIndex = fieldType.indexOf(")");
+        var decimalPointPlace = "0";
+        if (index != -1 && tIndex != -1) {
+            var sub = fieldType.substring(index + 1, tIndex);
+            var ij = sub.indexOf(",");
+            if (ij != -1) {
+                decimalPointPlace = sub.substring(ij + 1);
+            }
+        }
+        return decimalPointPlace;
     }
 
     @Override
