@@ -148,23 +148,25 @@ public class DesignTableController extends BaseController<JsonObject> {
         var uuid = data.getString(Constants.UUID);
         var scheme = data.getString(Constants.SCHEME);
         var table = data.getString(Constants.TABLE_NAME, "");
-        if ("".equals(table)) {
-            return;
-        }
-        var tableName = scheme + "." + table;
-        pool = DATABASE_SOURCE.getDataBaseSource(uuid);
-        var future = pool.getDql().showColumns(tableName);
-        future.onSuccess(rs -> {
-            var list = DesignTableModel.build(rs);
-            Platform.runLater(() -> {
-                fieldTable.setItems(FXCollections.observableList(list));
-                if (list.size() > 0) {
-                    //default select first row
-                    fieldTable.getSelectionModel().select(0);
-                }
+        var title = "无标题" + " @ " + scheme;
+        if (!"".equals(table)) {
+            title = table + " @ " + scheme;
+            var tableName = scheme + "." + table;
+            pool = DATABASE_SOURCE.getDataBaseSource(uuid);
+            var future = pool.getDql().showColumns(tableName);
+            future.onSuccess(rs -> {
+                var list = DesignTableModel.build(rs);
+                Platform.runLater(() -> {
+                    fieldTable.setItems(FXCollections.observableList(list));
+                    if (list.size() > 0) {
+                        //default select first row
+                        fieldTable.getSelectionModel().select(0);
+                    }
+                });
             });
-        });
-        future.onFailure(Throwable::printStackTrace);
+            future.onFailure(Throwable::printStackTrace);
+        }
+        stage.setTitle(title);
     }
 
     private void listAction(final String ij) {
