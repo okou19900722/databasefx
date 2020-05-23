@@ -7,7 +7,7 @@ import io.vertx.core.json.JsonObject;
 import javafx.stage.Modality;
 
 /**
- * sql编辑器
+ * sql edit stage view
  *
  * @author yangkui
  * @since 1.0

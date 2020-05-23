@@ -9,7 +9,7 @@ import java.util.ResourceBundle;
 /**
  * base controller
  *
- * @param <D> 传递数据类型
+ * @param <D> Transfer data type
  * @author yangkui
  * @since 1.0
  */
@@ -32,7 +32,8 @@ public abstract class BaseController<D> implements Initializable {
     protected URL location;
 
     /**
-     * 初始化fxml视图时调用
+     * Called when initializing the fxml view
+     * {@inheritDoc}
      *
      * @param location  location
      * @param resources resources
@@ -44,7 +45,7 @@ public abstract class BaseController<D> implements Initializable {
     }
 
     /**
-     * 初始化controller
+     * init controller
      */
     public void init() {
         //todo override

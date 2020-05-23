@@ -15,10 +15,10 @@ import static com.openjfx.database.common.config.StringConstants.*;
 
 public class TableDataHelper {
     /**
-     * 将FX属性值装换为常规值
+     * Replace the FX attribute value with the normal value
      *
-     * @param list 属性值列表
-     * @return 返回常规值列表
+     * @param list List of property values
+     * @return Return to the list of general values
      */
     public static List<Object[]> fxPropertyToObject(List<ObservableList<StringProperty>> list) {
         return list.stream()
@@ -27,12 +27,12 @@ public class TableDataHelper {
     }
 
     /**
-     * 将更改后的字段转换为map
+     * Convert the changed field to map
      *
-     * @param modes 更改值
+     * @param modes update value
      * @param metas table column meta
-     * @param data  原始数据
-     * @return 返回转换后的数据
+     * @param data  raw data
+     * @return Return converted data
      */
     public static List<Map<String, Object[]>> getChangeValue(List<TableDataChangeMode> modes, List<TableColumnMeta> metas, int keyIndex, ObservableList<ObservableList<StringProperty>> data) {
         List<Integer> rows = modes.stream().map(TableDataChangeMode::getRowIndex)
@@ -42,9 +42,8 @@ public class TableDataHelper {
 
         List<Map<String, Object[]>> list = new ArrayList<>();
 
-        int index = 0;
         for (Integer row : rows) {
-            //获取行数据
+            //Get row data
             ObservableList<StringProperty> item = data.get(row);
 
             Object[] objects = fxPropertyToObject(item);
@@ -54,9 +53,9 @@ public class TableDataHelper {
             List<TableDataChangeMode> models = modes.stream()
                     .filter(m -> m.getRowIndex() == row)
                     .collect(Collectors.toList());
-            //默认key值没有发生改变
+            //The default key value has not changed
             map.put(KEY, new Object[]{objects[keyIndex]});
-            //检测key值是否发生改变
+            //Check whether the key value changes
             for (TableDataChangeMode model : models) {
                 int colIndex = model.getColumnIndex();
                 if (keyIndex == colIndex) {

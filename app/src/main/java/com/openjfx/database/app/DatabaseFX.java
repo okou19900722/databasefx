@@ -9,7 +9,7 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 /**
- * javafx程序入口
+ * JavaFX program entry
  *
  * @author yangkui
  * @since 1.0

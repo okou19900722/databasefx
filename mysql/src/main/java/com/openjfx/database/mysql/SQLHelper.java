@@ -8,13 +8,13 @@ package com.openjfx.database.mysql;
  */
 public class SQLHelper {
     /**
-     * Escape MySQL table name
+     * Escape MySQL keyword conflict
      *
-     * @param tableName Target table name
-     * @return escape after table name
+     * @param field field
+     * @return escape after field
      */
-    public static String escapeTableName(String tableName) {
-        var array = tableName.split("\\.");
+    public static String escapeMysqlField(String field) {
+        var array = field.split("\\.");
         var stringBuffer = new StringBuilder();
         for (int i = 0; i < array.length; i++) {
             var s = array[i];

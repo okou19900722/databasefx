@@ -27,91 +27,100 @@ public class DQLImpl implements DQL {
 
     @Override
     public Future<List<String>> showDatabase() {
-        String sql = "SHOW DATABASES";
-        Promise<List<String>> promise = Promise.promise();
-        client.query(sql).onSuccess(r -> {
-            List<String> schemes = new ArrayList<>();
+        var sql = "SHOW DATABASES";
+        var promise = Promise.<List<String>>promise();
+        var future = client.query(sql);
+        future.onSuccess(r -> {
+            var schemes = new ArrayList<String>();
             r.forEach(row -> {
-                String scheme = row.getString(0);
+                var scheme = row.getString(0);
                 schemes.add(scheme);
             });
             promise.complete(schemes);
-        }).onFailure(promise::fail);
+        });
+        future.onFailure(promise::fail);
 
         return promise.future();
     }
 
     @Override
     public Future<List<String>> showTables(String scheme) {
-        String sql = "SHOW TABLES FROM " + scheme + "";
-        Promise<List<String>> promise = Promise.promise();
-        client.query(sql).onSuccess(r -> {
-            List<String> schemes = new ArrayList<>();
+        var sql = "SHOW TABLES FROM " + scheme + "";
+        var promise = Promise.<List<String>>promise();
+        var future = client.query(sql);
+        future.onSuccess(r -> {
+            var schemes = new ArrayList<String>();
             r.forEach(row -> {
-                String table = row.getString(0);
+                var table = row.getString(0);
                 schemes.add(table);
             });
             promise.complete(schemes);
-        }).onFailure(promise::fail);
+        });
+        future.onFailure(promise::fail);
         return promise.future();
     }
 
     @Override
     public Future<List<TableColumnMeta>> showColumns(String table) {
-        var tableName = SQLHelper.escapeTableName(table);
+        var tableName = SQLHelper.escapeMysqlField(table);
 
         var sql = "SHOW FULL COLUMNS FROM " + tableName;
 
-        Promise<List<TableColumnMeta>> promise = Promise.promise();
+        var promise = Promise.<List<TableColumnMeta>>promise();
 
-        client.query(sql)
-                .onSuccess(rows -> {
-                    List<TableColumnMeta> metas = new ArrayList<>();
-                    for (Row row : rows) {
-                        TableColumnMeta meta = new TableColumnMeta();
-                        meta.setField(row.getString("Field"));
-                        meta.setType(row.getString("Type"));
-                        meta.setCollation(row.getString("Collation"));
-                        meta.setNull(row.getString("Null"));
-                        meta.setKey(row.getString("Key"));
-                        meta.setDefault(row.getString("Default"));
-                        meta.setExtra(row.getString("Extra"));
-                        meta.setPrivileges(row.getString("Privileges"));
-                        meta.setComment(row.getString("Comment"));
-                        metas.add(meta);
-                    }
-                    promise.complete(metas);
-                }).onFailure(promise::fail);
+        var future = client.query(sql);
+        future.onSuccess(rows -> {
+            var metas = new ArrayList<TableColumnMeta>();
+            for (var row : rows) {
+                TableColumnMeta meta = new TableColumnMeta();
+                meta.setField(row.getString("Field"));
+                meta.setType(row.getString("Type"));
+                meta.setCollation(row.getString("Collation"));
+                meta.setNull(row.getString("Null"));
+                meta.setKey(row.getString("Key"));
+                meta.setDefault(row.getString("Default"));
+                meta.setExtra(row.getString("Extra"));
+                meta.setPrivileges(row.getString("Privileges"));
+                meta.setComment(row.getString("Comment"));
+                metas.add(meta);
+            }
+            promise.complete(metas);
+        });
+        future.onFailure(promise::fail);
 
         return promise.future();
     }
 
     @Override
     public Future<List<String[]>> query(String table, int pageIndex, int pageSize) {
-        var tableName = SQLHelper.escapeTableName(table);
+        var tableName = SQLHelper.escapeMysqlField(table);
         var sql = "SELECT * FROM " + tableName + " LIMIT ?,?";
-        int a = PageHelper.getInitPage(pageIndex, pageSize);
-        Tuple tuple = Tuple.of(a, pageSize);
-        Promise<List<String[]>> promise = Promise.promise();
-        client.preparedQuery(sql, tuple).onSuccess(rows -> {
+        var a = PageHelper.getInitPage(pageIndex, pageSize);
+        var tuple = Tuple.of(a, pageSize);
+        var promise = Promise.<List<String[]>>promise();
+        var future = client.preparedQuery(sql, tuple);
+        future.onSuccess(rows -> {
             var list = dataConvert.toConvert(rows);
             promise.complete(list);
-        }).onFailure(promise::fail);
+        });
+        future.onFailure(promise::fail);
         return promise.future();
     }
 
     @Override
     public Future<Long> count(String table) {
-        var tableName = SQLHelper.escapeTableName(table);
-        String sql = "SELECT COUNT(*) FROM " + tableName;
-        Promise<Long> promise = Promise.promise();
-        client.query(sql).onSuccess(rows -> {
-            Long number = 0L;
-            for (Row row : rows) {
+        var tableName = SQLHelper.escapeMysqlField(table);
+        var sql = "SELECT COUNT(*) FROM " + tableName;
+        var promise = Promise.<Long>promise();
+        var future = client.query(sql);
+        future.onSuccess(rows -> {
+            var number = 0L;
+            for (var row : rows) {
                 number = row.getLong(0);
             }
             promise.complete(number);
-        }).onFailure(promise::fail);
+        });
+        future.onFailure(promise::fail);
         return promise.future();
     }
 

@@ -5,7 +5,7 @@ import com.openjfx.database.app.annotation.Layout;
 import com.openjfx.database.model.ConnectionParam;
 
 /**
- * 创建连接界面
+ * create connection stage view
  *
  * @author yangkui
  * @since 1.0

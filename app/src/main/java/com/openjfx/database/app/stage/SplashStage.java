@@ -7,7 +7,7 @@ import javafx.stage.StageStyle;
 
 
 /**
- * app启动屏
+ * App splash stage view
  *
  * @author yangkui
  * @since 1.0

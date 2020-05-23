@@ -20,7 +20,7 @@ import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
 /**
  * base stage
  *
- * @param <D> 传递参数类型
+ * @param <D> Pass parameter type
  * @author yangkui
  * @since 1.0
  */
@@ -31,7 +31,7 @@ public class BaseStage<D> extends Stage {
     protected BaseController<D> controller;
 
     /**
-     * 不需要传递参数
+     * No parameters need to be passed
      */
     public BaseStage() {
         initController();
@@ -40,9 +40,9 @@ public class BaseStage<D> extends Stage {
     }
 
     /**
-     * 需要传递参数
+     * Parameters need to be passed
      *
-     * @param data 参数
+     * @param data param
      */
 
     public BaseStage(D data) {
@@ -53,9 +53,9 @@ public class BaseStage<D> extends Stage {
     }
 
     /**
-     * 获取Layout注解
+     * Get layout annotation
      *
-     * @return 返回注解信息
+     * @return Return annotation information
      */
     private Layout getLayout() {
         Layout layout = this.getClass().getAnnotation(Layout.class);
@@ -66,7 +66,7 @@ public class BaseStage<D> extends Stage {
     }
 
     /**
-     * 初始化controller
+     * init controller
      */
     private void initController() {
         Layout layout = this.getClass().getAnnotation(Layout.class);
@@ -84,14 +84,14 @@ public class BaseStage<D> extends Stage {
             throw new RuntimeException(e);
         }
         scene = new Scene(root);
-        //添加全局样式
+        //add global style
         scene.getStylesheets().add("css/base.css");
         controller = loader.getController();
         controller.setStage(this);
     }
 
     /**
-     * 初始化stage
+     * init stage
      */
     private void initStage() {
         Layout layout = getLayout();

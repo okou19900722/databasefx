@@ -6,7 +6,7 @@ import com.openjfx.database.app.annotation.Layout;
 /**
  *
  *
- * 关于视图
+ * about stage view
  *
  * @author yangkui
  * @since 1.0

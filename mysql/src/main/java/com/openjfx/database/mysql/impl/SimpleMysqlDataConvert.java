@@ -13,14 +13,14 @@ import java.util.Objects;
 import static com.openjfx.database.common.config.StringConstants.NULL;
 
 /**
- * mysql数据转换器
+ * MySQL data converter
  *
  * @author yangkui
  * @since 1.0
  */
 public class SimpleMysqlDataConvert implements DataConvert {
     /**
-     * 默认时间转换格式
+     * Default time conversion format
      */
     private static final String DEFAULT_DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
 

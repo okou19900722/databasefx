@@ -7,7 +7,7 @@ import io.vertx.core.json.JsonObject;
 /**
  *
  *
- * 设计表界面
+ * design stage view
  *
  * @author yangkui
  * @since 1.0

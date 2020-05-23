@@ -5,7 +5,7 @@ import com.openjfx.database.app.annotation.Layout;
 
 
 /**
- * app主界面
+ * App main stage view
  *
  * @author yangkui
  * @since 1.0
