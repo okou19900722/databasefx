@@ -145,8 +145,8 @@ public class DesignTableModel {
         var charset = DATABASE_SOURCE.getCharset();
         var dataType = DATABASE_SOURCE.getDataType();
         model.getFieldType().setText(dataType.getDataType(type));
-        model.getFieldLength().setText(Integer.valueOf(dataType.getDataTypeLength(type)).toString());
-
+        model.getFieldLength().setText(dataType.getDataTypeLength(type));
+        model.getFieldPoint().setText(dataType.getDataFieldDecimalPoint(type));
         var json = new JsonObject();
         json.put("defaultValue", meta.getDefault());
         json.put("collation", meta.getCollation());

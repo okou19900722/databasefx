@@ -2,6 +2,7 @@ package com.openjfx.database.mysql.impl;
 
 import com.openjfx.database.DataType;
 import com.openjfx.database.common.VertexUtils;
+import com.openjfx.database.common.utils.StringUtils;
 import com.openjfx.database.model.DataTypeModel;
 import io.vertx.core.json.JsonObject;
 
@@ -34,6 +35,9 @@ public class MysqlDataType implements DataType {
 
     @Override
     public String getDataType(String type) {
+        if (StringUtils.isEmpty(type)) {
+            return "";
+        }
         var index = type.indexOf("(");
         var tty = type;
         if (index != -1) {
@@ -43,13 +47,18 @@ public class MysqlDataType implements DataType {
     }
 
     @Override
-    public int getDataTypeLength(String type) {
+    public String getDataTypeLength(String type) {
         var index = type.indexOf("(");
+        var tIndex = type.indexOf(")");
         var length = "0";
-        if (index != -1) {
-            length = type.substring(index + 1, type.length() - 1);
+        if (index != -1 && tIndex != -1) {
+            length = type.substring(index + 1, tIndex);
+            var i = length.indexOf(",");
+            if (i != -1) {
+                length = length.substring(0, i);
+            }
         }
-        return Integer.parseInt(length);
+        return length;
     }
 
     @Override
@@ -64,6 +73,21 @@ public class MysqlDataType implements DataType {
             result = category.equals(dataTypeEnum.toString());
         }
         return result;
+    }
+
+    @Override
+    public String getDataFieldDecimalPoint(String fieldType) {
+        var index = fieldType.indexOf("(");
+        var tIndex = fieldType.indexOf(")");
+        var decimalPointPlace = "0";
+        if (index != -1 && tIndex != -1) {
+            var sub = fieldType.substring(index + 1, tIndex);
+            var ij = sub.indexOf(",");
+            if (ij != -1) {
+                decimalPointPlace = sub.substring(ij + 1);
+            }
+        }
+        return decimalPointPlace;
     }
 
     @Override

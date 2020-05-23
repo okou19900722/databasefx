@@ -9,9 +9,21 @@ import java.util.List;
  * @since 1.0
  */
 public interface DataType {
+    /**
+     * database support data category
+     */
     enum DataTypeEnum {
+        /**
+         * NUMBER
+         */
         NUMBER,
+        /**
+         * DATETIME
+         */
         DATETIME,
+        /**
+         * STRING
+         */
         STRING
     }
 
@@ -36,7 +48,7 @@ public interface DataType {
      * @param type data type
      * @return return data type
      */
-    int getDataTypeLength(final String type);
+    String getDataTypeLength(final String type);
 
     /**
      * Judge whether a type is classified
@@ -46,4 +58,12 @@ public interface DataType {
      * @return If the input target classification returns true, otherwise it returns false
      */
     boolean isCategory(String typeName, DataTypeEnum dataTypeEnum);
+
+    /**
+     * Get field decimal places
+     *
+     * @param fieldType field type
+     * @return decimalPoint places
+     */
+    String getDataFieldDecimalPoint(String fieldType);
 }
