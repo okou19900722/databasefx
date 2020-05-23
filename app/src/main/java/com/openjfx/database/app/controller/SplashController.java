@@ -28,7 +28,7 @@ import static com.openjfx.database.app.utils.DialogUtils.showErrorDialog;
  * @author yangkui
  * @since 1.0
  */
-public class SplashController extends BaseController {
+public class SplashController extends BaseController<Void> {
     @FXML
     private Label title;
 
