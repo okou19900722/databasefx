@@ -27,12 +27,6 @@ public class AssetUtils {
      * Font default size
      */
     private static final double DEFAULT_FONT_SIZE = 12D;
-    /**
-     * Font list
-     */
-    private static final String[] FONTS = new String[]{
-            FONT_PATH + "SourceHanSerifCN-Light.otf"
-    };
 
     /**
      * load image resource
