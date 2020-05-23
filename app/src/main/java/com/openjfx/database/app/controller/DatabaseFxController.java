@@ -43,7 +43,7 @@ import static com.openjfx.database.app.config.Constants.ACTION;
  * @author yangkui
  * @since 1.0
  */
-public class DatabaseFxController extends BaseController {
+public class DatabaseFxController extends BaseController<Void> {
 
     /**
      * 顶部菜单栏

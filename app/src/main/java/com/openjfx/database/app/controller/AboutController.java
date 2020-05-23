@@ -11,5 +11,5 @@ import com.openjfx.database.app.BaseController;
  * @since 1.0
  *
  */
-public class AboutController extends BaseController {
+public class AboutController extends BaseController<Void> {
 }
