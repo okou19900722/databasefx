@@ -47,13 +47,26 @@ public class DesignTableModel {
      */
     private CheckBox key = new CheckBox();
     /**
-     * field mark
+     * field comment
      */
-    private TextField mark = new TextField();
+    private TextField comment = new TextField();
     /**
-     * extension config info
+     * default value
      */
-    private JsonObject json = new JsonObject();
+    private String defaultValue;
+    /**
+     * field collation
+     */
+    private String collation;
+    /**
+     * field charset
+     */
+    private String charset;
+    /**
+     * field autoincrement?
+     */
+    private boolean autoIncrement;
+
 
     public DesignTableModel() {
         var dataTypeList = DATABASE_SOURCE.getDataType().getDataTypeList();
@@ -70,14 +83,6 @@ public class DesignTableModel {
 
     public EditChoiceBox<String> getFieldType() {
         return fieldType;
-    }
-
-    public JsonObject getJson() {
-        return json;
-    }
-
-    public void setJson(JsonObject json) {
-        this.json = json;
     }
 
     public void setFieldType(EditChoiceBox<String> fieldType) {
@@ -124,12 +129,12 @@ public class DesignTableModel {
         this.key = key;
     }
 
-    public TextField getMark() {
-        return mark;
+    public TextField getComment() {
+        return comment;
     }
 
-    public void setMark(TextField mark) {
-        this.mark = mark;
+    public void setComment(TextField comment) {
+        this.comment = comment;
     }
 
     public static DesignTableModel build(final TableColumnMeta meta) {
@@ -138,7 +143,7 @@ public class DesignTableModel {
         model.getField().setText(meta.getField());
         model.getFieldType().setText(meta.getType());
         model.getNullable().setSelected("NO".equals(meta.getNull()));
-        model.getMark().setText(meta.getComment());
+        model.getComment().setText(meta.getComment());
         model.getKey().setSelected("PRI".equals(meta.getKey()));
 
         var type = meta.getType();
@@ -147,12 +152,10 @@ public class DesignTableModel {
         model.getFieldType().setText(dataType.getDataType(type));
         model.getFieldLength().setText(dataType.getDataTypeLength(type));
         model.getFieldPoint().setText(dataType.getDataFieldDecimalPoint(type));
-        var json = new JsonObject();
-        json.put("defaultValue", meta.getDefault());
-        json.put("collation", meta.getCollation());
-        json.put("charset", charset.getCharset(meta.getCollation()));
-        json.put("autoIncrement", meta.getExtra().contains("auto_increment"));
-        model.setJson(json);
+        model.setDefaultValue(meta.getDefault());
+        model.setCollation(meta.getCollation());
+        model.setCharset(charset.getCharset(meta.getCollation()));
+        model.setAutoIncrement(meta.getExtra().contains("auto_increment"));
         return model;
     }
 
@@ -160,18 +163,53 @@ public class DesignTableModel {
         return metas.stream().map(DesignTableModel::build).collect(Collectors.toList());
     }
 
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+
+    public String getCollation() {
+        return collation;
+    }
+
+    public void setCollation(String collation) {
+        this.collation = collation;
+    }
+
+    public String getCharset() {
+        return charset;
+    }
+
+    public void setCharset(String charset) {
+        this.charset = charset;
+    }
+
+    public boolean isAutoIncrement() {
+        return autoIncrement;
+    }
+
+    public void setAutoIncrement(boolean autoIncrement) {
+        this.autoIncrement = autoIncrement;
+    }
+
     @Override
     public String toString() {
         return "DesignTableModel{" +
-                "field=" + field.getText() +
+                "field=" + field +
                 ", fieldType=" + fieldType.getText() +
                 ", fieldLength=" + fieldLength.getText() +
                 ", fieldPoint=" + fieldPoint.getText() +
                 ", nullable=" + nullable.isSelected() +
                 ", virtual=" + virtual.isSelected() +
                 ", key=" + key.isSelected() +
-                ", mark=" + mark.getText() +
-                ", json=" + json +
+                ", comment=" + comment.getText() +
+                ", defaultValue='" + defaultValue + '\'' +
+                ", collation='" + collation + '\'' +
+                ", charset='" + charset + '\'' +
+                ", autoIncrement=" + autoIncrement +
                 '}';
     }
 }

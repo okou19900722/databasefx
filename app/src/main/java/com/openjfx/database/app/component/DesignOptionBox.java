@@ -2,6 +2,7 @@ package com.openjfx.database.app.component;
 
 import com.openjfx.database.DataCharset;
 import com.openjfx.database.app.controls.EditChoiceBox;
+import com.openjfx.database.app.model.DesignTableModel;
 import io.vertx.core.json.JsonObject;
 import javafx.collections.FXCollections;
 import javafx.scene.control.CheckBox;
@@ -64,29 +65,24 @@ public class DesignOptionBox extends VBox {
         getStyleClass().add("design-table-option");
     }
 
-    public void updateValue(JsonObject json) {
-        if (json == null) {
+    public void updateValue(final DesignTableModel model) {
+        if (model == null) {
             return;
         }
-        var autoIncrement = json.getBoolean("autoIncrement", false);
-        var defaultValue = json.getString("defaultValue", "");
-        var charset = json.getString("charset", "");
-        var collation = json.getString("collation", "");
-        this.charsetBox.setText(charset);
-        this.collationBox.setText(collation);
-        this.incrementCheck.setSelected(autoIncrement);
-        this.defaultBox.setText(defaultValue);
+        this.charsetBox.setText(model.getCharset());
+        this.collationBox.setText(model.getCollation());
+        this.incrementCheck.setSelected(model.isAutoIncrement());
+        this.defaultBox.setText(model.getDefaultValue());
     }
 
-    public JsonObject getJsonResult() {
-        var json = new JsonObject();
-
-        json.put("autoIncrement", incrementCheck.isSelected());
-        json.put("defaultValue", defaultBox.getText());
-        json.put("charset", charsetBox.getText());
-        json.put("collation", collationBox.getText());
-
-        return json;
+    public void updateResult(final DesignTableModel model) {
+        if (model == null) {
+            return;
+        }
+        model.setAutoIncrement(incrementCheck.isSelected());
+        model.setDefaultValue(defaultBox.getText());
+        model.setCharset(model.getCharset());
+        model.setCollation(collationBox.getText());
     }
 
 }
