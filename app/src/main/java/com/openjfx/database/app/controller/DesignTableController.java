@@ -47,6 +47,27 @@ public class DesignTableController extends BaseController<JsonObject> {
 
     private final List<Button> actionList = new ArrayList<>();
 
+    /**
+     * design table type
+     */
+    public enum DesignTableType {
+        /**
+         * table regular field
+         */
+        FIELD,
+        /**
+         * table index
+         */
+        INDEX,
+        /**
+         * table foreign key
+         */
+        FOREIGN_KEY,
+        /**
+         * table trigger
+         */
+        TRIGGER
+    }
 
     @Override
     public void init() {
@@ -76,14 +97,13 @@ public class DesignTableController extends BaseController<JsonObject> {
             //unbind last listener
             if (oIndex != -1) {
                 var oItem = fieldTable.getItems().get(oIndex);
-                var item = (DesignOptionBox) splitPane.getItems().get(1);
-                oItem.setJson(item.getJsonResult());
+                box.updateResult(oItem);
             }
             if (index == -1) {
                 return;
             }
             var item = fieldTable.getItems().get(index);
-            box.updateValue(item.getJson());
+            box.updateValue(item);
         });
 
         stage.widthProperty().addListener((observable, oldValue, newValue) -> {
