@@ -5,6 +5,7 @@ import com.openjfx.database.app.component.DesignOptionBox;
 import com.openjfx.database.app.config.Constants;
 import com.openjfx.database.app.controls.DesignTableView;
 import com.openjfx.database.app.model.DesignTableModel;
+import com.openjfx.database.app.model.impl.RegularFieldTableChangeModel;
 import com.openjfx.database.base.AbstractDataBasePool;
 import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;
@@ -47,27 +48,29 @@ public class DesignTableController extends BaseController<JsonObject> {
 
     private final List<Button> actionList = new ArrayList<>();
 
-    /**
-     * design table type
-     */
-    public enum DesignTableType {
-        /**
-         * table regular field
-         */
-        FIELD,
-        /**
-         * table index
-         */
-        INDEX,
-        /**
-         * table foreign key
-         */
-        FOREIGN_KEY,
-        /**
-         * table trigger
-         */
-        TRIGGER
-    }
+    private final RegularFieldTableChangeModel regularFieldTableChangeModel = new RegularFieldTableChangeModel();
+
+//    /**
+//     * design table type
+//     */
+//    public enum DesignTableType {
+//        /**
+//         * table regular field
+//         */
+//        FIELD,
+//        /**
+//         * table index
+//         */
+//        INDEX,
+//        /**
+//         * table foreign key
+//         */
+//        FOREIGN_KEY,
+//        /**
+//         * table trigger
+//         */
+//        TRIGGER
+//    }
 
     @Override
     public void init() {
@@ -90,6 +93,7 @@ public class DesignTableController extends BaseController<JsonObject> {
             var index = newValue.intValue();
             tabSelectChange(index);
         });
+
         //listener fieldTable select change
         fieldTable.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
             var oIndex = oldValue.intValue();
@@ -104,6 +108,11 @@ public class DesignTableController extends BaseController<JsonObject> {
             }
             var item = fieldTable.getItems().get(index);
             box.updateValue(item);
+            //listener field every value change
+            item.setCallback((old, value, columnIndex) -> {
+                regularFieldTableChangeModel.addChange(index, columnIndex, old, value);
+                System.out.println(regularFieldTableChangeModel);
+            });
         });
 
         stage.widthProperty().addListener((observable, oldValue, newValue) -> {

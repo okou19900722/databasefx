@@ -1,8 +1,13 @@
 package com.openjfx.database.app.model;
 
 import com.openjfx.database.app.controls.EditChoiceBox;
+import com.openjfx.database.common.MultipleHandler;
+import com.openjfx.database.common.utils.StringUtils;
 import com.openjfx.database.model.TableColumnMeta;
-import io.vertx.core.json.JsonObject;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 
@@ -53,24 +58,45 @@ public class DesignTableModel {
     /**
      * default value
      */
-    private String defaultValue;
+    private final StringProperty defaultValue = new SimpleStringProperty();
     /**
      * field collation
      */
-    private String collation;
+    private final StringProperty collation = new SimpleStringProperty();
     /**
      * field charset
      */
-    private String charset;
+    private final StringProperty charset = new SimpleStringProperty();
     /**
      * field autoincrement?
      */
-    private boolean autoIncrement;
+    private final BooleanProperty autoIncrement = new SimpleBooleanProperty();
 
+    private MultipleHandler<String, String, Integer> callback;
 
     public DesignTableModel() {
         var dataTypeList = DATABASE_SOURCE.getDataType().getDataTypeList();
         fieldType.getItems().addAll(dataTypeList);
+        field.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, 0));
+        fieldType.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, 1));
+        fieldLength.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, 2));
+        fieldPoint.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, 3));
+        nullable.selectedProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue.toString(), newValue.toString(), 4));
+        virtual.selectedProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue.toString(), newValue.toString(), 5));
+        key.selectedProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue.toString(), newValue.toString(), 6));
+        comment.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, 7));
+        autoIncrement.addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue.toString(), newValue.toString(), 8));
+        defaultValue.addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, 9));
+        charset.addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, 10));
+        collation.addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, 11));
+
+    }
+
+    private void updateCallbackValue(String oldValue, String newValue, int columnIndex) {
+        if (callback == null) {
+            return;
+        }
+        callback.handler(oldValue, newValue, columnIndex);
     }
 
     public TextField getField() {
@@ -137,18 +163,21 @@ public class DesignTableModel {
         this.comment = comment;
     }
 
+    public void setCallback(MultipleHandler<String, String, Integer> callback) {
+        this.callback = callback;
+    }
+
     public static DesignTableModel build(final TableColumnMeta meta) {
         var model = new DesignTableModel();
+        var type = meta.getType();
+        var charset = DATABASE_SOURCE.getCharset();
+        var dataType = DATABASE_SOURCE.getDataType();
 
         model.getField().setText(meta.getField());
         model.getFieldType().setText(meta.getType());
         model.getNullable().setSelected("NO".equals(meta.getNull()));
         model.getComment().setText(meta.getComment());
         model.getKey().setSelected("PRI".equals(meta.getKey()));
-
-        var type = meta.getType();
-        var charset = DATABASE_SOURCE.getCharset();
-        var dataType = DATABASE_SOURCE.getDataType();
         model.getFieldType().setText(dataType.getDataType(type));
         model.getFieldLength().setText(dataType.getDataTypeLength(type));
         model.getFieldPoint().setText(dataType.getDataFieldDecimalPoint(type));
@@ -156,6 +185,7 @@ public class DesignTableModel {
         model.setCollation(meta.getCollation());
         model.setCharset(charset.getCharset(meta.getCollation()));
         model.setAutoIncrement(meta.getExtra().contains("auto_increment"));
+
         return model;
     }
 
@@ -164,51 +194,67 @@ public class DesignTableModel {
     }
 
     public String getDefaultValue() {
+        return defaultValue.get();
+    }
+
+    public StringProperty defaultValueProperty() {
         return defaultValue;
     }
 
     public void setDefaultValue(String defaultValue) {
-        this.defaultValue = defaultValue;
+        this.defaultValue.set(defaultValue);
     }
 
     public String getCollation() {
+        return collation.get();
+    }
+
+    public StringProperty collationProperty() {
         return collation;
     }
 
     public void setCollation(String collation) {
-        this.collation = collation;
+        this.collation.set(collation);
     }
 
     public String getCharset() {
+        return charset.get();
+    }
+
+    public StringProperty charsetProperty() {
         return charset;
     }
 
     public void setCharset(String charset) {
-        this.charset = charset;
+        this.charset.set(charset);
     }
 
     public boolean isAutoIncrement() {
+        return autoIncrement.get();
+    }
+
+    public BooleanProperty autoIncrementProperty() {
         return autoIncrement;
     }
 
     public void setAutoIncrement(boolean autoIncrement) {
-        this.autoIncrement = autoIncrement;
+        this.autoIncrement.set(autoIncrement);
     }
 
     @Override
     public String toString() {
         return "DesignTableModel{" +
                 "field=" + field +
-                ", fieldType=" + fieldType.getText() +
-                ", fieldLength=" + fieldLength.getText() +
-                ", fieldPoint=" + fieldPoint.getText() +
-                ", nullable=" + nullable.isSelected() +
-                ", virtual=" + virtual.isSelected() +
-                ", key=" + key.isSelected() +
-                ", comment=" + comment.getText() +
-                ", defaultValue='" + defaultValue + '\'' +
-                ", collation='" + collation + '\'' +
-                ", charset='" + charset + '\'' +
+                ", fieldType=" + fieldType +
+                ", fieldLength=" + fieldLength +
+                ", fieldPoint=" + fieldPoint +
+                ", nullable=" + nullable +
+                ", virtual=" + virtual +
+                ", key=" + key +
+                ", comment=" + comment +
+                ", defaultValue=" + defaultValue +
+                ", collation=" + collation +
+                ", charset=" + charset +
                 ", autoIncrement=" + autoIncrement +
                 '}';
     }
