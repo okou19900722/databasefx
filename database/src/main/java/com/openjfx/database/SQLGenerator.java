@@ -1,6 +1,11 @@
 package com.openjfx.database;
 
 
+import com.openjfx.database.model.RowChangeModel;
+import com.openjfx.database.model.TableColumnMeta;
+
+import java.util.List;
+
 /**
  * SQL statement generation interface
  *
@@ -18,4 +23,14 @@ public interface SQLGenerator {
      * @return create scheme sql
      */
     String createScheme(String name, String charset, String collation);
+
+    /**
+     * Create SQL statement to modify table field information
+     *
+     * @param table        target table
+     * @param changeModels change model
+     * @param metas        table column meta
+     * @return sql statement
+     */
+    String createFieldModifySqlStatement(String table, List<RowChangeModel> changeModels, List<TableColumnMeta> metas);
 }

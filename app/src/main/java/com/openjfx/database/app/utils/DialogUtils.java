@@ -1,10 +1,12 @@
 package com.openjfx.database.app.utils;
 
 import com.openjfx.database.app.enums.NotificationType;
+import com.sun.javafx.scene.control.InputField;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.TextInputDialog;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.controlsfx.control.Notifications;
@@ -83,6 +85,21 @@ public class DialogUtils {
         alert.getDialogPane().getStylesheets().add("css/base.css");
         var optional = alert.showAndWait();
         return optional.isPresent() && optional.get() == ButtonType.OK;
+    }
+
+    /**
+     * Display the input dialog box and return the input results
+     *
+     * @param title dialog title
+     * @return inout title
+     */
+    public static String showInputDialog(String title) {
+        var dialog = new TextInputDialog();
+        dialog.setTitle("inout dialog");
+        dialog.setHeaderText(title);
+        dialog.getDialogPane().getStylesheets().add("css/base.css");
+        var optional = dialog.showAndWait();
+        return optional.orElse("");
     }
 
     /**

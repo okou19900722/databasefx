@@ -4,6 +4,10 @@ import com.openjfx.database.DataCharset;
 import com.openjfx.database.app.controls.EditChoiceBox;
 import com.openjfx.database.app.model.DesignTableModel;
 import io.vertx.core.json.JsonObject;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -65,24 +69,21 @@ public class DesignOptionBox extends VBox {
         getStyleClass().add("design-table-option");
     }
 
+    private DesignTableModel model;
+
     public void updateValue(final DesignTableModel model) {
-        if (model == null) {
-            return;
-        }
+        this.model = model;
+
+        //update value
         this.charsetBox.setText(model.getCharset());
         this.collationBox.setText(model.getCollation());
         this.incrementCheck.setSelected(model.isAutoIncrement());
         this.defaultBox.setText(model.getDefaultValue());
-    }
 
-    public void updateResult(final DesignTableModel model) {
-        if (model == null) {
-            return;
-        }
-        model.setAutoIncrement(incrementCheck.isSelected());
-        model.setDefaultValue(defaultBox.getText());
-        model.setCharset(model.getCharset());
-        model.setCollation(collationBox.getText());
+        //update all listener
+        defaultBox.textProperty().addListener((observable, oldValue, newValue) -> this.model.setDefaultValue(newValue));
+        charsetBox.textProperty().addListener((observable, oldValue, newValue) -> this.model.setCharset(newValue));
+        collationBox.textProperty().addListener((observable, oldValue, newValue) -> this.model.setCollation(newValue));
+        incrementCheck.selectedProperty().addListener((observable, oldValue, newValue) -> this.model.setAutoIncrement(newValue));
     }
-
 }

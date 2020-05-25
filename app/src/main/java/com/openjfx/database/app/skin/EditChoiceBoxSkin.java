@@ -22,9 +22,7 @@ public class EditChoiceBoxSkin<T> extends ChoiceBoxSkin<T> {
         label.setGraphic(textField);
         label.setGraphicTextGap(0);
         //forbid text show in label
-        label.textProperty().addListener((observable, oldValue, newValue) -> {
-            label.setText("");
-        });
+        label.textProperty().addListener((observable, oldValue, newValue) -> label.setText(""));
         //listener ChoiceBox select change
         control.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
             var index = newValue.intValue();
@@ -36,9 +34,7 @@ public class EditChoiceBoxSkin<T> extends ChoiceBoxSkin<T> {
         });
 
         //listener TextField change
-        textField.textProperty().addListener((observable, oldValue, newValue) -> {
-            control.setText(newValue);
-        });
+        textField.textProperty().addListener((observable, oldValue, newValue) -> control.setText(newValue));
         control.textProperty().addListener((observable, oldValue, newValue) -> {
             var text = textField.getText();
             if (newValue == null) {

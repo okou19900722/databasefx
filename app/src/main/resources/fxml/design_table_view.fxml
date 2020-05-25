@@ -198,7 +198,7 @@
                     <TextArea/>
                 </Tab>
                 <Tab text="SQL预览">
-                    <SQLEditor/>
+                    <SQLEditor fx:id="sqlEditor"/>
                 </Tab>
             </TabPane>
             <DesignOptionBox fx:id="box"/>

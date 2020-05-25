@@ -72,31 +72,31 @@ public class DesignTableModel {
      */
     private final BooleanProperty autoIncrement = new SimpleBooleanProperty();
 
-    private MultipleHandler<String, String, Integer> callback;
+    private MultipleHandler<String, String, String> callback;
 
     public DesignTableModel() {
         var dataTypeList = DATABASE_SOURCE.getDataType().getDataTypeList();
         fieldType.getItems().addAll(dataTypeList);
-        field.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, 0));
-        fieldType.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, 1));
-        fieldLength.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, 2));
-        fieldPoint.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, 3));
-        nullable.selectedProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue.toString(), newValue.toString(), 4));
-        virtual.selectedProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue.toString(), newValue.toString(), 5));
-        key.selectedProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue.toString(), newValue.toString(), 6));
-        comment.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, 7));
-        autoIncrement.addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue.toString(), newValue.toString(), 8));
-        defaultValue.addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, 9));
-        charset.addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, 10));
-        collation.addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, 11));
+        field.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, "Field"));
+        fieldType.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, "Type"));
+        fieldLength.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, "Length"));
+        fieldPoint.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, "DecimalPoint"));
+        nullable.selectedProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue.toString(), newValue.toString(), "Nullable"));
+        virtual.selectedProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue.toString(), newValue.toString(), "Virtual"));
+        key.selectedProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue.toString(), newValue.toString(), "Key"));
+        comment.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, "Comment"));
+        autoIncrement.addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue.toString(), newValue.toString(), "AutoIncrement"));
+        defaultValue.addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, "Default"));
+        charset.addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, "Charset"));
+        collation.addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, "Collation"));
 
     }
 
-    private void updateCallbackValue(String oldValue, String newValue, int columnIndex) {
+    private void updateCallbackValue(String oldValue, String newValue, String fieldName) {
         if (callback == null) {
             return;
         }
-        callback.handler(oldValue, newValue, columnIndex);
+        callback.handler(oldValue, newValue, fieldName);
     }
 
     public TextField getField() {
@@ -163,7 +163,7 @@ public class DesignTableModel {
         this.comment = comment;
     }
 
-    public void setCallback(MultipleHandler<String, String, Integer> callback) {
+    public void setCallback(MultipleHandler<String, String, String> callback) {
         this.callback = callback;
     }
 
@@ -181,9 +181,9 @@ public class DesignTableModel {
         model.getFieldType().setText(dataType.getDataType(type));
         model.getFieldLength().setText(dataType.getDataTypeLength(type));
         model.getFieldPoint().setText(dataType.getDataFieldDecimalPoint(type));
-        model.setDefaultValue(meta.getDefault());
-        model.setCollation(meta.getCollation());
-        model.setCharset(charset.getCharset(meta.getCollation()));
+        model.setDefaultValue(meta.getDefault() == null ? "" : meta.getDefault());
+        model.setCollation(meta.getCollation() == null ? "" : meta.getCollation());
+        model.setCharset(charset.getCharset(model.getCollation()));
         model.setAutoIncrement(meta.getExtra().contains("auto_increment"));
 
         return model;
@@ -244,18 +244,18 @@ public class DesignTableModel {
     @Override
     public String toString() {
         return "DesignTableModel{" +
-                "field=" + field +
-                ", fieldType=" + fieldType +
-                ", fieldLength=" + fieldLength +
-                ", fieldPoint=" + fieldPoint +
-                ", nullable=" + nullable +
-                ", virtual=" + virtual +
-                ", key=" + key +
-                ", comment=" + comment +
-                ", defaultValue=" + defaultValue +
-                ", collation=" + collation +
-                ", charset=" + charset +
-                ", autoIncrement=" + autoIncrement +
+                "field=" + field.getText() +
+                ", fieldType=" + fieldType.getText() +
+                ", fieldLength=" + fieldLength.getText() +
+                ", fieldPoint=" + fieldPoint.getText() +
+                ", nullable=" + nullable.getText() +
+                ", virtual=" + virtual.getText() +
+                ", key=" + key.getText() +
+                ", comment=" + comment.getText() +
+                ", defaultValue=" + defaultValue.get() +
+                ", collation=" + collation.get() +
+                ", charset=" + charset.get() +
+                ", autoIncrement=" + autoIncrement.get() +
                 '}';
     }
 }

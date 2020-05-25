@@ -17,7 +17,7 @@ public class EditChoiceBox<T> extends ChoiceBox<T> {
     /**
      * TextField text property
      */
-    private final StringProperty text = new SimpleStringProperty("");
+    private final StringProperty text = new SimpleStringProperty();
 
     private final static String DEFAULT_STYLE_CLASS = "edit-choice-box";
 

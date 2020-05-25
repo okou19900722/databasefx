@@ -4,14 +4,19 @@ import com.openjfx.database.app.BaseController;
 import com.openjfx.database.app.component.DesignOptionBox;
 import com.openjfx.database.app.config.Constants;
 import com.openjfx.database.app.controls.DesignTableView;
+import com.openjfx.database.app.controls.SQLEditor;
+import com.openjfx.database.app.model.AbstractDesignTableChangeModel;
 import com.openjfx.database.app.model.DesignTableModel;
 import com.openjfx.database.app.model.impl.RegularFieldTableChangeModel;
+import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.base.AbstractDataBasePool;
+import com.openjfx.database.common.utils.StringUtils;
+import com.openjfx.database.model.RowChangeModel;
+import com.openjfx.database.model.TableColumnMeta;
 import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
@@ -44,33 +49,16 @@ public class DesignTableController extends BaseController<JsonObject> {
     @FXML
     private DesignOptionBox box;
 
+    @FXML
+    private SQLEditor sqlEditor;
+
     private AbstractDataBasePool pool;
 
     private final List<Button> actionList = new ArrayList<>();
 
     private final RegularFieldTableChangeModel regularFieldTableChangeModel = new RegularFieldTableChangeModel();
 
-//    /**
-//     * design table type
-//     */
-//    public enum DesignTableType {
-//        /**
-//         * table regular field
-//         */
-//        FIELD,
-//        /**
-//         * table index
-//         */
-//        INDEX,
-//        /**
-//         * table foreign key
-//         */
-//        FOREIGN_KEY,
-//        /**
-//         * table trigger
-//         */
-//        TRIGGER
-//    }
+    private final List<TableColumnMeta> columnMetas = new ArrayList<>();
 
     @Override
     public void init() {
@@ -80,7 +68,7 @@ public class DesignTableController extends BaseController<JsonObject> {
             tab.setClosable(false);
         }
         var i = 0;
-        for (Node child : topBox.getChildren()) {
+        for (var child : topBox.getChildren()) {
             var button = (Button) child;
             if (i != 0) {
                 actionList.add(button);
@@ -92,27 +80,22 @@ public class DesignTableController extends BaseController<JsonObject> {
         tabPane.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
             var index = newValue.intValue();
             tabSelectChange(index);
+            if (index == 6) {
+                var sql = regularFieldTableChangeModel.getUpdateSql(getTableName(false), columnMetas);
+                sqlEditor.setText(sql);
+            }
         });
 
         //listener fieldTable select change
         fieldTable.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
-            var oIndex = oldValue.intValue();
             var index = newValue.intValue();
-            //unbind last listener
-            if (oIndex != -1) {
-                var oItem = fieldTable.getItems().get(oIndex);
-                box.updateResult(oItem);
-            }
             if (index == -1) {
                 return;
             }
             var item = fieldTable.getItems().get(index);
             box.updateValue(item);
             //listener field every value change
-            item.setCallback((old, value, columnIndex) -> {
-                regularFieldTableChangeModel.addChange(index, columnIndex, old, value);
-                System.out.println(regularFieldTableChangeModel);
-            });
+            item.setCallback((old, value, fieldName) -> regularFieldTableChangeModel.addChange(RowChangeModel.ChangeType.UPDATE, index, fieldName, old, value));
         });
 
         stage.widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -184,6 +167,7 @@ public class DesignTableController extends BaseController<JsonObject> {
             pool = DATABASE_SOURCE.getDataBaseSource(uuid);
             var future = pool.getDql().showColumns(tableName);
             future.onSuccess(rs -> {
+                columnMetas.addAll(rs);
                 var list = DesignTableModel.build(rs);
                 Platform.runLater(() -> {
                     fieldTable.setItems(FXCollections.observableList(list));
@@ -201,8 +185,22 @@ public class DesignTableController extends BaseController<JsonObject> {
     private void listAction(final String ij) {
         //save
         if ("0_0".equals(ij)) {
-            for (DesignTableModel item : fieldTable.getItems()) {
-                System.out.println(item);
+            var title = stage.getTitle();
+            var array = title.split("@");
+            var temp = array[0].trim();
+            var tableName = "";
+            var sqlType = 0;
+            //Prompt user for table name
+            if ("无标题".equals(temp)) {
+                var table = DialogUtils.showInputDialog("请输入表名");
+                if (StringUtils.isEmpty(table)) {
+                    DialogUtils.showAlertInfo("表明不能为空");
+                    return;
+                }
+                tableName = array[1].trim() + "." + table;
+                sqlType = 1;
+            } else {
+                tableName = array[1].trim() + "." + array[0].trim();
             }
         }
         //new create  row
@@ -210,7 +208,42 @@ public class DesignTableController extends BaseController<JsonObject> {
             var model = new DesignTableModel();
             var items = fieldTable.getItems();
             items.add(model);
-            fieldTable.getSelectionModel().select(items.size() - 1);
+            var index = items.size() - 1;
+            fieldTable.getSelectionModel().select(index);
+            //add row
+            regularFieldTableChangeModel.addChange(RowChangeModel.ChangeType.CREATE, index, "", "", "");
         }
+        //delete row
+        if ("0_3".equals(ij)) {
+            var index = fieldTable.getSelectionModel().getSelectedIndex();
+            if (index != -1) {
+                fieldTable.getItems().remove(index);
+                regularFieldTableChangeModel.addChange(RowChangeModel.ChangeType.DELETE, index, "", "", "");
+            }
+        }
+    }
+
+    private String getTableName(boolean isInput) {
+        var title = stage.getTitle();
+        var array = title.split("@");
+        var temp = array[0].trim();
+        var tableName = "";
+        //Prompt user for table name
+        if ("无标题".equals(temp)) {
+            if (isInput) {
+                var table = DialogUtils.showInputDialog("请输入表名");
+                if (StringUtils.isEmpty(table)) {
+                    DialogUtils.showAlertInfo("表名不能为空");
+                    return "";
+                }
+                tableName = array[1].trim() + "." + table;
+            } else {
+                tableName = array[1].trim() + "." + "Untitled";
+            }
+        } else {
+            tableName = array[1].trim() + "." + array[0].trim();
+        }
+
+        return tableName;
     }
 }
