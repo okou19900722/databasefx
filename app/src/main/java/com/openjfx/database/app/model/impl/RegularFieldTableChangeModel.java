@@ -83,9 +83,7 @@ public class RegularFieldTableChangeModel extends AbstractDesignTableChangeModel
         } else {
             //update table field value
             sql = generator.createFieldModifySqlStatement(tableName, changeModels, tableColumnMetas);
-
-            var updated = changeModels.stream().filter(model -> model.getChangeType() == RowChangeModel.ChangeType.UPDATE).collect(Collectors.toList());
-
+            System.out.println(sql);
         }
         return sql;
     }

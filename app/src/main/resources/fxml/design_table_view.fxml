@@ -150,7 +150,7 @@
                             <TableColumn text="长度"/>
                             <TableColumn text="小数点"/>
                             <TableColumn text="不是null"/>
-                            <TableColumn text="虚拟"/>
+<!--                            <TableColumn text="虚拟"/>-->
                             <TableColumn text="键"/>
                             <TableColumn text="注释"/>
                         </columns>

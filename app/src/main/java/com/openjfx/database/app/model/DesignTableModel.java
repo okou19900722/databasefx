@@ -43,10 +43,10 @@ public class DesignTableModel {
      * field is null?
      */
     private CheckBox nullable = new CheckBox();
-    /**
-     * field is virtual
-     */
-    private CheckBox virtual = new CheckBox();
+//    /**
+//     * field is virtual
+//     */
+//    private CheckBox virtual = new CheckBox();
     /**
      * field is key?
      */
@@ -82,7 +82,7 @@ public class DesignTableModel {
         fieldLength.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, "Length"));
         fieldPoint.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, "DecimalPoint"));
         nullable.selectedProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue.toString(), newValue.toString(), "Nullable"));
-        virtual.selectedProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue.toString(), newValue.toString(), "Virtual"));
+//        virtual.selectedProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue.toString(), newValue.toString(), "Virtual"));
         key.selectedProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue.toString(), newValue.toString(), "Key"));
         comment.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, "Comment"));
         autoIncrement.addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue.toString(), newValue.toString(), "AutoIncrement"));
@@ -139,13 +139,13 @@ public class DesignTableModel {
         this.nullable = nullable;
     }
 
-    public CheckBox getVirtual() {
-        return virtual;
-    }
-
-    public void setVirtual(CheckBox virtual) {
-        this.virtual = virtual;
-    }
+//    public CheckBox getVirtual() {
+//        return virtual;
+//    }
+//
+//    public void setVirtual(CheckBox virtual) {
+//        this.virtual = virtual;
+//    }
 
     public CheckBox getKey() {
         return key;
@@ -249,7 +249,7 @@ public class DesignTableModel {
                 ", fieldLength=" + fieldLength.getText() +
                 ", fieldPoint=" + fieldPoint.getText() +
                 ", nullable=" + nullable.getText() +
-                ", virtual=" + virtual.getText() +
+//                ", virtual=" + virtual.getText() +
                 ", key=" + key.getText() +
                 ", comment=" + comment.getText() +
                 ", defaultValue=" + defaultValue.get() +
