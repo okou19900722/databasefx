@@ -40,14 +40,14 @@
                     </ImageView>
                 </graphic>
             </Button>
-            <Button text="插入字段" userData="0_2">
-                <graphic>
-                    <ImageView>
-                        <Image url="@/assets/images/design_insert_icon.png" requestedHeight="18" requestedWidth="18"
-                               smooth="true"/>
-                    </ImageView>
-                </graphic>
-            </Button>
+<!--            <Button text="插入字段" userData="0_2">-->
+<!--                <graphic>-->
+<!--                    <ImageView>-->
+<!--                        <Image url="@/assets/images/design_insert_icon.png" requestedHeight="18" requestedWidth="18"-->
+<!--                               smooth="true"/>-->
+<!--                    </ImageView>-->
+<!--                </graphic>-->
+<!--            </Button>-->
             <Button text="删除字段" userData="0_3">
                 <graphic>
                     <ImageView>
@@ -64,79 +64,79 @@
                     </ImageView>
                 </graphic>
             </Button>
-            <Button text="上移" userData="0_5,3_4">
-                <graphic>
-                    <ImageView>
-                        <Image url="@/assets/images/design_up_icon.png" requestedHeight="18" requestedWidth="18"
-                               smooth="true"/>
-                    </ImageView>
-                </graphic>
-            </Button>
-            <Button text="下移" userData="0_6,3_5">
-                <graphic>
-                    <ImageView>
-                        <Image url="@/assets/images/design_down_icon.png" requestedHeight="18" requestedWidth="18"
-                               smooth="true"/>
-                    </ImageView>
-                </graphic>
-            </Button>
-            <Button text="添加索引" userData="1_1">
-                <graphic>
-                    <ImageView>
-                        <Image url="@/assets/images/add_index_icon.png" requestedHeight="18" requestedWidth="18"
-                               smooth="true"/>
-                    </ImageView>
-                </graphic>
-            </Button>
-            <Button text="删除索引" userData="1_2">
-                <graphic>
-                    <ImageView>
-                        <Image url="@/assets/images/remove_index_icon.png" requestedHeight="18" requestedWidth="18"
-                               smooth="true"/>
-                    </ImageView>
-                </graphic>
-            </Button>
-            <Button text="添加外键" userData="2_1">
-                <graphic>
-                    <ImageView>
-                        <Image url="@/assets/images/extension-key_icon.png" requestedHeight="18" requestedWidth="18"
-                               smooth="true"/>
-                    </ImageView>
-                </graphic>
-            </Button>
-            <Button text="删除外键" userData="2_2">
-                <graphic>
-                    <ImageView>
-                        <Image url="@/assets/images/remove_extension_icon.png" requestedHeight="18" requestedWidth="18"
-                               smooth="true"/>
-                    </ImageView>
-                </graphic>
-            </Button>
-            <Button text="添加触发器" userData="3_1">
-                <graphic>
-                    <ImageView>
-                        <Image url="@/assets/images/trigger_icon.png" requestedHeight="18" requestedWidth="18"
-                               smooth="true"/>
-                    </ImageView>
-                </graphic>
-            </Button>
-            <Button text="插入触发器" userData="3_2">
-                <graphic>
-                    <ImageView>
-                        <Image url="@/assets/images/insert_trigger_icon.png" requestedHeight="18"
-                               requestedWidth="18"
-                               smooth="true"/>
-                    </ImageView>
-                </graphic>
-            </Button>
-            <Button text="删除触发器" userData="3_3">
-                <graphic>
-                    <ImageView>
-                        <Image url="@/assets/images/delete_trigger_icon.png" requestedHeight="18" requestedWidth="18"
-                               smooth="true"/>
-                    </ImageView>
-                </graphic>
-            </Button>
+<!--            <Button text="上移" userData="0_5,3_4">-->
+<!--                <graphic>-->
+<!--                    <ImageView>-->
+<!--                        <Image url="@/assets/images/design_up_icon.png" requestedHeight="18" requestedWidth="18"-->
+<!--                               smooth="true"/>-->
+<!--                    </ImageView>-->
+<!--                </graphic>-->
+<!--            </Button>-->
+<!--            <Button text="下移" userData="0_6,3_5">-->
+<!--                <graphic>-->
+<!--                    <ImageView>-->
+<!--                        <Image url="@/assets/images/design_down_icon.png" requestedHeight="18" requestedWidth="18"-->
+<!--                               smooth="true"/>-->
+<!--                    </ImageView>-->
+<!--                </graphic>-->
+<!--            </Button>-->
+<!--            <Button text="添加索引" userData="1_1">-->
+<!--                <graphic>-->
+<!--                    <ImageView>-->
+<!--                        <Image url="@/assets/images/add_index_icon.png" requestedHeight="18" requestedWidth="18"-->
+<!--                               smooth="true"/>-->
+<!--                    </ImageView>-->
+<!--                </graphic>-->
+<!--            </Button>-->
+<!--            <Button text="删除索引" userData="1_2">-->
+<!--                <graphic>-->
+<!--                    <ImageView>-->
+<!--                        <Image url="@/assets/images/remove_index_icon.png" requestedHeight="18" requestedWidth="18"-->
+<!--                               smooth="true"/>-->
+<!--                    </ImageView>-->
+<!--                </graphic>-->
+<!--            </Button>-->
+<!--            <Button text="添加外键" userData="2_1">-->
+<!--                <graphic>-->
+<!--                    <ImageView>-->
+<!--                        <Image url="@/assets/images/extension-key_icon.png" requestedHeight="18" requestedWidth="18"-->
+<!--                               smooth="true"/>-->
+<!--                    </ImageView>-->
+<!--                </graphic>-->
+<!--            </Button>-->
+<!--            <Button text="删除外键" userData="2_2">-->
+<!--                <graphic>-->
+<!--                    <ImageView>-->
+<!--                        <Image url="@/assets/images/remove_extension_icon.png" requestedHeight="18" requestedWidth="18"-->
+<!--                               smooth="true"/>-->
+<!--                    </ImageView>-->
+<!--                </graphic>-->
+<!--            </Button>-->
+<!--            <Button text="添加触发器" userData="3_1">-->
+<!--                <graphic>-->
+<!--                    <ImageView>-->
+<!--                        <Image url="@/assets/images/trigger_icon.png" requestedHeight="18" requestedWidth="18"-->
+<!--                               smooth="true"/>-->
+<!--                    </ImageView>-->
+<!--                </graphic>-->
+<!--            </Button>-->
+<!--            <Button text="插入触发器" userData="3_2">-->
+<!--                <graphic>-->
+<!--                    <ImageView>-->
+<!--                        <Image url="@/assets/images/insert_trigger_icon.png" requestedHeight="18"-->
+<!--                               requestedWidth="18"-->
+<!--                               smooth="true"/>-->
+<!--                    </ImageView>-->
+<!--                </graphic>-->
+<!--            </Button>-->
+<!--            <Button text="删除触发器" userData="3_3">-->
+<!--                <graphic>-->
+<!--                    <ImageView>-->
+<!--                        <Image url="@/assets/images/delete_trigger_icon.png" requestedHeight="18" requestedWidth="18"-->
+<!--                               smooth="true"/>-->
+<!--                    </ImageView>-->
+<!--                </graphic>-->
+<!--            </Button>-->
         </HBox>
     </top>
     <center>
@@ -156,46 +156,46 @@
                         </columns>
                     </DesignTableView>
                 </Tab>
-                <Tab text="索引">
-                    <DesignTableView>
-                        <columns>
-                            <TableColumn text="名"/>
-                            <TableColumn text="字段"/>
-                            <TableColumn text="类型"/>
-                            <TableColumn text="方法"/>
-                            <TableColumn text="注释"/>
-                        </columns>
-                    </DesignTableView>
-                </Tab>
-                <Tab text="外键">
-                    <DesignTableView>
-                        <columns>
-                            <TableColumn text="名"/>
-                            <TableColumn text="字段"/>
-                            <TableColumn text="被引用数据库"/>
-                            <TableColumn text="被引用表(父)"/>
-                            <TableColumn text="删除时"/>
-                            <TableColumn text="更新时"/>
-                        </columns>
-                    </DesignTableView>
-                </Tab>
-                <Tab text="触发器">
-                    <DesignTableView>
-                        <columns>
-                            <TableColumn text="名"/>
-                            <TableColumn text="字段"/>
-                            <TableColumn text="被引用数据库"/>
-                            <TableColumn text="被引用表(父)"/>
-                            <TableColumn text="删除时"/>
-                            <TableColumn text="更新时"/>
-                        </columns>
-                    </DesignTableView>
-                </Tab>
-                <Tab text="选项">
+<!--                <Tab text="索引">-->
+<!--                    <DesignTableView>-->
+<!--                        <columns>-->
+<!--                            <TableColumn text="名"/>-->
+<!--                            <TableColumn text="字段"/>-->
+<!--                            <TableColumn text="类型"/>-->
+<!--                            <TableColumn text="方法"/>-->
+<!--                            <TableColumn text="注释"/>-->
+<!--                        </columns>-->
+<!--                    </DesignTableView>-->
+<!--                </Tab>-->
+<!--                <Tab text="外键">-->
+<!--                    <DesignTableView>-->
+<!--                        <columns>-->
+<!--                            <TableColumn text="名"/>-->
+<!--                            <TableColumn text="字段"/>-->
+<!--                            <TableColumn text="被引用数据库"/>-->
+<!--                            <TableColumn text="被引用表(父)"/>-->
+<!--                            <TableColumn text="删除时"/>-->
+<!--                            <TableColumn text="更新时"/>-->
+<!--                        </columns>-->
+<!--                    </DesignTableView>-->
+<!--                </Tab>-->
+<!--                <Tab text="触发器">-->
+<!--                    <DesignTableView>-->
+<!--                        <columns>-->
+<!--                            <TableColumn text="名"/>-->
+<!--                            <TableColumn text="字段"/>-->
+<!--                            <TableColumn text="被引用数据库"/>-->
+<!--                            <TableColumn text="被引用表(父)"/>-->
+<!--                            <TableColumn text="删除时"/>-->
+<!--                            <TableColumn text="更新时"/>-->
+<!--                        </columns>-->
+<!--                    </DesignTableView>-->
+<!--                </Tab>-->
+<!--                <Tab text="选项">-->
 
-                </Tab>
+<!--                </Tab>-->
                 <Tab text="注释">
-                    <TextArea/>
+                    <TextArea fx:id="commentTextArea"/>
                 </Tab>
                 <Tab text="SQL预览">
                     <SQLEditor fx:id="sqlEditor"/>

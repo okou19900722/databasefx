@@ -1,6 +1,7 @@
 package com.openjfx.database.app.model.impl;
 
 import com.openjfx.database.app.model.AbstractDesignTableChangeModel;
+import com.openjfx.database.common.utils.StringUtils;
 import com.openjfx.database.model.ColumnChangeModel;
 import com.openjfx.database.model.RowChangeModel;
 import com.openjfx.database.model.TableColumnMeta;
@@ -22,7 +23,7 @@ public class RegularFieldTableChangeModel extends AbstractDesignTableChangeModel
     private final List<RowChangeModel> changeModels = new ArrayList<>();
 
     @Override
-    public void addChange(RowChangeModel.ChangeType changeType, int rowIndex, String fieldName, String oldValue, String newValue) {
+    public void addChange(RowChangeModel.ChangeType changeType, int rowIndex, String fieldName, String oldValue, String newValue, RowChangeModel.OperationType operationType) {
         final var _rowIndex = getRealRowIndex(rowIndex);
         var optional = changeModels.stream().filter(model -> model.getRowIndex() == _rowIndex).findAny();
         if (optional.isPresent()) {
@@ -45,6 +46,10 @@ public class RegularFieldTableChangeModel extends AbstractDesignTableChangeModel
                     col.setNewValue(newValue);
                 }
             } else {
+                //filter empty file name
+                if (StringUtils.isEmpty(fieldName)) {
+                    return;
+                }
                 var column = new ColumnChangeModel();
                 column.setOriginValue(oldValue);
                 column.setNewValue(newValue);
@@ -52,7 +57,7 @@ public class RegularFieldTableChangeModel extends AbstractDesignTableChangeModel
                 changes.add(column);
             }
         } else {
-            var rowChange = new RowChangeModel(_rowIndex, changeType);
+            var rowChange = new RowChangeModel(_rowIndex, changeType, operationType);
             var columns = new ArrayList<ColumnChangeModel>();
             rowChange.setColumnChangeModels(columns);
 
@@ -75,17 +80,16 @@ public class RegularFieldTableChangeModel extends AbstractDesignTableChangeModel
             return "";
         }
         var generator = DATABASE_SOURCE.getGenerator();
-        var createNum = changeModels.stream().filter(model -> model.getChangeType() == RowChangeModel.ChangeType.CREATE).count();
-        var sql = "";
-        //create table
-        if (createNum == changeModels.size()) {
+        return generator.createFieldModifySqlStatement(tableName, changeModels, tableColumnMetas);
+    }
 
-        } else {
-            //update table field value
-            sql = generator.createFieldModifySqlStatement(tableName, changeModels, tableColumnMetas);
-            System.out.println(sql);
+    @Override
+    public String getCreateSql(String tableName) {
+        if (changeModels.isEmpty()) {
+            return "";
         }
-        return sql;
+        var generator = DATABASE_SOURCE.getGenerator();
+        return generator.createTable(tableName, changeModels);
     }
 
     /**
@@ -98,6 +102,11 @@ public class RegularFieldTableChangeModel extends AbstractDesignTableChangeModel
         var list = changeModels.stream()
                 .filter(row -> row.getRowIndex() < rowIndex && row.getChangeType() == RowChangeModel.ChangeType.DELETE).collect(Collectors.toList());
         return rowIndex + list.size();
+    }
+
+    @Override
+    public void clear() {
+        changeModels.clear();
     }
 
     @Override

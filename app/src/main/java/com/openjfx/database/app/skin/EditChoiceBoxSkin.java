@@ -4,6 +4,7 @@ import com.openjfx.database.app.controls.EditChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.skin.ChoiceBoxSkin;
+import javafx.scene.layout.StackPane;
 
 /**
  * simple impl edit choice-box skin
@@ -19,10 +20,16 @@ public class EditChoiceBoxSkin<T> extends ChoiceBoxSkin<T> {
     public EditChoiceBoxSkin(EditChoiceBox<T> control) {
         super(control);
         var label = (Label) getChildren().get(0);
+        var openButton = (StackPane) getChildren().get(1);
+
         label.setGraphic(textField);
         label.setGraphicTextGap(0);
         //forbid text show in label
         label.textProperty().addListener((observable, oldValue, newValue) -> label.setText(""));
+        //hide open button
+        control.hideSelectorProperty().addListener((observable, oldValue, newValue) -> {
+            openButton.setVisible(!newValue);
+        });
         //listener ChoiceBox select change
         control.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
             var index = newValue.intValue();
@@ -37,13 +44,12 @@ public class EditChoiceBoxSkin<T> extends ChoiceBoxSkin<T> {
         textField.textProperty().addListener((observable, oldValue, newValue) -> control.setText(newValue));
         control.textProperty().addListener((observable, oldValue, newValue) -> {
             var text = textField.getText();
-            if (newValue == null) {
-                textField.setText("");
-                return;
-            }
             if (!text.equals(newValue)) {
                 textField.setText(newValue);
             }
+            var items = control.getItems();
+            var index = items.indexOf(newValue);
+            control.getSelectionModel().select(index);
         });
     }
 }

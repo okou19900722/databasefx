@@ -5,7 +5,6 @@ import com.openjfx.database.app.component.DesignOptionBox;
 import com.openjfx.database.app.config.Constants;
 import com.openjfx.database.app.controls.DesignTableView;
 import com.openjfx.database.app.controls.SQLEditor;
-import com.openjfx.database.app.model.AbstractDesignTableChangeModel;
 import com.openjfx.database.app.model.DesignTableModel;
 import com.openjfx.database.app.model.impl.RegularFieldTableChangeModel;
 import com.openjfx.database.app.utils.DialogUtils;
@@ -52,6 +51,9 @@ public class DesignTableController extends BaseController<JsonObject> {
     @FXML
     private SQLEditor sqlEditor;
 
+    @FXML
+    private TextArea commentTextArea;
+
     private AbstractDataBasePool pool;
 
     private final List<Button> actionList = new ArrayList<>();
@@ -59,6 +61,12 @@ public class DesignTableController extends BaseController<JsonObject> {
     private final RegularFieldTableChangeModel regularFieldTableChangeModel = new RegularFieldTableChangeModel();
 
     private final List<TableColumnMeta> columnMetas = new ArrayList<>();
+    /**
+     * design table type
+     * 0 create table
+     * 1 update table
+     */
+    private int type = 0;
 
     @Override
     public void init() {
@@ -79,10 +87,20 @@ public class DesignTableController extends BaseController<JsonObject> {
         tabSelectChange(0);
         tabPane.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
             var index = newValue.intValue();
+            var tab = tabPane.getTabs().get(index);
             tabSelectChange(index);
-            if (index == 6) {
-                var sql = regularFieldTableChangeModel.getUpdateSql(getTableName(false), columnMetas);
+            if (index == 2) {
+                var sql = getSql(getTableName(false));
                 sqlEditor.setText(sql);
+            }
+            if (index == 1) {
+                var ua = tab.getUserData();
+                if (ua == null) {
+                    commentTextArea.textProperty().addListener((observable1, oldValue1, newValue1) -> {
+                        regularFieldTableChangeModel.addChange(RowChangeModel.ChangeType.UPDATE, 9999, "Comment", oldValue1, newValue1, RowChangeModel.OperationType.TABLE_COMMENT);
+                    });
+                    tab.setUserData("COMMENT");
+                }
             }
         });
 
@@ -95,7 +113,8 @@ public class DesignTableController extends BaseController<JsonObject> {
             var item = fieldTable.getItems().get(index);
             box.updateValue(item);
             //listener field every value change
-            item.setCallback((old, value, fieldName) -> regularFieldTableChangeModel.addChange(RowChangeModel.ChangeType.UPDATE, index, fieldName, old, value));
+            item.setCallback((old, value, fieldName) -> regularFieldTableChangeModel.addChange
+                    (RowChangeModel.ChangeType.UPDATE, index, fieldName, old, value, RowChangeModel.OperationType.TABLE_FIELD));
         });
 
         stage.widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -158,18 +177,18 @@ public class DesignTableController extends BaseController<JsonObject> {
 
     private void initDataTable() {
         var uuid = data.getString(Constants.UUID);
-        var scheme = data.getString(Constants.SCHEME);
+        pool = DATABASE_SOURCE.getDataBaseSource(uuid);
         var table = data.getString(Constants.TABLE_NAME, "");
-        var title = "无标题" + " @ " + scheme;
+        updateTableName(table);
         if (!"".equals(table)) {
-            title = table + " @ " + scheme;
-            var tableName = scheme + "." + table;
-            pool = DATABASE_SOURCE.getDataBaseSource(uuid);
+            var array = stage.getTitle().split("@");
+            var tableName = array[1].trim() + "." + array[0].trim();
             var future = pool.getDql().showColumns(tableName);
             future.onSuccess(rs -> {
                 columnMetas.addAll(rs);
                 var list = DesignTableModel.build(rs);
                 Platform.runLater(() -> {
+                    fieldTable.getItems().clear();
                     fieldTable.setItems(FXCollections.observableList(list));
                     if (list.size() > 0) {
                         //default select first row
@@ -178,30 +197,38 @@ public class DesignTableController extends BaseController<JsonObject> {
                 });
             });
             future.onFailure(Throwable::printStackTrace);
+            type = 1;
         }
-        stage.setTitle(title);
+        //load table comment
+        if (type == 1) {
+            var future = pool.getDql().getCreateTableComment(getTableName(false));
+            future.onSuccess(comment -> Platform.runLater(() -> commentTextArea.setText(comment)));
+        }
     }
 
     private void listAction(final String ij) {
         //save
         if ("0_0".equals(ij)) {
-            var title = stage.getTitle();
-            var array = title.split("@");
-            var temp = array[0].trim();
-            var tableName = "";
-            var sqlType = 0;
-            //Prompt user for table name
-            if ("无标题".equals(temp)) {
-                var table = DialogUtils.showInputDialog("请输入表名");
-                if (StringUtils.isEmpty(table)) {
-                    DialogUtils.showAlertInfo("表明不能为空");
-                    return;
-                }
-                tableName = array[1].trim() + "." + table;
-                sqlType = 1;
-            } else {
-                tableName = array[1].trim() + "." + array[0].trim();
+            var tableName = getTableName(true);
+            if (StringUtils.isEmpty(tableName)) {
+                return;
             }
+            var sql = getSql(tableName);
+            if (StringUtils.isEmpty(sql)) {
+                return;
+            }
+            var future = pool.getPool().query(sql);
+            future.onSuccess(ar -> {
+                if (type == 0) {
+                    this.type = 1;
+                    var temp = tableName.split("\\.")[1];
+                    data.put(Constants.TABLE_NAME, temp);
+                }
+                regularFieldTableChangeModel.clear();
+                //refresh data table
+                initDataTable();
+            });
+            future.onFailure(t -> DialogUtils.showErrorDialog(t, "更新/创建表失败"));
         }
         //new create  row
         if ("0_1".equals(ij)) {
@@ -211,16 +238,26 @@ public class DesignTableController extends BaseController<JsonObject> {
             var index = items.size() - 1;
             fieldTable.getSelectionModel().select(index);
             //add row
-            regularFieldTableChangeModel.addChange(RowChangeModel.ChangeType.CREATE, index, "", "", "");
+            regularFieldTableChangeModel.addChange(RowChangeModel.ChangeType.CREATE, index, "", "", "", RowChangeModel.OperationType.TABLE_FIELD);
         }
         //delete row
         if ("0_3".equals(ij)) {
             var index = fieldTable.getSelectionModel().getSelectedIndex();
             if (index != -1) {
                 fieldTable.getItems().remove(index);
-                regularFieldTableChangeModel.addChange(RowChangeModel.ChangeType.DELETE, index, "", "", "");
+                regularFieldTableChangeModel.addChange(RowChangeModel.ChangeType.DELETE, index, "", "", "", RowChangeModel.OperationType.TABLE_FIELD);
             }
         }
+    }
+
+    private String getSql(final String tableName) {
+        var sql = "";
+        if (type == 1) {
+            sql = regularFieldTableChangeModel.getUpdateSql(tableName, columnMetas);
+        } else {
+            sql = regularFieldTableChangeModel.getCreateSql(tableName);
+        }
+        return sql;
     }
 
     private String getTableName(boolean isInput) {
@@ -229,7 +266,7 @@ public class DesignTableController extends BaseController<JsonObject> {
         var temp = array[0].trim();
         var tableName = "";
         //Prompt user for table name
-        if ("无标题".equals(temp)) {
+        if ("Untitled".equals(temp)) {
             if (isInput) {
                 var table = DialogUtils.showInputDialog("请输入表名");
                 if (StringUtils.isEmpty(table)) {
@@ -238,12 +275,23 @@ public class DesignTableController extends BaseController<JsonObject> {
                 }
                 tableName = array[1].trim() + "." + table;
             } else {
-                tableName = array[1].trim() + "." + "Untitled";
+                tableName = array[1].trim() + "." + temp;
             }
         } else {
             tableName = array[1].trim() + "." + array[0].trim();
         }
 
         return tableName;
+    }
+
+    private void updateTableName(final String table) {
+        var scheme = data.getString(Constants.SCHEME);
+        final String title;
+        if (StringUtils.isEmpty(table)) {
+            title = "Untitled" + " @ " + scheme;
+        } else {
+            title = table + " @ " + scheme;
+        }
+        Platform.runLater(()-> stage.setTitle(title));
     }
 }

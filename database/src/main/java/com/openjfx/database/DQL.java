@@ -70,4 +70,20 @@ public interface DQL {
      */
     Future<Map<List<String>, List<String[]>>> executeSql(String sql);
 
+    /**
+     * show create table sql statement
+     *
+     * @param table table
+     * @return create table sql statement
+     */
+    Future<String> showCreateTable(String table);
+
+    /**
+     * obtain create table comment
+     *
+     * @param table table
+     * @return table comment
+     */
+    Future<String> getCreateTableComment(String table);
+
 }

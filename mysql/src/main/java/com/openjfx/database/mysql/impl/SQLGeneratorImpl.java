@@ -9,7 +9,9 @@ import com.openjfx.database.mysql.MysqlHelper;
 import com.openjfx.database.mysql.SQLHelper;
 import io.vertx.mysqlclient.MySQLPool;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -43,8 +45,9 @@ public class SQLGeneratorImpl implements SQLGenerator {
         sb.append("ALTER TABLE");
         sb.append(tableName);
         sb.append(" ");
-        var flag = 0;
-        for (RowChangeModel rowChangeModel : changeModels) {
+        var fieldChanges = changeModels.stream()
+                .filter(rowChangeModel -> rowChangeModel.getOperationType() == RowChangeModel.OperationType.TABLE_FIELD).collect(Collectors.toList());
+        for (RowChangeModel rowChangeModel : fieldChanges) {
             var index = rowChangeModel.getRowIndex();
             var meta = metas.get(index);
             if (rowChangeModel.getChangeType() == RowChangeModel.ChangeType.UPDATE) {
@@ -113,7 +116,6 @@ public class SQLGeneratorImpl implements SQLGenerator {
                     sb.append(col.getNewValue());
                     sb.append("' ");
                 }
-
             }
             if (rowChangeModel.getChangeType() == RowChangeModel.ChangeType.CREATE) {
 
@@ -123,12 +125,9 @@ public class SQLGeneratorImpl implements SQLGenerator {
                 sb.append(meta.getField());
                 sb.append("` ");
             }
-            if (flag != changeModels.size() - 1) {
-                sb.append(",");
-            }
-            sb.append("\r\n");
-            flag++;
+            sb.append(",");
         }
+        //Handle primary key changes
         var keyRows = changeModels.stream().filter(rowChangeModel -> {
             var columns = rowChangeModel.getColumnChangeModels();
             for (ColumnChangeModel column : columns) {
@@ -142,10 +141,8 @@ public class SQLGeneratorImpl implements SQLGenerator {
         var keys = metas.stream().filter(meta -> StringUtils.nonEmpty(meta.getKey())).collect(Collectors.toList());
         //key already happen change
         if (keyRows.size() > 0) {
-            sb.append(" DROP PRIMARY KEY, ");
-            sb.append("\r\n");
-
-            var i = 0;
+            sb.append(" DROP PRIMARY KEY,");
+            var j = -1;
             var a = false;
             for (RowChangeModel keyRow : keyRows) {
                 var index = keyRow.getRowIndex();
@@ -153,6 +150,8 @@ public class SQLGeneratorImpl implements SQLGenerator {
                 var keyColumn = keyRow.getColumn("Key");
 
                 var keyStatus = Boolean.parseBoolean(keyColumn.getNewValue());
+
+                j++;
 
                 if (!keyStatus) {
                     keys.remove(meta);
@@ -169,22 +168,154 @@ public class SQLGeneratorImpl implements SQLGenerator {
                     sb.append(SQLHelper.escapeMysqlField(meta.getField()));
                 }
                 keys.remove(meta);
-                if (i < keyRows.size() - 1 && keys.size() > 0) {
+                if (j < keyRows.size() - 1) {
                     sb.append(",");
                 }
             }
-            var j = 0;
+            var k = 0;
             for (TableColumnMeta key : keys) {
-                sb.append(SQLHelper.escapeMysqlField(key.getField()));
-                if (j < keys.size() - 1) {
+                if (k == 0) {
                     sb.append(",");
                 }
+                sb.append(SQLHelper.escapeMysqlField(key.getField()));
+                if (k < keys.size() - 1) {
+                    sb.append(",");
+                }
+                k++;
             }
             if (a) {
-                sb.append(") USING BTREE;");
+                sb.append(") USING BTREE,");
             }
         }
+        //table comment
+        var optional = changeModels.stream().filter(
+                rowChangeModel -> rowChangeModel.getOperationType() == RowChangeModel.OperationType.TABLE_COMMENT).findAny();
+        if (optional.isPresent()) {
+            var rowChange = optional.get();
+            var column = rowChange.getColumn("Comment");
+            sb.append(" COMMENT='");
+            sb.append(column.getNewValue());
+            sb.append("';");
+        }
         var sql = sb.toString();
+        sql = sql.substring(0, sql.length() - 1) + ";";
         return sql;
+    }
+
+    @Override
+    public String createTable(String table, List<RowChangeModel> changeModels) {
+        var sb = new StringBuilder();
+        var tableName = SQLHelper.escapeMysqlField(table);
+        sb.append("CREATE TABLE ");
+        sb.append(tableName);
+        sb.append("(");
+        var rowChangeModels = changeModels
+                .stream()
+                .filter(rowChangeModel -> rowChangeModel.getOperationType() == RowChangeModel.OperationType.TABLE_FIELD)
+                .collect(Collectors.toList());
+        var i = 0;
+        var keys = new ArrayList<String>();
+        for (RowChangeModel changeModel : rowChangeModels) {
+            if (changeModel.containField("Field")) {
+                var field = changeModel.getColumn("Field");
+                var fieldName = SQLHelper.escapeMysqlField(field.getNewValue());
+                sb.append(fieldName).append(" ");
+                if (changeModel.containField("Key")) {
+                    keys.add(fieldName);
+                }
+                ;
+            } else {
+                sb.append(" ");
+            }
+            if (changeModel.containField("Type")) {
+                var type = changeModel.getColumn("Type");
+                var val = type.getNewValue();
+                var length = "(";
+                if (changeModel.containField("Length")) {
+                    var l = changeModel.getColumn("Length");
+                    length += l.getNewValue();
+                } else {
+                    length += "0";
+                }
+                if (changeModel.containField("DecimalPoint")) {
+                    var point = changeModel.getColumn("DecimalPoint");
+                    length += "," + point.getNewValue();
+                }
+                length += ")";
+                val += length;
+                sb.append(val);
+                sb.append(" ");
+            }
+            if (changeModel.containField("Charset")) {
+                var charset = changeModel.getColumn("Charset");
+                var collate = changeModel.getColumn("Collation");
+                sb.append("CHARACTER SET ");
+                sb.append(charset.getNewValue());
+                sb.append(" COLLATE ");
+                sb.append(collate.getNewValue());
+                sb.append(" ");
+            }
+
+            if (changeModel.containField("AutoIncrement")) {
+                var autoIncrement = changeModel.getColumn("AutoIncrement");
+                var a = Boolean.parseBoolean(autoIncrement.getNewValue());
+                if (a) {
+                    sb.append(" AUTO_INCREMENT ");
+                }
+            }
+
+            if (changeModel.containField("Nullable")) {
+                var nullable = changeModel.getColumn("Nullable");
+                var b = Boolean.parseBoolean(nullable.getNewValue());
+                if (b) {
+                    sb.append("NOT NULL ");
+                } else {
+                    sb.append("NULL ");
+                }
+            }
+
+            if (changeModel.containField("Default")) {
+                var defaultValue = changeModel.getColumn("Default");
+                sb.append("DEFAULT '");
+                sb.append(defaultValue.getNewValue());
+                sb.append("' ");
+            }
+
+            if (changeModel.containField("Comment")) {
+                var comment = changeModel.getColumn("Comment");
+                sb.append("COMMENT '");
+                sb.append(comment.getNewValue());
+                sb.append("' ");
+            }
+
+            if (i < changeModels.size() - 1) {
+                sb.append(",");
+            }
+            i++;
+        }
+        for (int j = 0; j < keys.size(); j++) {
+            var key = keys.get(j);
+            if (j == 0) {
+                sb.append(" PRIMARY KEY (");
+            }
+            sb.append(key);
+            if (j == keys.size() - 1) {
+                sb.append(") ");
+            } else {
+                sb.append(",");
+            }
+        }
+        sb.append(") ");
+        var optional = changeModels.stream()
+                .filter(rowChangeModel -> rowChangeModel.getOperationType() == RowChangeModel.OperationType.TABLE_COMMENT)
+                .findAny();
+        if (optional.isPresent()) {
+            var column = optional.get().getColumn("Comment");
+            sb.append("COMMENT '");
+            sb.append(column.getNewValue());
+            sb.append("' ");
+        }
+        sb.append(";");
+        return sb.toString();
     }
 }

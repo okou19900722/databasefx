@@ -9,14 +9,18 @@ import java.util.List;
 
 public class TableTriggerChangeModel extends AbstractDesignTableChangeModel {
 
-
     @Override
-    public void addChange(RowChangeModel.ChangeType type, int rowIndex, String fieldName, String oldValue, String newValue) {
+    public void addChange(RowChangeModel.ChangeType type, int rowIndex, String fieldName, String oldValue, String newValue, RowChangeModel.OperationType operationType) {
 
     }
 
     @Override
     public String getUpdateSql(String tableName, List<TableColumnMeta> tableColumnMetas) {
+        return null;
+    }
+
+    @Override
+    public String getCreateSql(String tableName) {
         return null;
     }
 }

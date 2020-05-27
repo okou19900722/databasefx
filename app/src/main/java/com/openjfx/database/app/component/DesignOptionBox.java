@@ -3,11 +3,6 @@ package com.openjfx.database.app.component;
 import com.openjfx.database.DataCharset;
 import com.openjfx.database.app.controls.EditChoiceBox;
 import com.openjfx.database.app.model.DesignTableModel;
-import io.vertx.core.json.JsonObject;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -28,14 +23,16 @@ public class DesignOptionBox extends VBox {
     private final DataCharset dataCharset = DATABASE_SOURCE.getCharset();
 
     public DesignOptionBox() {
-        Label autoIncrement = new Label("自增");
-        GridPane grid = new GridPane();
+        defaultBox.setHideSelector(true);
+
+        var autoIncrement = new Label("自增");
+        var grid = new GridPane();
         grid.addRow(0, autoIncrement, incrementCheck);
-        Label defaultLabel = new Label("默认值:");
+        var defaultLabel = new Label("默认值:");
         grid.addRow(1, defaultLabel, defaultBox);
-        Label charsetLabel = new Label("字符集:");
+        var charsetLabel = new Label("字符集:");
         grid.addRow(2, charsetLabel, charsetBox);
-        Label collationLabel = new Label("排序规则:");
+        var collationLabel = new Label("排序规则:");
         grid.addRow(3, collationLabel, collationBox);
 
         grid.setHgap(10);
@@ -43,7 +40,6 @@ public class DesignOptionBox extends VBox {
         grid.getRowConstraints().add(new RowConstraints());
         grid.getColumnConstraints().add(new ColumnConstraints());
 
-        defaultBox.getItems().addAll("", "EMPTY STRINGING");
 
         charsetBox.getItems().addAll(dataCharset.getCharset());
 

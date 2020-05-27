@@ -30,13 +30,37 @@ public class RowChangeModel {
         CREATE
     }
 
+    /**
+     * operation type
+     */
+    public enum OperationType {
+        /**
+         * table field
+         */
+        TABLE_FIELD,
+        /**
+         * table comment
+         */
+        TABLE_COMMENT,
+        /**
+         * table index
+         */
+        TABLE_INDEX,
+        /**
+         * table trigger
+         */
+        TABLE_TRIGGER
+    }
+
     private final int rowIndex;
     private final ChangeType changeType;
+    private final OperationType operationType;
     private List<ColumnChangeModel> columnChangeModels;
 
-    public RowChangeModel(int rowIndex, ChangeType changeType) {
+    public RowChangeModel(int rowIndex, ChangeType changeType, OperationType operationType) {
         this.rowIndex = rowIndex;
         this.changeType = changeType;
+        this.operationType = operationType;
     }
 
     public ChangeType getChangeType() {
@@ -68,5 +92,9 @@ public class RowChangeModel {
 
     public int getRowIndex() {
         return rowIndex;
+    }
+
+    public OperationType getOperationType() {
+        return operationType;
     }
 }

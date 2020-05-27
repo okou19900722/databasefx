@@ -15,13 +15,14 @@ public abstract class AbstractDesignTableChangeModel {
     /**
      * add change
      *
-     * @param type      change type
-     * @param rowIndex  row index
-     * @param fieldName change column name
-     * @param oldValue  change before value
-     * @param newValue  change after value
+     * @param type          change type
+     * @param rowIndex      row index
+     * @param fieldName     change column name
+     * @param oldValue      change before value
+     * @param newValue      change after value
+     * @param operationType operation type
      */
-    public abstract void addChange(RowChangeModel.ChangeType type, int rowIndex, String fieldName, String oldValue, String newValue);
+    public abstract void addChange(RowChangeModel.ChangeType type, int rowIndex, String fieldName, String oldValue, String newValue, RowChangeModel.OperationType operationType);
 
     /**
      * obtain update sql statement
@@ -31,4 +32,15 @@ public abstract class AbstractDesignTableChangeModel {
      */
     public abstract String getUpdateSql(String tableName, List<TableColumnMeta> tableColumnMetas);
 
+    /**
+     * obtain create sql
+     *
+     * @param tableName table name
+     * @return create sql
+     */
+    public abstract String getCreateSql(String tableName);
+
+    public void clear() {
+
+    }
 }

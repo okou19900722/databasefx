@@ -2,7 +2,6 @@ package com.openjfx.database.app.model;
 
 import com.openjfx.database.app.controls.EditChoiceBox;
 import com.openjfx.database.common.MultipleHandler;
-import com.openjfx.database.common.utils.StringUtils;
 import com.openjfx.database.model.TableColumnMeta;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -58,19 +57,19 @@ public class DesignTableModel {
     /**
      * default value
      */
-    private final StringProperty defaultValue = new SimpleStringProperty();
+    private final StringProperty defaultValue = new SimpleStringProperty("");
     /**
      * field collation
      */
-    private final StringProperty collation = new SimpleStringProperty();
+    private final StringProperty collation = new SimpleStringProperty("");
     /**
      * field charset
      */
-    private final StringProperty charset = new SimpleStringProperty();
+    private final StringProperty charset = new SimpleStringProperty("");
     /**
      * field autoincrement?
      */
-    private final BooleanProperty autoIncrement = new SimpleBooleanProperty();
+    private final BooleanProperty autoIncrement = new SimpleBooleanProperty(false);
 
     private MultipleHandler<String, String, String> callback;
 

@@ -2,11 +2,13 @@ package com.openjfx.database.mysql.impl;
 
 import com.openjfx.database.DQL;
 import com.openjfx.database.DataConvert;
+import com.openjfx.database.common.utils.StringUtils;
 import com.openjfx.database.model.TableColumnMeta;
 import com.openjfx.database.mysql.PageHelper;
 import com.openjfx.database.mysql.SQLHelper;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
+import io.vertx.core.json.JsonObject;
 import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.Tuple;
@@ -144,6 +146,51 @@ public class DQLImpl implements DQL {
             var map = new HashMap<List<String>, List<String[]>>();
             map.put(columns, dd);
             promise.complete(map);
+        });
+        future.onFailure(promise::fail);
+        return promise.future();
+    }
+
+    @Override
+    public Future<String> showCreateTable(String table) {
+        var tableName = SQLHelper.escapeMysqlField(table);
+        var sql = "SHOW CREATE table " + tableName;
+        var future = client.query(sql);
+        var promise = Promise.<String>promise();
+        future.onSuccess(rs -> {
+            for (Row row : rs) {
+                var str = row.getString(1);
+                promise.complete(str);
+                return;
+            }
+            promise.complete("");
+        });
+        future.onFailure(promise::fail);
+        return promise.future();
+    }
+
+    @Override
+    public Future<String> getCreateTableComment(String table) {
+        var future = showCreateTable(table);
+        var promise = Promise.<String>promise();
+        future.onSuccess(createTableSql -> {
+            if (StringUtils.isEmpty(createTableSql)) {
+                promise.complete("");
+                return;
+            }
+            var index = createTableSql.lastIndexOf(")");
+            if (index == -1) {
+                promise.complete("");
+                return;
+            }
+            var str = createTableSql.substring(index + 1);
+            var tIndex = str.indexOf("COMMENT");
+            if (tIndex == -1) {
+                promise.complete("");
+            } else {
+                var comment = str.substring(tIndex + 9, str.length() - 1);
+                promise.complete(comment);
+            }
         });
         future.onFailure(promise::fail);
         return promise.future();

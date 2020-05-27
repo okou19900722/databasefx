@@ -1,6 +1,8 @@
 package com.openjfx.database.app.controls;
 
 import com.openjfx.database.app.skin.EditChoiceBoxSkin;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.ChoiceBox;
@@ -17,7 +19,11 @@ public class EditChoiceBox<T> extends ChoiceBox<T> {
     /**
      * TextField text property
      */
-    private final StringProperty text = new SimpleStringProperty();
+    private final StringProperty text = new SimpleStringProperty("");
+    /**
+     * is hide selector
+     */
+    private final BooleanProperty hideSelector = new SimpleBooleanProperty(false);
 
     private final static String DEFAULT_STYLE_CLASS = "edit-choice-box";
 
@@ -43,5 +49,17 @@ public class EditChoiceBox<T> extends ChoiceBox<T> {
 
     public void setText(String text) {
         this.text.set(text);
+    }
+
+    public boolean isHideSelector() {
+        return hideSelector.get();
+    }
+
+    public BooleanProperty hideSelectorProperty() {
+        return hideSelector;
+    }
+
+    public void setHideSelector(boolean hideSelector) {
+        this.hideSelector.set(hideSelector);
     }
 }
