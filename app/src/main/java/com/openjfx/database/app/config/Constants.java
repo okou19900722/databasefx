@@ -43,4 +43,8 @@ public class Constants {
      * scheme
      */
     public static final String SCHEME = "scheme";
+    /**
+     * type
+     */
+    public static final String TYPE = "type";
 }

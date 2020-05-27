@@ -7,42 +7,80 @@ package com.openjfx.database.model;
  * @since 1.0
  */
 public class TableColumnMeta {
+
+    public static enum TableColumnEnum {
+        FIELD,
+        TYPE,
+        COLLATION,
+        NULL,
+        KEY,
+        AUTO_INCREMENT,
+        DEFAULT,
+        EXTRA,
+        COMMENT,
+        LENGTH,
+        DECIMAL_POINT,
+        CHARSET,
+        PRIMARY_KEY
+    }
+
     /**
      * 字段值
      */
     private String Field;
     /**
-     * 数据类型
+     * data type
      */
     private String Type;
     /**
-     * 字符编码
+     * charset collation
      */
     private String Collation;
     /**
-     * 是否空
+     * is Null?
      */
-    private String Null;
+    private Boolean Null;
     /**
-     * 是否key值
+     * is Key
      */
     private String Key;
     /**
-     * 默认值
+     * field is auto_increment
+     */
+    private Boolean AutoIncrement;
+    /**
+     * field default
      */
     private String Default;
     /**
-     * 外部数据
+     * field extra
      */
     private String Extra;
     /**
-     * 权限
+     * field privileges
      */
     private String Privileges;
     /**
-     * 备注信息
+     * field comment
      */
     private String Comment;
+    /**
+     * field length
+     */
+    private String Length;
+
+    /**
+     * field decimal point
+     */
+    private String DecimalPoint;
+    /**
+     * field charset
+     */
+    private String Charset;
+    /**
+     * field is primary Key
+     */
+    private Boolean PrimaryKey;
 
     public TableColumnMeta() {
     }
@@ -75,11 +113,11 @@ public class TableColumnMeta {
         Collation = collation;
     }
 
-    public String getNull() {
+    public Boolean getNull() {
         return Null;
     }
 
-    public void setNull(String aNull) {
+    public void setNull(Boolean aNull) {
         Null = aNull;
     }
 
@@ -121,5 +159,77 @@ public class TableColumnMeta {
 
     public void setComment(String comment) {
         Comment = comment;
+    }
+
+    public String getLength() {
+        return Length;
+    }
+
+    public void setLength(String length) {
+        Length = length;
+    }
+
+    public String getDecimalPoint() {
+        return DecimalPoint;
+    }
+
+    public void setDecimalPoint(String decimalPoint) {
+        DecimalPoint = decimalPoint;
+    }
+
+    public Boolean getAutoIncrement() {
+        return AutoIncrement;
+    }
+
+    public void setAutoIncrement(Boolean autoIncrement) {
+        AutoIncrement = autoIncrement;
+    }
+
+    public String getCharset() {
+        return Charset;
+    }
+
+    public void setCharset(String charset) {
+        Charset = charset;
+    }
+
+    public Boolean getPrimaryKey() {
+        return PrimaryKey;
+    }
+
+    public void setPrimaryKey(Boolean primaryKey) {
+        PrimaryKey = primaryKey;
+    }
+
+    public <T> T getFieldValue(TableColumnEnum tableColumnEnum) {
+        T t = null;
+        if (tableColumnEnum == TableColumnEnum.FIELD) {
+            t = (T) this.getField();
+        } else if (tableColumnEnum == TableColumnEnum.TYPE) {
+            t = (T) this.getType();
+        } else if (tableColumnEnum == TableColumnEnum.AUTO_INCREMENT) {
+            t = (T) this.getAutoIncrement();
+        } else if (tableColumnEnum == TableColumnEnum.CHARSET) {
+            t = (T) this.getCharset();
+        } else if (tableColumnEnum == TableColumnEnum.COLLATION) {
+            t = (T) this.getCollation();
+        } else if (tableColumnEnum == TableColumnEnum.COMMENT) {
+            t = (T) this.getComment();
+        } else if (tableColumnEnum == TableColumnEnum.DEFAULT) {
+            t = (T) this.getDefault();
+        } else if (tableColumnEnum == TableColumnEnum.EXTRA) {
+            t = (T) this.getExtra();
+        } else if (tableColumnEnum == TableColumnEnum.KEY) {
+            t = (T) this.getKey();
+        } else if (tableColumnEnum == TableColumnEnum.LENGTH) {
+            t = (T) this.getLength();
+        } else if (tableColumnEnum == TableColumnEnum.PRIMARY_KEY) {
+            t = (T) this.getPrimaryKey();
+        } else if (tableColumnEnum == TableColumnEnum.NULL) {
+            t = (T) this.getNull();
+        } else if (tableColumnEnum == TableColumnEnum.DECIMAL_POINT) {
+            t = (T) this.getDecimalPoint();
+        }
+        return t;
     }
 }

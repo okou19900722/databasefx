@@ -75,6 +75,7 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
             var params = new JsonObject();
             params.put(Constants.UUID, getUuid());
             params.put(Constants.SCHEME, scheme);
+            params.put(Constants.TYPE, 0);
             new DesignTableStage(params);
         });
 

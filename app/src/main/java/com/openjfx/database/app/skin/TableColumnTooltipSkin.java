@@ -3,14 +3,11 @@ package com.openjfx.database.app.skin;
 import com.openjfx.database.app.controls.TableDataColumn;
 import com.openjfx.database.common.utils.StringUtils;
 import com.openjfx.database.model.TableColumnMeta;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Skin;
 import javafx.scene.layout.GridPane;
 
-import java.util.Objects;
 
 public class TableColumnTooltipSkin implements Skin<TableDataColumn.TableColumnTooltip> {
     private final TableDataColumn.TableColumnTooltip tooltip;
@@ -40,15 +37,17 @@ public class TableColumnTooltipSkin implements Skin<TableDataColumn.TableColumnT
         var isNull = columnMeta.getNull();
         var extra = columnMeta.getExtra();
         var collation = columnMeta.getCollation();
+        var charset = columnMeta.getCharset();
 
-        gridPane.addRow(0, new Label("Field:"), new Label(field));
-        gridPane.addRow(1, new Label("Type:"), new Label(type));
+        gridPane.addRow(0, new Label("Field"), new Label(field));
+        gridPane.addRow(1, new Label("Type"), new Label(type));
         gridPane.addRow(2, new Label("Key"), new Label(key));
         gridPane.addRow(3, new Label("Default"), new Label(defValue));
         gridPane.addRow(4, new Label("Comment"), new Label(comment));
-        gridPane.addRow(5, new Label("Null"), new Label(isNull));
+        gridPane.addRow(5, new Label("Null"), new Label(isNull.toString()));
         gridPane.addRow(7, new Label("Extra"), new Label(extra));
-        gridPane.addRow(8, new Label("Collation"), new Label(collation));
+        gridPane.addRow(8, new Label("Charset"), new Label(charset));
+        gridPane.addRow(9, new Label("Collation"), new Label(collation));
 
         return gridPane;
     }

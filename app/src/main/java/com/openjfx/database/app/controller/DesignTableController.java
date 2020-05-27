@@ -6,10 +6,11 @@ import com.openjfx.database.app.config.Constants;
 import com.openjfx.database.app.controls.DesignTableView;
 import com.openjfx.database.app.controls.SQLEditor;
 import com.openjfx.database.app.model.DesignTableModel;
-import com.openjfx.database.app.model.impl.RegularFieldTableChangeModel;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.base.AbstractDataBasePool;
 import com.openjfx.database.common.utils.StringUtils;
+import com.openjfx.database.enums.DesignTableOperationSource;
+import com.openjfx.database.enums.DesignTableOperationType;
 import com.openjfx.database.model.RowChangeModel;
 import com.openjfx.database.model.TableColumnMeta;
 import io.vertx.core.json.JsonObject;
@@ -19,6 +20,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
+import com.openjfx.database.app.model.TableFieldChangeModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +60,7 @@ public class DesignTableController extends BaseController<JsonObject> {
 
     private final List<Button> actionList = new ArrayList<>();
 
-    private final RegularFieldTableChangeModel regularFieldTableChangeModel = new RegularFieldTableChangeModel();
+    private final TableFieldChangeModel tableFieldChangeModel = new TableFieldChangeModel();
 
     private final List<TableColumnMeta> columnMetas = new ArrayList<>();
     /**
@@ -70,6 +72,7 @@ public class DesignTableController extends BaseController<JsonObject> {
 
     @Override
     public void init() {
+        this.type = data.getInteger(Constants.TYPE, 0);
         intiTable(fieldTable, DesignTableModel.class);
         initDataTable();
         for (Tab tab : tabPane.getTabs()) {
@@ -96,9 +99,7 @@ public class DesignTableController extends BaseController<JsonObject> {
             if (index == 1) {
                 var ua = tab.getUserData();
                 if (ua == null) {
-                    commentTextArea.textProperty().addListener((observable1, oldValue1, newValue1) -> {
-                        regularFieldTableChangeModel.addChange(RowChangeModel.ChangeType.UPDATE, 9999, "Comment", oldValue1, newValue1, RowChangeModel.OperationType.TABLE_COMMENT);
-                    });
+                    commentTextArea.textProperty().addListener((observable1, oldValue1, newValue1) -> tableFieldChangeModel.tableCommentChange(oldValue1, newValue1));
                     tab.setUserData("COMMENT");
                 }
             }
@@ -113,8 +114,7 @@ public class DesignTableController extends BaseController<JsonObject> {
             var item = fieldTable.getItems().get(index);
             box.updateValue(item);
             //listener field every value change
-            item.setCallback((old, value, fieldName) -> regularFieldTableChangeModel.addChange
-                    (RowChangeModel.ChangeType.UPDATE, index, fieldName, old, value, RowChangeModel.OperationType.TABLE_FIELD));
+            item.setCallback((meta, value, fieldName) -> tableFieldChangeModel.fieldChange(meta, DesignTableOperationType.UPDATE, index, fieldName, value));
         });
 
         stage.widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -178,31 +178,30 @@ public class DesignTableController extends BaseController<JsonObject> {
     private void initDataTable() {
         var uuid = data.getString(Constants.UUID);
         pool = DATABASE_SOURCE.getDataBaseSource(uuid);
-        var table = data.getString(Constants.TABLE_NAME, "");
+        var scheme = data.getString(Constants.SCHEME);
+        var table = data.getString(Constants.TABLE_NAME);
         updateTableName(table);
-        if (!"".equals(table)) {
-            var array = stage.getTitle().split("@");
-            var tableName = array[1].trim() + "." + array[0].trim();
-            var future = pool.getDql().showColumns(tableName);
-            future.onSuccess(rs -> {
+        if (type == 1) {
+            final var tableName = scheme + "." + table;
+            final var future = pool.getDql().showColumns(tableName);
+            //clear design table
+            Platform.runLater(() -> fieldTable.getItems().clear());
+            //load design table info
+            var fut = future.compose(rs -> {
+                columnMetas.clear();
                 columnMetas.addAll(rs);
                 var list = DesignTableModel.build(rs);
                 Platform.runLater(() -> {
-                    fieldTable.getItems().clear();
                     fieldTable.setItems(FXCollections.observableList(list));
                     if (list.size() > 0) {
                         //default select first row
                         fieldTable.getSelectionModel().select(0);
                     }
                 });
+                return pool.getDql().getCreateTableComment(tableName);
             });
-            future.onFailure(Throwable::printStackTrace);
-            type = 1;
-        }
-        //load table comment
-        if (type == 1) {
-            var future = pool.getDql().getCreateTableComment(getTableName(false));
-            future.onSuccess(comment -> Platform.runLater(() -> commentTextArea.setText(comment)));
+            fut.onSuccess(comment -> Platform.runLater(() -> commentTextArea.setText(comment)));
+            fut.onFailure(t -> DialogUtils.showErrorDialog(t, "设计表初始化失败"));
         }
     }
 
@@ -224,7 +223,7 @@ public class DesignTableController extends BaseController<JsonObject> {
                     var temp = tableName.split("\\.")[1];
                     data.put(Constants.TABLE_NAME, temp);
                 }
-                regularFieldTableChangeModel.clear();
+                tableFieldChangeModel.clear();
                 //refresh data table
                 initDataTable();
             });
@@ -238,14 +237,15 @@ public class DesignTableController extends BaseController<JsonObject> {
             var index = items.size() - 1;
             fieldTable.getSelectionModel().select(index);
             //add row
-            regularFieldTableChangeModel.addChange(RowChangeModel.ChangeType.CREATE, index, "", "", "", RowChangeModel.OperationType.TABLE_FIELD);
+            tableFieldChangeModel.fieldChange(null, DesignTableOperationType.CREATE, index, null, "");
         }
         //delete row
         if ("0_3".equals(ij)) {
             var index = fieldTable.getSelectionModel().getSelectedIndex();
             if (index != -1) {
+                //remove item from table
                 fieldTable.getItems().remove(index);
-                regularFieldTableChangeModel.addChange(RowChangeModel.ChangeType.DELETE, index, "", "", "", RowChangeModel.OperationType.TABLE_FIELD);
+                tableFieldChangeModel.deleteChange(DesignTableOperationSource.TABLE_FIELD, index);
             }
         }
     }
@@ -253,9 +253,9 @@ public class DesignTableController extends BaseController<JsonObject> {
     private String getSql(final String tableName) {
         var sql = "";
         if (type == 1) {
-            sql = regularFieldTableChangeModel.getUpdateSql(tableName, columnMetas);
+            sql = tableFieldChangeModel.getUpdateSql(tableName, columnMetas);
         } else {
-            sql = regularFieldTableChangeModel.getCreateSql(tableName);
+            sql = tableFieldChangeModel.getCreateSql(tableName);
         }
         return sql;
     }
@@ -292,6 +292,6 @@ public class DesignTableController extends BaseController<JsonObject> {
         } else {
             title = table + " @ " + scheme;
         }
-        Platform.runLater(()-> stage.setTitle(title));
+        Platform.runLater(() -> stage.setTitle(title));
     }
 }

@@ -72,18 +72,32 @@ public class DQLImpl implements DQL {
 
         var future = client.query(sql);
         future.onSuccess(rows -> {
+            var dataType = new MysqlDataType();
+            var charset = new MysqlCharset();
             var metas = new ArrayList<TableColumnMeta>();
+
             for (var row : rows) {
-                TableColumnMeta meta = new TableColumnMeta();
+                var meta = new TableColumnMeta();
+                var type = row.getString("Type");
+                var extra = row.getString("Extra");
+                var collation = row.getString("Collation");
+                var key = row.getString("Key");
+                var defaultValue = row.getString("Default");
+                var comment = row.getString("Comment");
+
                 meta.setField(row.getString("Field"));
-                meta.setType(row.getString("Type"));
-                meta.setCollation(row.getString("Collation"));
-                meta.setNull(row.getString("Null"));
-                meta.setKey(row.getString("Key"));
-                meta.setDefault(row.getString("Default"));
-                meta.setExtra(row.getString("Extra"));
+                meta.setType(dataType.getDataType(type));
+                meta.setLength(dataType.getDataTypeLength(type));
+                meta.setAutoIncrement(extra.contains("auto_increment"));
+                meta.setCollation(collation);
+                meta.setNull("YES".equals(row.getString("Null")));
+                meta.setKey(key);
+                meta.setPrimaryKey(key.contains("PRI"));
+                meta.setCharset(charset.getCharset(collation));
+                meta.setDefault(defaultValue == null ? "" : defaultValue);
+                meta.setExtra(extra);
                 meta.setPrivileges(row.getString("Privileges"));
-                meta.setComment(row.getString("Comment"));
+                meta.setComment(comment == null ? "" : comment);
                 metas.add(meta);
             }
             promise.complete(metas);

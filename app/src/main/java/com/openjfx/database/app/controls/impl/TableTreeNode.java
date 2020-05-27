@@ -45,6 +45,7 @@ public class TableTreeNode extends BaseTreeNode<String> {
         params.put(Constants.UUID, getUuid());
         params.put(SCHEME, database);
         params.put(TABLE_NAME, tableName);
+        params.put(TYPE, 1);
 
         setValue(tableName);
 

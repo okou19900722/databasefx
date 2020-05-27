@@ -14,11 +14,18 @@ public class ColumnChangeModel {
     /**
      * column index
      */
-    private String fieldName;
+    private TableColumnMeta.TableColumnEnum fieldName;
     /**
      * new value
      */
     private String newValue;
+
+    public ColumnChangeModel(TableColumnMeta.TableColumnEnum fieldName) {
+        this.fieldName = fieldName;
+    }
+
+    public ColumnChangeModel() {
+    }
 
     public String getOriginValue() {
         return originValue;
@@ -36,11 +43,11 @@ public class ColumnChangeModel {
         this.originValue = originValue;
     }
 
-    public String getFieldName() {
+    public TableColumnMeta.TableColumnEnum getFieldName() {
         return fieldName;
     }
 
-    public void setFieldName(String fieldName) {
+    public void setFieldName(TableColumnMeta.TableColumnEnum fieldName) {
         this.fieldName = fieldName;
     }
 
@@ -48,7 +55,7 @@ public class ColumnChangeModel {
     public String toString() {
         return "ColumnChangeModel{" +
                 "originValue='" + originValue + '\'' +
-                ", fieldName='" + fieldName + '\'' +
+                ", fieldName=" + fieldName +
                 ", newValue='" + newValue + '\'' +
                 '}';
     }

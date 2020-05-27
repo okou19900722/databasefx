@@ -71,31 +71,33 @@ public class DesignTableModel {
      */
     private final BooleanProperty autoIncrement = new SimpleBooleanProperty(false);
 
-    private MultipleHandler<String, String, String> callback;
+    private MultipleHandler<TableColumnMeta, String, TableColumnMeta.TableColumnEnum> callback;
+
+    private TableColumnMeta tableColumnMeta = null;
 
     public DesignTableModel() {
         var dataTypeList = DATABASE_SOURCE.getDataType().getDataTypeList();
         fieldType.getItems().addAll(dataTypeList);
-        field.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, "Field"));
-        fieldType.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, "Type"));
-        fieldLength.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, "Length"));
-        fieldPoint.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, "DecimalPoint"));
-        nullable.selectedProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue.toString(), newValue.toString(), "Nullable"));
+        field.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue, TableColumnMeta.TableColumnEnum.FIELD));
+        fieldType.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue, TableColumnMeta.TableColumnEnum.TYPE));
+        fieldLength.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue, TableColumnMeta.TableColumnEnum.LENGTH));
+        fieldPoint.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue, TableColumnMeta.TableColumnEnum.DECIMAL_POINT));
+        nullable.selectedProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue.toString(), TableColumnMeta.TableColumnEnum.NULL));
 //        virtual.selectedProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue.toString(), newValue.toString(), "Virtual"));
-        key.selectedProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue.toString(), newValue.toString(), "Key"));
-        comment.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, "Comment"));
-        autoIncrement.addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue.toString(), newValue.toString(), "AutoIncrement"));
-        defaultValue.addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, "Default"));
-        charset.addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, "Charset"));
-        collation.addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue, newValue, "Collation"));
+        key.selectedProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue.toString(), TableColumnMeta.TableColumnEnum.KEY));
+        comment.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue, TableColumnMeta.TableColumnEnum.COMMENT));
+        autoIncrement.addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue.toString(), TableColumnMeta.TableColumnEnum.AUTO_INCREMENT));
+        defaultValue.addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue, TableColumnMeta.TableColumnEnum.DEFAULT));
+        charset.addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue, TableColumnMeta.TableColumnEnum.CHARSET));
+        collation.addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue, TableColumnMeta.TableColumnEnum.COLLATION));
 
     }
 
-    private void updateCallbackValue(String oldValue, String newValue, String fieldName) {
+    private void updateCallbackValue(String newValue, TableColumnMeta.TableColumnEnum fieldName) {
         if (callback == null) {
             return;
         }
-        callback.handler(oldValue, newValue, fieldName);
+        callback.handler(tableColumnMeta, newValue, fieldName);
     }
 
     public TextField getField() {
@@ -162,28 +164,32 @@ public class DesignTableModel {
         this.comment = comment;
     }
 
-    public void setCallback(MultipleHandler<String, String, String> callback) {
+    public MultipleHandler<TableColumnMeta, String, TableColumnMeta.TableColumnEnum> getCallback() {
+        return callback;
+    }
+
+    public void setCallback(MultipleHandler<TableColumnMeta, String, TableColumnMeta.TableColumnEnum> callback) {
         this.callback = callback;
     }
 
     public static DesignTableModel build(final TableColumnMeta meta) {
         var model = new DesignTableModel();
-        var type = meta.getType();
-        var charset = DATABASE_SOURCE.getCharset();
-        var dataType = DATABASE_SOURCE.getDataType();
+
 
         model.getField().setText(meta.getField());
         model.getFieldType().setText(meta.getType());
-        model.getNullable().setSelected("NO".equals(meta.getNull()));
+        model.getNullable().setSelected(meta.getNull());
         model.getComment().setText(meta.getComment());
-        model.getKey().setSelected("PRI".equals(meta.getKey()));
-        model.getFieldType().setText(dataType.getDataType(type));
-        model.getFieldLength().setText(dataType.getDataTypeLength(type));
-        model.getFieldPoint().setText(dataType.getDataFieldDecimalPoint(type));
-        model.setDefaultValue(meta.getDefault() == null ? "" : meta.getDefault());
-        model.setCollation(meta.getCollation() == null ? "" : meta.getCollation());
-        model.setCharset(charset.getCharset(model.getCollation()));
-        model.setAutoIncrement(meta.getExtra().contains("auto_increment"));
+        model.getKey().setSelected(meta.getPrimaryKey());
+        model.getFieldType().setText(meta.getType());
+        model.getFieldLength().setText(meta.getLength());
+        model.getFieldPoint().setText(meta.getDecimalPoint());
+        model.setDefaultValue(meta.getDefault());
+        model.setCollation(meta.getCollation());
+        model.setCharset(meta.getCharset());
+        model.setAutoIncrement(meta.getAutoIncrement());
+
+        model.setTableColumnMeta(meta);
 
         return model;
     }
@@ -238,6 +244,14 @@ public class DesignTableModel {
 
     public void setAutoIncrement(boolean autoIncrement) {
         this.autoIncrement.set(autoIncrement);
+    }
+
+    public TableColumnMeta getTableColumnMeta() {
+        return tableColumnMeta;
+    }
+
+    public void setTableColumnMeta(TableColumnMeta tableColumnMeta) {
+        this.tableColumnMeta = tableColumnMeta;
     }
 
     @Override

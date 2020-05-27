@@ -1,5 +1,8 @@
 package com.openjfx.database.model;
 
+import com.openjfx.database.enums.DesignTableOperationSource;
+import com.openjfx.database.enums.DesignTableOperationType;
+
 import java.util.List;
 
 /**
@@ -9,63 +12,21 @@ import java.util.List;
  * @since 1.0
  */
 public class RowChangeModel {
-    /**
-     * Model change type
-     *
-     * @author yangkui
-     * @since 1.0
-     */
-    public enum ChangeType {
-        /**
-         * update
-         */
-        UPDATE,
-        /**
-         * delete
-         */
-        DELETE,
-        /**
-         * create
-         */
-        CREATE
-    }
-
-    /**
-     * operation type
-     */
-    public enum OperationType {
-        /**
-         * table field
-         */
-        TABLE_FIELD,
-        /**
-         * table comment
-         */
-        TABLE_COMMENT,
-        /**
-         * table index
-         */
-        TABLE_INDEX,
-        /**
-         * table trigger
-         */
-        TABLE_TRIGGER
-    }
 
     private final int rowIndex;
-    private final ChangeType changeType;
-    private final OperationType operationType;
+    private final DesignTableOperationType operationType;
+    private final DesignTableOperationSource source;
     private List<ColumnChangeModel> columnChangeModels;
+    private final TableColumnMeta tableColumnMeta;
 
-    public RowChangeModel(int rowIndex, ChangeType changeType, OperationType operationType) {
+    public RowChangeModel(int rowIndex, DesignTableOperationType operationType, DesignTableOperationSource source, List<ColumnChangeModel> columnChangeModels, TableColumnMeta tableColumnMeta) {
         this.rowIndex = rowIndex;
-        this.changeType = changeType;
         this.operationType = operationType;
+        this.source = source;
+        this.columnChangeModels = columnChangeModels;
+        this.tableColumnMeta = tableColumnMeta;
     }
 
-    public ChangeType getChangeType() {
-        return changeType;
-    }
 
     public List<ColumnChangeModel> getColumnChangeModels() {
         return columnChangeModels;
@@ -75,26 +36,45 @@ public class RowChangeModel {
         this.columnChangeModels = columnChangeModels;
     }
 
-    public boolean containField(String field) {
-        System.out.println(columnChangeModels);
-        var optional = columnChangeModels.stream().filter(column -> column.getFieldName()
-                .equals(field)).findAny();
+    public boolean containField(TableColumnMeta.TableColumnEnum tableColumnEnum) {
+        var optional = columnChangeModels.stream()
+                .filter(column -> column.getFieldName() == tableColumnEnum).findAny();
         return optional.isPresent();
     }
 
-    public ColumnChangeModel getColumn(String field) {
-        var optional = columnChangeModels.stream().filter(column -> column.getFieldName().equals(field)).findAny();
+    public ColumnChangeModel getColumn(TableColumnMeta.TableColumnEnum tableColumnEnum) {
+        var optional = columnChangeModels.stream()
+                .filter(column -> column.getFieldName() == tableColumnEnum).findAny();
         if (optional.isPresent()) {
             return optional.get();
         }
         throw new RuntimeException("Column not find");
     }
 
+    public TableColumnMeta getTableColumnMeta() {
+        return tableColumnMeta;
+    }
+
     public int getRowIndex() {
         return rowIndex;
     }
 
-    public OperationType getOperationType() {
+    public DesignTableOperationType getOperationType() {
         return operationType;
+    }
+
+    public DesignTableOperationSource getSource() {
+        return source;
+    }
+
+    @Override
+    public String toString() {
+        return "RowChangeModel{" +
+                "rowIndex=" + rowIndex +
+                ", operationType=" + operationType +
+                ", source=" + source +
+                ", columnChangeModels=" + columnChangeModels +
+                ", tableColumnMeta=" + tableColumnMeta +
+                '}';
     }
 }
