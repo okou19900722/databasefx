@@ -4,6 +4,7 @@ import com.openjfx.database.enums.DesignTableOperationSource;
 import com.openjfx.database.enums.DesignTableOperationType;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * row change detail
@@ -49,6 +50,21 @@ public class RowChangeModel {
             return optional.get();
         }
         throw new RuntimeException("Column not find");
+    }
+
+    public Optional<ColumnChangeModel> getFixColumn(TableColumnMeta.TableColumnEnum tableColumnEnum) {
+        return columnChangeModels.stream()
+                .filter(column -> column.getFieldName() == tableColumnEnum).findAny();
+    }
+
+    public String getColumnValueOrGet(TableColumnMeta.TableColumnEnum tableColumnEnum, String defaultValue) {
+        var optional = columnChangeModels.stream()
+                .filter(column -> column.getFieldName() == tableColumnEnum).findAny();
+        if (optional.isEmpty()) {
+            return defaultValue;
+        } else {
+            return optional.get().getNewValue();
+        }
     }
 
     public TableColumnMeta getTableColumnMeta() {

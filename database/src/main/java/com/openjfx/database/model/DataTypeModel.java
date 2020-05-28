@@ -15,6 +15,10 @@ public class DataTypeModel {
      * current type belong to category,current category main contain thirty category NUMBER、STRING、DATETIME
      */
     private String category;
+    /**
+     * Whether there is decimal point
+     */
+    private boolean decimalPoint = false;
 
     public String getTypeName() {
         return typeName;
@@ -30,5 +34,13 @@ public class DataTypeModel {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public boolean isDecimalPoint() {
+        return decimalPoint;
+    }
+
+    public void setDecimalPoint(boolean decimalPoint) {
+        this.decimalPoint = decimalPoint;
     }
 }

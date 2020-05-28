@@ -25,9 +25,13 @@ public class TableColumnMeta {
     }
 
     /**
-     * 字段值
+     * field name
      */
     private String Field;
+    /**
+     * original type contain length and point
+     */
+    private String OriginalType;
     /**
      * data type
      */
@@ -195,6 +199,14 @@ public class TableColumnMeta {
 
     public Boolean getPrimaryKey() {
         return PrimaryKey;
+    }
+
+    public String getOriginalType() {
+        return OriginalType;
+    }
+
+    public void setOriginalType(String originalType) {
+        OriginalType = originalType;
     }
 
     public void setPrimaryKey(Boolean primaryKey) {

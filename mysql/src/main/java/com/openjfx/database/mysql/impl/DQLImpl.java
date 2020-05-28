@@ -86,6 +86,7 @@ public class DQLImpl implements DQL {
                 var comment = row.getString("Comment");
 
                 meta.setField(row.getString("Field"));
+                meta.setOriginalType(type);
                 meta.setType(dataType.getDataType(type));
                 meta.setLength(dataType.getDataTypeLength(type));
                 meta.setAutoIncrement(extra.contains("auto_increment"));
@@ -95,6 +96,7 @@ public class DQLImpl implements DQL {
                 meta.setPrimaryKey(key.contains("PRI"));
                 meta.setCharset(charset.getCharset(collation));
                 meta.setDefault(defaultValue == null ? "" : defaultValue);
+                meta.setDecimalPoint(dataType.getDataFieldDecimalPoint(type));
                 meta.setExtra(extra);
                 meta.setPrivileges(row.getString("Privileges"));
                 meta.setComment(comment == null ? "" : comment);

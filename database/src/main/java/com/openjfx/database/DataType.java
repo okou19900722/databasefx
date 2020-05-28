@@ -66,4 +66,12 @@ public interface DataType {
      * @return decimalPoint places
      */
     String getDataFieldDecimalPoint(String fieldType);
+
+    /**
+     * Determine whether a field can have decimal point
+     *
+     * @param type field type
+     * @return Return true if any, otherwise return false
+     */
+    boolean hasDecimalPoint(String type);
 }

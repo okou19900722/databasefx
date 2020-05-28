@@ -84,7 +84,7 @@ public class DesignTableModel {
         fieldPoint.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue, TableColumnMeta.TableColumnEnum.DECIMAL_POINT));
         nullable.selectedProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue.toString(), TableColumnMeta.TableColumnEnum.NULL));
 //        virtual.selectedProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue.toString(), newValue.toString(), "Virtual"));
-        key.selectedProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue.toString(), TableColumnMeta.TableColumnEnum.KEY));
+        key.selectedProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue.toString(), TableColumnMeta.TableColumnEnum.PRIMARY_KEY));
         comment.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue, TableColumnMeta.TableColumnEnum.COMMENT));
         autoIncrement.addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue.toString(), TableColumnMeta.TableColumnEnum.AUTO_INCREMENT));
         defaultValue.addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue, TableColumnMeta.TableColumnEnum.DEFAULT));
@@ -178,7 +178,7 @@ public class DesignTableModel {
 
         model.getField().setText(meta.getField());
         model.getFieldType().setText(meta.getType());
-        model.getNullable().setSelected(meta.getNull());
+        model.getNullable().setSelected(!meta.getNull());
         model.getComment().setText(meta.getComment());
         model.getKey().setSelected(meta.getPrimaryKey());
         model.getFieldType().setText(meta.getType());
