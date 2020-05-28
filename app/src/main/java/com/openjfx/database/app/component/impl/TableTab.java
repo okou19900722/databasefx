@@ -1,13 +1,10 @@
 package com.openjfx.database.app.component.impl;
 
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXTextField;
 import com.openjfx.database.DML;
 import com.openjfx.database.TableColumnMetaHelper;
 import com.openjfx.database.app.TableDataHelper;
 import com.openjfx.database.app.component.BaseTab;
 import com.openjfx.database.app.component.SearchPopup;
-import com.openjfx.database.app.controls.TableDataCell;
 import com.openjfx.database.app.controls.TableDataView;
 import com.openjfx.database.app.enums.NotificationType;
 import com.openjfx.database.app.model.TableSearchResultModel;
@@ -74,13 +71,13 @@ public class TableTab extends BaseTab<TableTabModel> {
     private int pageIndex = 1;
     private int pageSize = 100;
 
-    private final JFXButton addData = new JFXButton();
-    private final JFXButton flush = new JFXButton();
-    private final JFXButton next = new JFXButton();
-    private final JFXButton last = new JFXButton();
-    private final JFXButton submit = new JFXButton();
-    private final JFXButton delete = new JFXButton();
-    private final JFXTextField numberTextField = new JFXTextField(String.valueOf(pageSize));
+    private final Button addData = new Button();
+    private final Button flush = new Button();
+    private final Button next = new Button();
+    private final Button last = new Button();
+    private final Button submit = new Button();
+    private final Button delete = new Button();
+    private final TextField numberTextField = new TextField(String.valueOf(pageSize));
 
     private final List<TableColumnMeta> metas = new ArrayList<>();
     private final Label totalLabel = new Label("共0行");
@@ -108,6 +105,7 @@ public class TableTab extends BaseTab<TableTabModel> {
         last.setGraphic(new ImageView(LAST_ICON));
         submit.setGraphic(new ImageView(SUBMIT_ICON));
         delete.setGraphic(new ImageView(DELETE_ICON));
+        numberTextField.setPrefWidth(60);
 
         addData.setTooltip(new Tooltip("新增数据"));
         flush.setTooltip(new Tooltip("刷新"));
