@@ -4,6 +4,11 @@
     -fx-alignment: center-right;
 }
 
+.rrbox {
+    -fx-spacing: 5px;
+    -fx-alignment: center;
+}
+
 .bottom-box .jfx-text-field {
     -fx-pref-width: 70px;
     -fx-alignment: center;
