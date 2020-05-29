@@ -282,7 +282,6 @@ public class DatabaseFxController extends BaseController<Void> {
                 optional1.ifPresent(node::setParam);
             }
         }
-        System.out.println(uuid);
         //flush scheme
         if (action == EventBusAction.FLUSH_SCHEME) {
             var optional = nodes.stream().map(db -> (BaseTreeNode<String>) db)
@@ -306,6 +305,10 @@ public class DatabaseFxController extends BaseController<Void> {
         /**
          * flush scheme
          */
-        FLUSH_SCHEME
+        FLUSH_SCHEME,
+        /**
+         * flush table
+         */
+        FLUSH_TABLE
     }
 }

@@ -5,6 +5,7 @@ import com.openjfx.database.app.component.DesignOptionBox;
 import com.openjfx.database.app.config.Constants;
 import com.openjfx.database.app.controls.DesignTableView;
 import com.openjfx.database.app.controls.SQLEditor;
+import com.openjfx.database.app.controls.impl.SchemeTreeNode;
 import com.openjfx.database.app.enums.NotificationType;
 import com.openjfx.database.app.model.DesignTableModel;
 import com.openjfx.database.app.utils.DialogUtils;
@@ -30,8 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
-import static com.openjfx.database.app.config.Constants.ACTION;
-import static com.openjfx.database.app.config.Constants.UUID;
+import static com.openjfx.database.app.config.Constants.*;
 
 /**
  * 设计表控制器
@@ -192,10 +192,12 @@ public class DesignTableController extends BaseController<JsonObject> {
                 var temp = tableName.split("\\.")[1];
                 data.put(Constants.TABLE_NAME, temp);
                 //notify scheme flush table list
+                var scheme = data.getString(SCHEME);
+                var uuid = data.getString(UUID);
                 var msg = new JsonObject();
-                msg.put(ACTION, DatabaseFxController.EventBusAction.FLUSH_SCHEME);
-                msg.getString(UUID, data.getString(UUID));
-                VertexUtils.send(DatabaseFxController.EVENT_ADDRESS, msg);
+                var address = uuid + "_" + scheme;
+                msg.put(ACTION, SchemeTreeNode.EventBusAction.FLUSH_TABLE);
+                VertexUtils.send(address, msg);
             }
             tableFieldChangeModel.clear();
             //refresh data table
