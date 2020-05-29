@@ -21,15 +21,18 @@
   },
   {
     "typeName": "FLOAT",
-    "category": "NUMBER"
+    "category": "NUMBER",
+    "decimalPoint": true
   },
   {
     "typeName": "DOUBLE",
-    "category": "NUMBER"
+    "category": "NUMBER",
+    "decimalPoint": true
   },
   {
     "typeName": "DECIMAL",
-    "category": "NUMBER"
+    "category": "NUMBER",
+    "decimalPoint": true
   },
   {
     "typeName": "YEAR",

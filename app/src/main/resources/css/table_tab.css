@@ -1,7 +1,24 @@
+.bottom-box {
+    -fx-background-color: #F5F5F5;
+}
+
 .bottom-box HBox {
     -fx-padding: 3px 5px;
     -fx-spacing: 10px;
     -fx-alignment: center-right;
+}
+
+.bottom-box .button:hover {
+    -fx-background-color: #FFFFFF;
+}
+
+.bottom-box .button {
+    -fx-background-color: transparent;
+}
+
+.rrbox {
+    -fx-spacing: 5px;
+    -fx-alignment: center;
 }
 
 .bottom-box .jfx-text-field {

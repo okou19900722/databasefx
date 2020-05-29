@@ -91,6 +91,18 @@ public class MysqlDataType implements DataType {
     }
 
     @Override
+    public boolean hasDecimalPoint(String type) {
+        for (DataTypeModel dataTypeModel : DATA_TYPE) {
+            var tt = dataTypeModel.getTypeName();
+            var decimalPoint = dataTypeModel.isDecimalPoint();
+            if (tt.equals(type.toUpperCase()) && decimalPoint) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public List<String> getDataTypeList() {
         return DATA_TYPE.stream()
                 .map(DataTypeModel::getTypeName)

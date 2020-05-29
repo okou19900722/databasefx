@@ -50,12 +50,7 @@ public class SQLEditController extends BaseController<JsonObject> {
 
         var scheme = data.getString(Constants.SCHEME);
 
-        if (optional.isPresent()) {
-            client = DATABASE_SOURCE.createPool(optional.get(), uuid, scheme, 1);
-        } else {
-            //todo
-        }
-
+        optional.ifPresent(param -> client = DATABASE_SOURCE.createPool(param, uuid, scheme, 1));
         //加载scheme
         var param = client.getConnectionParam();
         var title = param.getName() + "<" + param.getHost() + "/" + scheme + ">";
@@ -89,6 +84,7 @@ public class SQLEditController extends BaseController<JsonObject> {
                 values = convert.toConvert(rs);
             }
             createData(columnNames, values);
+            DialogUtils.showNotification("execute sql success!", Pos.TOP_CENTER, NotificationType.INFORMATION);
         });
         fut.onFailure(t -> DialogUtils.showErrorDialog(t, "execute sql failed"));
     }
@@ -108,16 +104,6 @@ public class SQLEditController extends BaseController<JsonObject> {
         sqlEditor.deleteText(0, sqlEditor.getText().length());
     }
 
-    public void executeSqlQuery(String sql) {
-        Platform.runLater(() -> tableView.getColumns().clear());
-        var future = client.getDql().executeSql(sql);
-        future.onSuccess(rs -> {
-            for (Map.Entry<List<String>, List<String[]>> entry : rs.entrySet()) {
-                createData(entry.getKey(), entry.getValue());
-            }
-        });
-        future.onFailure(t -> DialogUtils.showErrorDialog(t, "执行查询失败"));
-    }
 
     private void createData(List<String> fields, List<String[]> data) {
         Platform.runLater(() -> tableView.getColumns().clear());

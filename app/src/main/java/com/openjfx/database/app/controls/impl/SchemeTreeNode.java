@@ -38,9 +38,15 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
     private final MenuItem open = new MenuItem("打开数据库");
 
     private final MenuItem close = new MenuItem("关闭数据库");
+    /**
+     * event bus address
+     */
+    public final String eventBusAddress;
 
     public SchemeTreeNode(String scheme, ConnectionParam param) {
         super(param, ICON_IMAGE);
+        this.eventBusAddress = getUuid() + "_" + scheme;
+
         this.scheme = scheme;
 
         setValue(scheme);
@@ -67,6 +73,15 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
                     DATABASE_SOURCE.close(getUuid());
                 });
                 future.onFailure(t -> DialogUtils.showErrorDialog(t, "删除schema失败"));
+            }
+        });
+
+        //register event bus
+        VertexUtils.eventBus().<JsonObject>consumer(eventBusAddress, msg -> {
+            var body = msg.body();
+            var action = body.getString(ACTION);
+            if (EventBusAction.FLUSH_TABLE == EventBusAction.valueOf(action)) {
+                flush();
             }
         });
 
@@ -134,5 +149,15 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
             setLoading(false);
         });
         future.onFailure(t -> initFailed(t, "获取scheme失败"));
+    }
+
+    /**
+     * Event bus address
+     *
+     * @author yangkui
+     * @since 1.0
+     */
+    public enum EventBusAction {
+        FLUSH_TABLE
     }
 }

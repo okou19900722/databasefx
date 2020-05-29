@@ -22,6 +22,21 @@ javafx {
     modules = ['javafx.controls', 'javafx.fxml', 'javafx.base', 'javafx.graphics']
 }
 
+
+//gluonClient {
+//    target = 'host'
+//    compilerArgs = [
+//            '-Dio.netty.noUnsafe = true',
+//            '--initialize-at-run-time=io.netty .handler.codec.http.HttpObjectEncoder',
+//            '--initialize-at-run-time=io.netty.handler.codec.http2.Http2CodecUtil',
+//            '--initialize-at-run-time=io.netty .handler.codec.http2.DefaultHttp2FrameWriter',
+//            '--initialize-at-run-time=io.netty.handler.codec.http.websocketx .WebSocket00FrameEncoder',
+//            '--initialize-at-run-time=io.netty.resolver.dns.DefaultDnsServerAddressStreamProvider',
+//            '--initialize-at-run-time=io.netty.util.AbstractReferenceCounted,io.netty.util.concurrent.GlobalEventExecutor,io.netty.util.concurrent.ImmediateEventExecutor,io.netty.util.concurrent.ScheduledFutureTask,io.netty.util.internal.ThreadLocalRandom',
+//            '--report-unsupported-elements-at-runtime'
+//    ]
+//}
+
 dependencies {
     compile project(":common")
     compile project(":mysql")

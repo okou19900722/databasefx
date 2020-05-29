@@ -1,13 +1,10 @@
 package com.openjfx.database.app.component.impl;
 
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXTextField;
 import com.openjfx.database.DML;
 import com.openjfx.database.TableColumnMetaHelper;
 import com.openjfx.database.app.TableDataHelper;
 import com.openjfx.database.app.component.BaseTab;
 import com.openjfx.database.app.component.SearchPopup;
-import com.openjfx.database.app.controls.TableDataCell;
 import com.openjfx.database.app.controls.TableDataView;
 import com.openjfx.database.app.enums.NotificationType;
 import com.openjfx.database.app.model.TableSearchResultModel;
@@ -74,16 +71,18 @@ public class TableTab extends BaseTab<TableTabModel> {
     private int pageIndex = 1;
     private int pageSize = 100;
 
-    private final JFXButton addData = new JFXButton();
-    private final JFXButton flush = new JFXButton();
-    private final JFXButton next = new JFXButton();
-    private final JFXButton last = new JFXButton();
-    private final JFXButton submit = new JFXButton();
-    private final JFXButton delete = new JFXButton();
-    private final JFXTextField numberTextField = new JFXTextField(String.valueOf(pageSize));
+    private final Button addData = new Button();
+    private final Button flush = new Button();
+    private final Button next = new Button();
+    private final Button last = new Button();
+    private final Button submit = new Button();
+    private final Button delete = new Button();
+    private final TextField numberTextField = new TextField(String.valueOf(pageSize));
 
     private final List<TableColumnMeta> metas = new ArrayList<>();
-    private final Label totalLabel = new Label("0行数据");
+    private final Label totalLabel = new Label("共0行");
+    private final Label indexCounter = new Label();
+    private final Label pageCounter = new Label();
 
     private final SearchPopup searchPopup = SearchPopup.complexPopup();
 
@@ -106,6 +105,7 @@ public class TableTab extends BaseTab<TableTabModel> {
         last.setGraphic(new ImageView(LAST_ICON));
         submit.setGraphic(new ImageView(SUBMIT_ICON));
         delete.setGraphic(new ImageView(DELETE_ICON));
+        numberTextField.setPrefWidth(60);
 
         addData.setTooltip(new Tooltip("新增数据"));
         flush.setTooltip(new Tooltip("刷新"));
@@ -115,15 +115,17 @@ public class TableTab extends BaseTab<TableTabModel> {
 
         var lBox = new HBox();
         var rBox = new HBox();
-
+        var rrBox = new HBox();
 
         lBox.getChildren().addAll(addData, delete, submit);
-        rBox.getChildren().addAll(totalLabel, last, next, numberTextField, flush);
+        rrBox.getChildren().addAll(indexCounter, totalLabel, pageCounter);
+        rBox.getChildren().addAll(rrBox, last, next, numberTextField, flush);
 
         HBox.setHgrow(rBox, Priority.ALWAYS);
 
 
         bottomBox.getChildren().addAll(lBox, rBox);
+        rrBox.getStyleClass().add("rrbox");
         bottomBox.getStyleClass().add("bottom-box");
 
         flush.setOnAction(e -> checkChange(true));
@@ -143,7 +145,7 @@ public class TableTab extends BaseTab<TableTabModel> {
 
         numberTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
-                String text = numberTextField.getText();
+                var text = numberTextField.getText();
                 if (StringUtils.isEmpty(text)) {
                     numberTextField.setText(String.valueOf(pageSize));
                 } else {
@@ -208,6 +210,15 @@ public class TableTab extends BaseTab<TableTabModel> {
             //search data in current table
             if (event.isControlDown() && event.getCode() == KeyCode.F && !tableView.getItems().isEmpty()) {
                 borderPane.setTop(searchPopup);
+            }
+        });
+
+        tableView.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+            var index = newValue.intValue();
+            if (index == -1) {
+                indexCounter.setText("");
+            } else {
+                indexCounter.setText("第" + (index + 1) + "条记录");
             }
         });
 
@@ -294,10 +305,6 @@ public class TableTab extends BaseTab<TableTabModel> {
         var promise = Promise.<Void>promise();
         var future = pool.getDql().query(model.getTable(), pageIndex, pageSize);
         future.onSuccess(rs -> {
-            if (rs.isEmpty()) {
-                Platform.runLater(() -> tableView.setPlaceholder(null));
-                return;
-            }
             var list = FXCollections.<ObservableList<StringProperty>>observableArrayList();
             for (var values : rs) {
                 var item = FXCollections.<StringProperty>observableArrayList();
@@ -309,6 +316,7 @@ public class TableTab extends BaseTab<TableTabModel> {
 
             Platform.runLater(() -> {
                 tableView.getItems().addAll(list);
+                pageCounter.setText("于第" + pageIndex + "页");
             });
             promise.complete();
         });
@@ -428,7 +436,7 @@ public class TableTab extends BaseTab<TableTabModel> {
         var promise = Promise.<Void>promise();
         var future = pool.getDql().count(model.getTable());
         future.onSuccess(number -> {
-            Platform.runLater(() -> totalLabel.setText(number + "行数据"));
+            Platform.runLater(() -> totalLabel.setText("(共" + number + "行)"));
             promise.complete();
         });
         future.onFailure(promise::fail);

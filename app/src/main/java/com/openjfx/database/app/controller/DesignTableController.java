@@ -5,9 +5,12 @@ import com.openjfx.database.app.component.DesignOptionBox;
 import com.openjfx.database.app.config.Constants;
 import com.openjfx.database.app.controls.DesignTableView;
 import com.openjfx.database.app.controls.SQLEditor;
+import com.openjfx.database.app.controls.impl.SchemeTreeNode;
+import com.openjfx.database.app.enums.NotificationType;
 import com.openjfx.database.app.model.DesignTableModel;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.base.AbstractDataBasePool;
+import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.common.utils.StringUtils;
 import com.openjfx.database.enums.DesignTableOperationSource;
 import com.openjfx.database.enums.DesignTableOperationType;
@@ -16,7 +19,9 @@ import com.openjfx.database.model.TableColumnMeta;
 import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
@@ -26,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
+import static com.openjfx.database.app.config.Constants.*;
 
 /**
  * 设计表控制器
@@ -58,8 +64,6 @@ public class DesignTableController extends BaseController<JsonObject> {
 
     private AbstractDataBasePool pool;
 
-    private final List<Button> actionList = new ArrayList<>();
-
     private final TableFieldChangeModel tableFieldChangeModel = new TableFieldChangeModel();
 
     private final List<TableColumnMeta> columnMetas = new ArrayList<>();
@@ -78,20 +82,9 @@ public class DesignTableController extends BaseController<JsonObject> {
         for (Tab tab : tabPane.getTabs()) {
             tab.setClosable(false);
         }
-        var i = 0;
-        for (var child : topBox.getChildren()) {
-            var button = (Button) child;
-            if (i != 0) {
-                actionList.add(button);
-            }
-            button.setOnAction(e -> listAction(button.getUserData().toString()));
-            i++;
-        }
-        tabSelectChange(0);
         tabPane.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
             var index = newValue.intValue();
             var tab = tabPane.getTabs().get(index);
-            tabSelectChange(index);
             if (index == 2) {
                 var sql = getSql(getTableName(false));
                 sqlEditor.setText(sql);
@@ -152,29 +145,6 @@ public class DesignTableController extends BaseController<JsonObject> {
         }
     }
 
-    private void tabSelectChange(int index) {
-        var cc = topBox.getChildren();
-        var length = topBox.getChildren().size();
-        cc.remove(1, length);
-        for (Button node : actionList) {
-            var useData = node.getUserData().toString();
-            var indexNest = useData.split(",");
-            for (var i : indexNest) {
-                var ab = i.split("_");
-                var a = Integer.parseInt(ab[0]);
-                var b = Integer.parseInt(ab[1]);
-                if (a == index) {
-                    var size = cc.size();
-                    if (b >= size - 1) {
-                        cc.add(node);
-                    } else {
-                        cc.add(b, node);
-                    }
-                }
-            }
-        }
-    }
-
     private void initDataTable() {
         var uuid = data.getString(Constants.UUID);
         pool = DATABASE_SOURCE.getDataBaseSource(uuid);
@@ -205,49 +175,70 @@ public class DesignTableController extends BaseController<JsonObject> {
         }
     }
 
-    private void listAction(final String ij) {
-        //save
-        if ("0_0".equals(ij)) {
-            var tableName = getTableName(true);
-            if (StringUtils.isEmpty(tableName)) {
-                return;
-            }
-            var sql = getSql(tableName);
-            if (StringUtils.isEmpty(sql)) {
-                return;
-            }
-            var future = pool.getPool().query(sql);
-            future.onSuccess(ar -> {
-                if (type == 0) {
-                    this.type = 1;
-                    var temp = tableName.split("\\.")[1];
-                    data.put(Constants.TABLE_NAME, temp);
-                }
-                tableFieldChangeModel.clear();
-                //refresh data table
-                initDataTable();
-            });
-            future.onFailure(t -> DialogUtils.showErrorDialog(t, "更新/创建表失败"));
+    @FXML
+    public void save(ActionEvent event) {
+        var tableName = getTableName(true);
+        if (StringUtils.isEmpty(tableName)) {
+            return;
         }
-        //new create  row
-        if ("0_1".equals(ij)) {
-            var model = new DesignTableModel();
-            var items = fieldTable.getItems();
-            items.add(model);
-            var index = items.size() - 1;
-            fieldTable.getSelectionModel().select(index);
-            //add row
-            tableFieldChangeModel.fieldChange(null, DesignTableOperationType.CREATE, index, null, "");
+        var sql = getSql(tableName);
+        if (StringUtils.isEmpty(sql)) {
+            return;
         }
-        //delete row
-        if ("0_3".equals(ij)) {
-            var index = fieldTable.getSelectionModel().getSelectedIndex();
-            if (index != -1) {
-                //remove item from table
-                fieldTable.getItems().remove(index);
-                tableFieldChangeModel.deleteChange(DesignTableOperationSource.TABLE_FIELD, index);
+        var future = pool.getPool().query(sql);
+        future.onSuccess(ar -> {
+            if (type == 0) {
+                this.type = 1;
+                var temp = tableName.split("\\.")[1];
+                data.put(Constants.TABLE_NAME, temp);
+                //notify scheme flush table list
+                var scheme = data.getString(SCHEME);
+                var uuid = data.getString(UUID);
+                var msg = new JsonObject();
+                var address = uuid + "_" + scheme;
+                msg.put(ACTION, SchemeTreeNode.EventBusAction.FLUSH_TABLE);
+                VertexUtils.send(address, msg);
             }
+            tableFieldChangeModel.clear();
+            //refresh data table
+            initDataTable();
+            DialogUtils.showNotification("更新成功", Pos.TOP_CENTER, NotificationType.INFORMATION);
+        });
+        future.onFailure(t -> DialogUtils.showErrorDialog(t, "更新/创建表失败"));
+    }
+
+    @FXML
+    public void createNewField(ActionEvent event) {
+        var model = new DesignTableModel();
+        var items = fieldTable.getItems();
+        items.add(model);
+        var index = items.size() - 1;
+        fieldTable.getSelectionModel().select(index);
+        model.getFieldLength().setText("0");
+        model.getFieldPoint().setText("0");
+        //add row
+        tableFieldChangeModel.fieldChange(null, DesignTableOperationType.CREATE, index, null, "");
+    }
+
+    @FXML
+    public void deleteField(ActionEvent event) {
+        var index = fieldTable.getSelectionModel().getSelectedIndex();
+        if (index != -1) {
+            //remove item from table
+            var item = fieldTable.getItems().remove(index);
+            tableFieldChangeModel.deleteChange(item.getTableColumnMeta(), DesignTableOperationSource.TABLE_FIELD, index);
         }
+    }
+
+    @FXML
+    public void setPrimaryKey(ActionEvent event) {
+        var index = fieldTable.getSelectionModel().getSelectedIndex();
+        if (index == -1) {
+            return;
+        }
+        var item = fieldTable.getItems().get(index);
+        //select key
+        item.getKey().setSelected(true);
     }
 
     private String getSql(final String tableName) {

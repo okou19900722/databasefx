@@ -24,7 +24,7 @@
     </stylesheets>
     <top>
         <HBox BorderPane.alignment="CENTER" styleClass="top-box" fx:id="topBox">
-            <Button text="保存" userData="0_0">
+            <Button text="保存" onAction="#save">
                 <graphic>
                     <ImageView>
                         <Image url="@/assets/images/design_save_icon.png" requestedHeight="18" requestedWidth="18"
@@ -32,7 +32,7 @@
                     </ImageView>
                 </graphic>
             </Button>
-            <Button text="添加字段" userData="0_1">
+            <Button text="添加字段" onAction="#createNewField">
                 <graphic>
                     <ImageView>
                         <Image url="@/assets/images/design_add_icon.png" requestedHeight="18" requestedWidth="18"
@@ -40,15 +40,7 @@
                     </ImageView>
                 </graphic>
             </Button>
-<!--            <Button text="插入字段" userData="0_2">-->
-<!--                <graphic>-->
-<!--                    <ImageView>-->
-<!--                        <Image url="@/assets/images/design_insert_icon.png" requestedHeight="18" requestedWidth="18"-->
-<!--                               smooth="true"/>-->
-<!--                    </ImageView>-->
-<!--                </graphic>-->
-<!--            </Button>-->
-            <Button text="删除字段" userData="0_3">
+            <Button text="删除字段" onAction="#deleteField">
                 <graphic>
                     <ImageView>
                         <Image url="@/assets/images/design_delete_icon.png" requestedHeight="18" requestedWidth="18"
@@ -56,7 +48,7 @@
                     </ImageView>
                 </graphic>
             </Button>
-            <Button text="主键" userData="0_4">
+            <Button text="主键" onAction="#setPrimaryKey">
                 <graphic>
                     <ImageView>
                         <Image url="@/assets/images/key_icon.png" requestedHeight="18" requestedWidth="18"
@@ -64,79 +56,6 @@
                     </ImageView>
                 </graphic>
             </Button>
-<!--            <Button text="上移" userData="0_5,3_4">-->
-<!--                <graphic>-->
-<!--                    <ImageView>-->
-<!--                        <Image url="@/assets/images/design_up_icon.png" requestedHeight="18" requestedWidth="18"-->
-<!--                               smooth="true"/>-->
-<!--                    </ImageView>-->
-<!--                </graphic>-->
-<!--            </Button>-->
-<!--            <Button text="下移" userData="0_6,3_5">-->
-<!--                <graphic>-->
-<!--                    <ImageView>-->
-<!--                        <Image url="@/assets/images/design_down_icon.png" requestedHeight="18" requestedWidth="18"-->
-<!--                               smooth="true"/>-->
-<!--                    </ImageView>-->
-<!--                </graphic>-->
-<!--            </Button>-->
-<!--            <Button text="添加索引" userData="1_1">-->
-<!--                <graphic>-->
-<!--                    <ImageView>-->
-<!--                        <Image url="@/assets/images/add_index_icon.png" requestedHeight="18" requestedWidth="18"-->
-<!--                               smooth="true"/>-->
-<!--                    </ImageView>-->
-<!--                </graphic>-->
-<!--            </Button>-->
-<!--            <Button text="删除索引" userData="1_2">-->
-<!--                <graphic>-->
-<!--                    <ImageView>-->
-<!--                        <Image url="@/assets/images/remove_index_icon.png" requestedHeight="18" requestedWidth="18"-->
-<!--                               smooth="true"/>-->
-<!--                    </ImageView>-->
-<!--                </graphic>-->
-<!--            </Button>-->
-<!--            <Button text="添加外键" userData="2_1">-->
-<!--                <graphic>-->
-<!--                    <ImageView>-->
-<!--                        <Image url="@/assets/images/extension-key_icon.png" requestedHeight="18" requestedWidth="18"-->
-<!--                               smooth="true"/>-->
-<!--                    </ImageView>-->
-<!--                </graphic>-->
-<!--            </Button>-->
-<!--            <Button text="删除外键" userData="2_2">-->
-<!--                <graphic>-->
-<!--                    <ImageView>-->
-<!--                        <Image url="@/assets/images/remove_extension_icon.png" requestedHeight="18" requestedWidth="18"-->
-<!--                               smooth="true"/>-->
-<!--                    </ImageView>-->
-<!--                </graphic>-->
-<!--            </Button>-->
-<!--            <Button text="添加触发器" userData="3_1">-->
-<!--                <graphic>-->
-<!--                    <ImageView>-->
-<!--                        <Image url="@/assets/images/trigger_icon.png" requestedHeight="18" requestedWidth="18"-->
-<!--                               smooth="true"/>-->
-<!--                    </ImageView>-->
-<!--                </graphic>-->
-<!--            </Button>-->
-<!--            <Button text="插入触发器" userData="3_2">-->
-<!--                <graphic>-->
-<!--                    <ImageView>-->
-<!--                        <Image url="@/assets/images/insert_trigger_icon.png" requestedHeight="18"-->
-<!--                               requestedWidth="18"-->
-<!--                               smooth="true"/>-->
-<!--                    </ImageView>-->
-<!--                </graphic>-->
-<!--            </Button>-->
-<!--            <Button text="删除触发器" userData="3_3">-->
-<!--                <graphic>-->
-<!--                    <ImageView>-->
-<!--                        <Image url="@/assets/images/delete_trigger_icon.png" requestedHeight="18" requestedWidth="18"-->
-<!--                               smooth="true"/>-->
-<!--                    </ImageView>-->
-<!--                </graphic>-->
-<!--            </Button>-->
         </HBox>
     </top>
     <center>
@@ -150,55 +69,17 @@
                             <TableColumn text="长度"/>
                             <TableColumn text="小数点"/>
                             <TableColumn text="不是null"/>
-<!--                            <TableColumn text="虚拟"/>-->
+                            <!--                            <TableColumn text="虚拟"/>-->
                             <TableColumn text="键"/>
                             <TableColumn text="注释"/>
                         </columns>
                     </DesignTableView>
                 </Tab>
-<!--                <Tab text="索引">-->
-<!--                    <DesignTableView>-->
-<!--                        <columns>-->
-<!--                            <TableColumn text="名"/>-->
-<!--                            <TableColumn text="字段"/>-->
-<!--                            <TableColumn text="类型"/>-->
-<!--                            <TableColumn text="方法"/>-->
-<!--                            <TableColumn text="注释"/>-->
-<!--                        </columns>-->
-<!--                    </DesignTableView>-->
-<!--                </Tab>-->
-<!--                <Tab text="外键">-->
-<!--                    <DesignTableView>-->
-<!--                        <columns>-->
-<!--                            <TableColumn text="名"/>-->
-<!--                            <TableColumn text="字段"/>-->
-<!--                            <TableColumn text="被引用数据库"/>-->
-<!--                            <TableColumn text="被引用表(父)"/>-->
-<!--                            <TableColumn text="删除时"/>-->
-<!--                            <TableColumn text="更新时"/>-->
-<!--                        </columns>-->
-<!--                    </DesignTableView>-->
-<!--                </Tab>-->
-<!--                <Tab text="触发器">-->
-<!--                    <DesignTableView>-->
-<!--                        <columns>-->
-<!--                            <TableColumn text="名"/>-->
-<!--                            <TableColumn text="字段"/>-->
-<!--                            <TableColumn text="被引用数据库"/>-->
-<!--                            <TableColumn text="被引用表(父)"/>-->
-<!--                            <TableColumn text="删除时"/>-->
-<!--                            <TableColumn text="更新时"/>-->
-<!--                        </columns>-->
-<!--                    </DesignTableView>-->
-<!--                </Tab>-->
-<!--                <Tab text="选项">-->
-
-<!--                </Tab>-->
                 <Tab text="注释">
                     <TextArea fx:id="commentTextArea"/>
                 </Tab>
                 <Tab text="SQL预览">
-                    <SQLEditor fx:id="sqlEditor"/>
+                    <SQLEditor fx:id="sqlEditor" editable="false"/>
                 </Tab>
             </TabPane>
             <DesignOptionBox fx:id="box"/>

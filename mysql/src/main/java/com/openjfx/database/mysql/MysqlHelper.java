@@ -77,13 +77,15 @@ public class MysqlHelper {
         var client = createPool(param);
         var testSql = "SELECT 1";
         var promise = Promise.<Boolean>promise();
-        client.query(testSql).setHandler(ar -> {
-            if (ar.succeeded()) {
-                promise.complete(true);
-            } else {
-                promise.fail(ar.cause());
-            }
-            //关闭连接
+        var future = client.query(testSql);
+        future.onFailure(ar -> {
+            promise.complete(true);
+            //close connection
+            client.close();
+        });
+        future.onFailure(t -> {
+            promise.fail(t);
+            //close connection
             client.close();
         });
         return promise.future();

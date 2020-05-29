@@ -83,16 +83,17 @@ public class TableFieldChangeModel {
      * delete change row
      *
      * @param source   operation source
+     * @param meta     table column meta
      * @param rowIndex row index
      */
-    public void deleteChange(DesignTableOperationSource source, int rowIndex) {
+    public void deleteChange(TableColumnMeta meta, DesignTableOperationSource source, int rowIndex) {
         var _rowIndex = getRealRowIndex(rowIndex, source);
         var optional = changeModels.stream()
                 .filter(rowChangeModel -> rowChangeModel.getSource() == source)
                 .filter(rowChangeModel -> rowChangeModel.getRowIndex() == _rowIndex)
                 .findAny();
         if (optional.isEmpty()) {
-            var rowChange = new RowChangeModel(_rowIndex, DesignTableOperationType.DELETE, source, List.of(), null);
+            var rowChange = new RowChangeModel(_rowIndex, DesignTableOperationType.DELETE, source, List.of(), meta);
             changeModels.add(rowChange);
         } else {
             var row = optional.get();

@@ -1,5 +1,10 @@
 package com.openjfx.database.mysql;
 
+import com.openjfx.database.model.TableColumnMeta;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * SQL statement processing auxiliary class
  *
@@ -24,5 +29,9 @@ public class SQLHelper {
             }
         }
         return stringBuffer.toString();
+    }
+
+    public static List<TableColumnMeta> getPrimaryKey(List<TableColumnMeta> tableColumnMetas) {
+        return tableColumnMetas.stream().filter(TableColumnMeta::getPrimaryKey).collect(Collectors.toList());
     }
 }

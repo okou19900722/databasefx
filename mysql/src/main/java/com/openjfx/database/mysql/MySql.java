@@ -56,7 +56,7 @@ public class MySql extends AbstractDatabaseSource {
                 var serverName = b.getConnectionParam().getName();
                 var host = b.getConnectionParam().getHost();
                 var target = serverName + "<" + host + ">";
-                future.onFailure(t -> LOGGER.error("failed heart beat to {} server cause:{}", target, t.getMessage()));
+                future.onFailure(t -> System.out.println("failed heart beat to " + target + " server cause:" + serverName));
             });
         });
     }

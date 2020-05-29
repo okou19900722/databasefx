@@ -1,22 +1,19 @@
 package com.openjfx.database.app.controls;
 
-import javafx.application.Platform;
-import javafx.concurrent.Task;
+
+import javafx.geometry.Point2D;
+import javafx.scene.input.InputMethodRequests;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
-import org.reactfx.Subscription;
 
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -86,13 +83,19 @@ public class SQLEditor extends CodeArea {
         this.multiPlainChanges().successionEnds(Duration.ofMillis(500))
                 .subscribe(ignore -> this.setStyleSpans(0, computeHighlighting(this.getText())));
 
-        final Pattern whiteSpace = Pattern.compile("^\\s+");
+        final var whiteSpace = Pattern.compile("^\\s+");
         addEventFilter(KeyEvent.KEY_PRESSED, kE -> {
             if (kE.getCode() == KeyCode.ENTER) {
                 int caretPosition = getCaretPosition();
                 int currentParagraph = getCurrentParagraph();
                 Matcher m0 = whiteSpace.matcher(getParagraph(currentParagraph - 1).getSegments().get(0));
                 insertText(caretPosition, m0.group());
+            }
+        });
+        setInputMethodRequests(new InputMethodRequestsObject());
+        setOnInputMethodTextChanged(event -> {
+            if (!"".equals(event.getCommitted())) {
+                insertText(getCaretPosition(), event.getCommitted());
             }
         });
     }
@@ -124,5 +127,28 @@ public class SQLEditor extends CodeArea {
     public void setText(final String text) {
         clear();
         insertText(0, text);
+    }
+
+    class InputMethodRequestsObject implements InputMethodRequests {
+
+        @Override
+        public Point2D getTextLocation(int offset) {
+            return new Point2D(0, 0);
+        }
+
+        @Override
+        public int getLocationOffset(int x, int y) {
+            return 0;
+        }
+
+        @Override
+        public void cancelLatestCommittedText() {
+
+        }
+
+        @Override
+        public String getSelectedText() {
+            return "";
+        }
     }
 }
