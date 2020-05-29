@@ -35,19 +35,21 @@ public class TableColumnTooltipSkin implements Skin<TableDataColumn.TableColumnT
         var defValue = columnMeta.getDefault();
         var comment = columnMeta.getComment();
         var isNull = columnMeta.getNull();
-        var extra = columnMeta.getExtra();
         var collation = columnMeta.getCollation();
         var charset = columnMeta.getCharset();
+        var autoIncrement = columnMeta.getAutoIncrement().toString();
+        var primaryKey = columnMeta.getPrimaryKey().toString();
 
         gridPane.addRow(0, new Label("Field"), new Label(field));
         gridPane.addRow(1, new Label("Type"), new Label(type));
-        gridPane.addRow(2, new Label("Key"), new Label(key));
-        gridPane.addRow(3, new Label("Default"), new Label(defValue));
-        gridPane.addRow(4, new Label("Comment"), new Label(comment));
+        gridPane.addRow(2, new Label("PrimaryKey"), new Label(primaryKey));
+        gridPane.addRow(3, new Label("Key"), new Label(key));
+        gridPane.addRow(4, new Label("AutoIncrement"), new Label(autoIncrement));
         gridPane.addRow(5, new Label("Null"), new Label(isNull.toString()));
-        gridPane.addRow(7, new Label("Extra"), new Label(extra));
-        gridPane.addRow(8, new Label("Charset"), new Label(charset));
-        gridPane.addRow(9, new Label("Collation"), new Label(collation));
+        gridPane.addRow(6, new Label("Charset"), new Label(charset));
+        gridPane.addRow(7, new Label("Collation"), new Label(collation));
+        gridPane.addRow(8, new Label("Default"), new Label(defValue));
+        gridPane.addRow(9, new Label("Comment"), new Label(comment));
 
         return gridPane;
     }

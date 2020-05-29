@@ -43,7 +43,7 @@ public class TableColumnMeta {
     /**
      * is Null?
      */
-    private Boolean Null;
+    private Boolean Null = true;
     /**
      * is Key
      */
@@ -51,7 +51,7 @@ public class TableColumnMeta {
     /**
      * field is auto_increment
      */
-    private Boolean AutoIncrement;
+    private Boolean AutoIncrement = false;
     /**
      * field default
      */
@@ -84,7 +84,7 @@ public class TableColumnMeta {
     /**
      * field is primary Key
      */
-    private Boolean PrimaryKey;
+    private Boolean PrimaryKey = false;
 
     public TableColumnMeta() {
     }

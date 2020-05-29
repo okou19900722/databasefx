@@ -264,7 +264,7 @@ public class DatabaseFxController extends BaseController<Void> {
         var action = EventBusAction.valueOf(body.getString(ACTION));
 
         var uuid = body.getString(Constants.UUID);
-        //新增连接
+        //create connection
         if (action == EventBusAction.ADD_CONNECTION) {
             DbPreference.getConnectionParam(uuid).ifPresent(db -> {
                 var node = new DBTreeNode(db);
@@ -272,7 +272,7 @@ public class DatabaseFxController extends BaseController<Void> {
             });
         }
         final var nodes = treeItemRoot.getChildren();
-        //更新连接信息
+        //update connection
         if (action == EventBusAction.UPDATE_CONNECTION) {
             var optional = nodes.stream()
                     .map(db -> ((BaseTreeNode<String>) db)).filter(db -> db.getUuid().equals(uuid)).findAny();
@@ -282,6 +282,8 @@ public class DatabaseFxController extends BaseController<Void> {
                 optional1.ifPresent(node::setParam);
             }
         }
+        System.out.println(uuid);
+        //flush scheme
         if (action == EventBusAction.FLUSH_SCHEME) {
             var optional = nodes.stream().map(db -> (BaseTreeNode<String>) db)
                     .filter(db -> db.getUuid().equals(uuid)).findAny();

@@ -1,22 +1,17 @@
 package com.openjfx.database.app.controls;
 
-import javafx.application.Platform;
-import javafx.concurrent.Task;
+
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
-import org.reactfx.Subscription;
 
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -86,7 +81,7 @@ public class SQLEditor extends CodeArea {
         this.multiPlainChanges().successionEnds(Duration.ofMillis(500))
                 .subscribe(ignore -> this.setStyleSpans(0, computeHighlighting(this.getText())));
 
-        final Pattern whiteSpace = Pattern.compile("^\\s+");
+        final var whiteSpace = Pattern.compile("^\\s+");
         addEventFilter(KeyEvent.KEY_PRESSED, kE -> {
             if (kE.getCode() == KeyCode.ENTER) {
                 int caretPosition = getCaretPosition();

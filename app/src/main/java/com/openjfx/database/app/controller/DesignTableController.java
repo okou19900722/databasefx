@@ -9,6 +9,7 @@ import com.openjfx.database.app.enums.NotificationType;
 import com.openjfx.database.app.model.DesignTableModel;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.base.AbstractDataBasePool;
+import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.common.utils.StringUtils;
 import com.openjfx.database.enums.DesignTableOperationSource;
 import com.openjfx.database.enums.DesignTableOperationType;
@@ -29,6 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
+import static com.openjfx.database.app.config.Constants.ACTION;
+import static com.openjfx.database.app.config.Constants.UUID;
 
 /**
  * 设计表控制器
@@ -60,8 +63,6 @@ public class DesignTableController extends BaseController<JsonObject> {
     private TextArea commentTextArea;
 
     private AbstractDataBasePool pool;
-
-    private final List<Button> actionList = new ArrayList<>();
 
     private final TableFieldChangeModel tableFieldChangeModel = new TableFieldChangeModel();
 
@@ -190,6 +191,11 @@ public class DesignTableController extends BaseController<JsonObject> {
                 this.type = 1;
                 var temp = tableName.split("\\.")[1];
                 data.put(Constants.TABLE_NAME, temp);
+                //notify scheme flush table list
+                var msg = new JsonObject();
+                msg.put(ACTION, DatabaseFxController.EventBusAction.FLUSH_SCHEME);
+                msg.getString(UUID, data.getString(UUID));
+                VertexUtils.send(DatabaseFxController.EVENT_ADDRESS, msg);
             }
             tableFieldChangeModel.clear();
             //refresh data table
@@ -206,6 +212,8 @@ public class DesignTableController extends BaseController<JsonObject> {
         items.add(model);
         var index = items.size() - 1;
         fieldTable.getSelectionModel().select(index);
+        model.getFieldLength().setText("0");
+        model.getFieldPoint().setText("0");
         //add row
         tableFieldChangeModel.fieldChange(null, DesignTableOperationType.CREATE, index, null, "");
     }

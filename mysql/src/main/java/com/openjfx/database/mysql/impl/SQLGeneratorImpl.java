@@ -91,7 +91,11 @@ public class SQLGeneratorImpl implements SQLGenerator {
                 var fieldName = SQLHelper.escapeMysqlField(field.getNewValue());
                 sb.append(fieldName).append(" ");
                 if (changeModel.containField(TableColumnMeta.TableColumnEnum.PRIMARY_KEY)) {
-                    keys.add(fieldName);
+                    var column = changeModel.getColumn(TableColumnMeta.TableColumnEnum.PRIMARY_KEY);
+                    var a = Boolean.parseBoolean(column.getNewValue());
+                    if (a) {
+                        keys.add(fieldName);
+                    }
                 }
             } else {
                 i++;
@@ -107,7 +111,9 @@ public class SQLGeneratorImpl implements SQLGenerator {
                 } else {
                     length += "0";
                 }
-                if (changeModel.containField(TableColumnMeta.TableColumnEnum.DECIMAL_POINT)) {
+                var dataType = new MysqlDataType();
+                var a = dataType.hasDecimalPoint(val);
+                if (changeModel.containField(TableColumnMeta.TableColumnEnum.DECIMAL_POINT) && a) {
                     var point = changeModel.getColumn(TableColumnMeta.TableColumnEnum.DECIMAL_POINT);
                     length += "," + point.getNewValue();
                 }
@@ -163,8 +169,10 @@ public class SQLGeneratorImpl implements SQLGenerator {
             i++;
         }
         for (int j = 0; j < keys.size(); j++) {
+            if (j == 0) {
+                sb.append(",PRIMARY KEY (");
+            }
             var key = keys.get(j);
-            sb.append(",PRIMARY KEY (");
             sb.append(key);
             if (j == keys.size() - 1) {
                 sb.append(") ");
@@ -303,7 +311,7 @@ public class SQLGeneratorImpl implements SQLGenerator {
                     }
                 } else {
                     if (meta != null) {
-                        if (meta.getPrimaryKey()) {
+                        if (meta.getAutoIncrement()) {
                             sb.append(" AUTO_INCREMENT ");
                         }
                     }
