@@ -5,8 +5,6 @@ import com.openjfx.database.DataType;
 import com.openjfx.database.SQLGenerator;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.model.ConnectionParam;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,7 +16,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 1.0
  */
 public abstract class AbstractDatabaseSource {
-    protected final static Logger LOGGER = LogManager.getLogger();
     /**
      * Database connection pool cache map
      */
@@ -79,7 +76,6 @@ public abstract class AbstractDatabaseSource {
         var pool = pools.get(uuid);
         if (Objects.nonNull(pool)) {
             pool.close();
-            LOGGER.info("remove database pool:{}", uuid);
         }
         //Move out of database connection cache
         pools.remove(uuid);
@@ -106,10 +102,7 @@ public abstract class AbstractDatabaseSource {
         //Make sure the link is available before joining the cache
         var fut = pool.getDql().heartBeatQuery();
         fut.onSuccess(r -> pools.put(param.getUuid(), pool));
-        fut.onFailure(t -> {
-            LOGGER.error(t.getMessage(), t);
-            pool.close();
-        });
+        fut.onFailure(t -> pool.close());
     }
 
     public DataCharset getCharset() {

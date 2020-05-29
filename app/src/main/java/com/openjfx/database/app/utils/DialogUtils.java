@@ -7,8 +7,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextInputDialog;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.controlsfx.control.Notifications;
 import org.controlsfx.dialog.ExceptionDialog;
 
@@ -20,8 +18,6 @@ import org.controlsfx.dialog.ExceptionDialog;
  */
 public class DialogUtils {
 
-    private final static Logger LOGGER = LogManager.getLogger();
-
     /**
      * show error dialog
      *
@@ -29,7 +25,6 @@ public class DialogUtils {
      * @param throwable error info
      */
     public static void showErrorDialog(Throwable throwable, String title) {
-        LOGGER.error(throwable.getMessage(), throwable);
         throwable.printStackTrace();
         Platform.runLater(() -> {
             var exceptionDialog = new ExceptionDialog(throwable);
