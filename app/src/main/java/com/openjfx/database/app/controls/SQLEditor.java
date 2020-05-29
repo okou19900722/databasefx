@@ -1,6 +1,8 @@
 package com.openjfx.database.app.controls;
 
 
+import javafx.geometry.Point2D;
+import javafx.scene.input.InputMethodRequests;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.CodeArea;
@@ -90,6 +92,12 @@ public class SQLEditor extends CodeArea {
                 insertText(caretPosition, m0.group());
             }
         });
+        setInputMethodRequests(new InputMethodRequestsObject());
+        setOnInputMethodTextChanged(event -> {
+            if (!"".equals(event.getCommitted())) {
+                insertText(getCaretPosition(), event.getCommitted());
+            }
+        });
     }
 
     private static StyleSpans<Collection<String>> computeHighlighting(String text) {
@@ -119,5 +127,28 @@ public class SQLEditor extends CodeArea {
     public void setText(final String text) {
         clear();
         insertText(0, text);
+    }
+
+    class InputMethodRequestsObject implements InputMethodRequests {
+
+        @Override
+        public Point2D getTextLocation(int offset) {
+            return new Point2D(0, 0);
+        }
+
+        @Override
+        public int getLocationOffset(int x, int y) {
+            return 0;
+        }
+
+        @Override
+        public void cancelLatestCommittedText() {
+
+        }
+
+        @Override
+        public String getSelectedText() {
+            return "";
+        }
     }
 }
