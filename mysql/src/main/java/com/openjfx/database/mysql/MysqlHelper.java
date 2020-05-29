@@ -68,24 +68,22 @@ public class MysqlHelper {
     }
 
     /**
-     * 测试连接
+     * test connection
      *
-     * @param param 连接参数
-     * @return 异步返回测试结果
+     * @param param con param
+     * @return async return test result
      */
     public static Future<Boolean> testConnection(ConnectionParam param) {
         var client = createPool(param);
         var testSql = "SELECT 1";
         var promise = Promise.<Boolean>promise();
         var future = client.query(testSql);
-        future.onFailure(ar -> {
-            promise.complete(true);
-            //close connection
-            client.close();
-        });
-        future.onFailure(t -> {
-            promise.fail(t);
-            //close connection
+        future.onComplete(ar -> {
+            if (ar.succeeded()) {
+                promise.complete(true);
+            } else {
+                promise.fail(ar.cause());
+            }
             client.close();
         });
         return promise.future();
