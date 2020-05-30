@@ -2,15 +2,19 @@ package com.openjfx.database.mysql;
 
 import com.openjfx.database.common.utils.StringUtils;
 import com.openjfx.database.model.ConnectionParam;
+import com.openjfx.database.model.TableColumnMeta;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.mysqlclient.MySQLConnectOptions;
 import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.sqlclient.PoolOptions;
 
+import java.util.List;
+import java.util.Optional;
+
 
 /**
- * mysql数据库操作一些辅助方法
+ * Some auxiliary methods of MySQL database operation
  *
  * @author yangkui
  * @since 1.0
@@ -18,33 +22,33 @@ import io.vertx.sqlclient.PoolOptions;
 public class MysqlHelper {
 
     /**
-     * 创建数据库连接池
+     * Create database connection pool
      *
-     * @param param 参数
-     * @return 返回数据库连接池
+     * @param param parameter
+     * @return Back to database connection pool
      */
     public static MySQLPool createPool(ConnectionParam param) {
         return createPool(param, 10);
     }
 
     /**
-     * 创建数据库连接池
+     * Create database connection pool
      *
-     * @param param    连接参数
-     * @param initSize 初始化尺寸
-     * @return 返回连接池
+     * @param param    Connection parameters
+     * @param initSize Initialize dimensions
+     * @return Back to connection pool
      */
     public static MySQLPool createPool(ConnectionParam param, int initSize) {
         return createPool(param, initSize, null);
     }
 
     /**
-     * 创建数据库连接池
+     * Create database connection pool
      *
-     * @param param    连接参数
-     * @param initSize 初始化连接池尺寸
-     * @param database 初始化数据库
-     * @return 返回连接池
+     * @param param    Connection parameters
+     * @param initSize Initialize connection pool size
+     * @param database Initialize database
+     * @return Back to connection pool
      */
     public static MySQLPool createPool(ConnectionParam param, int initSize, String database) {
         var options = new MySQLConnectOptions()
@@ -53,7 +57,7 @@ public class MysqlHelper {
                 .setUser(param.getUser())
                 .setPassword(param.getPassword())
                 .setTcpKeepAlive(true)
-                //设置链接超时为5s
+                //Set link timeout to 5s
                 .setConnectTimeout(5000)
                 .setIdleTimeout(5)
                 .setSslHandshakeTimeout(5);
@@ -87,6 +91,16 @@ public class MysqlHelper {
             client.close();
         });
         return promise.future();
+    }
+
+    /**
+     * Get primary key from a table
+     *
+     * @param metas table column list
+     * @return primary key
+     */
+    public static Optional<TableColumnMeta> getPrimaryKey(List<TableColumnMeta> metas) {
+        return metas.stream().filter(TableColumnMeta::getPrimaryKey).findAny();
     }
 
 }
