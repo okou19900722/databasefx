@@ -1,7 +1,6 @@
 package com.openjfx.database.app.component.impl;
 
 import com.openjfx.database.DML;
-import com.openjfx.database.TableColumnMetaHelper;
 import com.openjfx.database.app.TableDataHelper;
 import com.openjfx.database.app.component.BaseTab;
 import com.openjfx.database.app.component.SearchPopup;
@@ -15,6 +14,7 @@ import com.openjfx.database.app.utils.TableDataUtils;
 import com.openjfx.database.base.AbstractDataBasePool;
 import com.openjfx.database.common.utils.StringUtils;
 import com.openjfx.database.model.TableColumnMeta;
+import com.openjfx.database.mysql.MysqlHelper;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
@@ -87,15 +87,17 @@ public class TableTab extends BaseTab<TableTabModel> {
     private final SearchPopup searchPopup = SearchPopup.complexPopup();
 
     private final List<TableSearchResultModel> searchList = new ArrayList<>();
-
-
-    private TableColumnMeta keyMeta = null;
+    /**
+     * Determine whether the primary key exists in the current table.
+     * If it does not exist, it is not allowed to update.
+     * Because there is no primary key, it is likely to cause data update failure.
+     */
+    private TableColumnMeta primaryKeyMeta = null;
 
     public TableTab(TableTabModel model) {
         super(model);
         pool = DATABASE_SOURCE.getDataBaseSource(model.getUuid());
     }
-
 
     public void init() {
         flag.setGraphic(new ImageView(FLAG_IMAGE));
@@ -286,10 +288,10 @@ public class TableTab extends BaseTab<TableTabModel> {
                 tableView.getColumns().addAll(columns);
             });
             //get key
-            var optional = TableColumnMetaHelper.getTableKey(metas);
+            var optional = MysqlHelper.getPrimaryKey(metas);
             if (optional.isPresent()) {
                 tableView.setEditable(true);
-                keyMeta = optional.get();
+                primaryKeyMeta = optional.get();
             }
             promise.complete();
         });
@@ -408,8 +410,8 @@ public class TableTab extends BaseTab<TableTabModel> {
         var change = tableView.getChangeModes();
         //Update data
         if (change.size() > 0) {
-            int keyIndex = metas.indexOf(keyMeta);
-            //Due to asynchrony, you may only need to update in batch, but not in single update
+            int keyIndex = metas.indexOf(primaryKeyMeta);
+            //Due to asynchronous, you may only need to update in batch, but not in single update
             var values = TableDataHelper.getChangeValue(change, metas, keyIndex, tableView.getItems());
             //Update data asynchronously
             return dml.batchUpdate(values, model.getTable(), metas);
@@ -420,12 +422,11 @@ public class TableTab extends BaseTab<TableTabModel> {
     private Future<Integer> deleteData(DML dml) {
         var list = tableView.getDeletes();
         if (!list.isEmpty()) {
-            var index = metas.indexOf(keyMeta);
+            var index = metas.indexOf(primaryKeyMeta);
             var keys = list.stream()
-                    .map(it -> it.get(index))
-                    .map(TableDataHelper::singleFxPropertyToObject)
+                    .map(it -> it.get(index)).map(TableDataHelper::singleFxPropertyToObject)
                     .toArray();
-            return dml.batchDelete(keyMeta, keys, model.getTable());
+            return dml.batchDelete(primaryKeyMeta, keys, model.getTable());
         }
         return Future.succeededFuture();
     }
@@ -448,8 +449,8 @@ public class TableTab extends BaseTab<TableTabModel> {
      * @return True can update false can not update
      */
     private boolean updated() {
-        if (Objects.isNull(keyMeta)) {
-            DialogUtils.showNotification("当前设计表无Key,无法进行更新操作", Pos.TOP_CENTER, NotificationType.WARNING);
+        if (Objects.isNull(primaryKeyMeta)) {
+            DialogUtils.showNotification("当前表不存在主键,为了数据安全,禁止更新.", Pos.TOP_CENTER, NotificationType.WARNING);
             return true;
         }
         return false;
