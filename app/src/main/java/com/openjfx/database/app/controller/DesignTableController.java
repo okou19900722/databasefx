@@ -14,7 +14,6 @@ import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.common.utils.StringUtils;
 import com.openjfx.database.enums.DesignTableOperationSource;
 import com.openjfx.database.enums.DesignTableOperationType;
-import com.openjfx.database.model.RowChangeModel;
 import com.openjfx.database.model.TableColumnMeta;
 import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;
@@ -24,7 +23,6 @@ import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.HBox;
 import com.openjfx.database.app.model.TableFieldChangeModel;
 
 import java.util.ArrayList;
@@ -43,10 +41,6 @@ public class DesignTableController extends BaseController<JsonObject> {
 
     @FXML
     private TabPane tabPane;
-
-    @FXML
-    private HBox topBox;
-
     @FXML
     private DesignTableView<DesignTableModel> fieldTable;
 
@@ -213,11 +207,12 @@ public class DesignTableController extends BaseController<JsonObject> {
         var items = fieldTable.getItems();
         items.add(model);
         var index = items.size() - 1;
+        //note this row code must place first row
+        tableFieldChangeModel.fieldChange(null, DesignTableOperationType.CREATE, index, null, "");
+        //init property
         fieldTable.getSelectionModel().select(index);
         model.getFieldLength().setText("0");
         model.getFieldPoint().setText("0");
-        //add row
-        tableFieldChangeModel.fieldChange(null, DesignTableOperationType.CREATE, index, null, "");
     }
 
     @FXML

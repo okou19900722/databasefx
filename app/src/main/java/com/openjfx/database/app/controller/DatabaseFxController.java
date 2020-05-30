@@ -79,7 +79,7 @@ public class DatabaseFxController extends BaseController<Void> {
     private int selectIndex = 0;
 
     /**
-     * EVENT-BUS 地址
+     * EVENT-BUS address
      */
     public static final String EVENT_ADDRESS = "controller:databaseFX";
 
@@ -186,13 +186,12 @@ public class DatabaseFxController extends BaseController<Void> {
     }
 
     /**
-     * 执行菜单指令集
+     * execute menu order
      *
-     * @param value 指令值
+     * @param value order value
      */
     private void doExecMenuOrder(String value) {
-        //构造指令
-        MenuItemOrder order = MenuItemOrder.valueOf(value.toUpperCase());
+        var order = MenuItemOrder.valueOf(value.toUpperCase());
 
         if (order == MenuItemOrder.CONNECTION) {
             new CreateConnectionStage();
@@ -218,10 +217,9 @@ public class DatabaseFxController extends BaseController<Void> {
     }
 
     /**
-     * 渲染连接列表
+     * render connection list
      */
     private void initDbList() {
-        //渲染数据库列表
         var nodes = DbPreference.getParams().stream().map(DBTreeNode::new).collect(Collectors.toList());
         var observableList = treeItemRoot.getChildren();
         if (!observableList.isEmpty()) {
@@ -236,14 +234,14 @@ public class DatabaseFxController extends BaseController<Void> {
                 .filter(t -> t.getModel().getFlag().equals(flag)).findAny();
 
         if (optional.isPresent()) {
-            //切换tab
+            //change tab
             int index = tabs.indexOf(optional.get());
             tabPane.getSelectionModel().select(index);
             return;
         }
         final Tab tab;
         if (tabType == TabType.TABLE) {
-            //新建tab
+            //create tab
             tab = new TableTab((TableTabModel) mode);
             tabPane.getTabs().add(tab);
             ((TableTab) tab).init();
@@ -254,9 +252,9 @@ public class DatabaseFxController extends BaseController<Void> {
     }
 
     /**
-     * eventBus 统一处理外部输入信息
+     * eventBus Unified processing of external input information
      *
-     * @param message 消息内容
+     * @param message message body
      */
     private void eventBusHandler(Message<JsonObject> message) {
         var body = message.body();

@@ -409,7 +409,6 @@ public class TableTab extends BaseTab<TableTabModel> {
         //Update data
         if (change.size() > 0) {
             int keyIndex = metas.indexOf(keyMeta);
-
             //Due to asynchrony, you may only need to update in batch, but not in single update
             var values = TableDataHelper.getChangeValue(change, metas, keyIndex, tableView.getItems());
             //Update data asynchronously
