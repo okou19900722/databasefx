@@ -87,8 +87,11 @@ public class CreateConnectionController extends BaseController<String> {
             updateConnection(param);
             flag = DialogUtils.showAlertConfirm("连接已更改是否重连?");
         } else {
-            //new connection
-            saveConnection(param);
+            var ok = DialogUtils.showAlertConfirm("是否将连接保存到本地,方便下次使用?");
+            //save connection to disk
+            if (ok) {
+                saveConnection(param);
+            }
             DbPreference.addConnection(param);
         }
         var message = new JsonObject();
