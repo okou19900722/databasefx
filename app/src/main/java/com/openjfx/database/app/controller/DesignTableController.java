@@ -32,7 +32,7 @@ import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
 import static com.openjfx.database.app.config.Constants.*;
 
 /**
- * 设计表控制器
+ * design table controller
  *
  * @author yangkui
  * @since 1.0
