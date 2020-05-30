@@ -169,8 +169,12 @@ public class SQLGeneratorImpl implements SQLGenerator {
             i++;
         }
         for (int j = 0; j < keys.size(); j++) {
+            var str = sb.toString().trim();
             if (j == 0) {
-                sb.append(",PRIMARY KEY (");
+                if (!str.endsWith(",")) {
+                    sb.append(",");
+                }
+                sb.append("PRIMARY KEY (");
             }
             var key = keys.get(j);
             sb.append(key);

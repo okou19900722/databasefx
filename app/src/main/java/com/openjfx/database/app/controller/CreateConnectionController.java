@@ -7,17 +7,13 @@ import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.model.ConnectionParam;
 import com.openjfx.database.mysql.MysqlHelper;
-import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 import java.util.Objects;
-import java.util.Optional;
 
 import static com.openjfx.database.app.config.Constants.ACTION;
 import static com.openjfx.database.app.config.Constants.UUID;
@@ -28,7 +24,7 @@ import static com.openjfx.database.app.utils.DialogUtils.showNotification;
 import static com.openjfx.database.common.utils.StringUtils.isEmpty;
 
 /**
- * 创建连接控制器
+ * create connection controller
  *
  * @author yangkui
  * @since 1.0

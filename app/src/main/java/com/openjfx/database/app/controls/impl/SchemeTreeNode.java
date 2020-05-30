@@ -69,8 +69,6 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
                     closeOpenTab();
                     //delete current node from parent node
                     getParent().getChildren().remove(this);
-                    //remove cached database pool
-                    DATABASE_SOURCE.close(getUuid());
                 });
                 future.onFailure(t -> DialogUtils.showErrorDialog(t, "删除schema失败"));
             }

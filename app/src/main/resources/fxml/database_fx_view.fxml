@@ -15,28 +15,58 @@
         <URL value="@/css/database_fx.css"/>
     </stylesheets>
     <top>
-        <MenuBar fx:id="menuBar">
-            <Menu text="文件(F)">
-                <MenuItem text="打开文件" userData="open"/>
-                <MenuItem text="刷新" userData="flush"/>
-<!--                <MenuItem text="导入" userData="import"/>-->
-<!--                <MenuItem text="导出" userData="export"/>-->
-                <MenuItem text="退出" userData="exit"/>
-            </Menu>
-<!--            <Menu text="编辑(E)"/>-->
-<!--            <Menu text="SQL编辑器">-->
-<!--                <MenuItem text="SQL编辑器" userData="editor"/>-->
-<!--            </Menu>-->
-            <Menu text="数据库(D)">
-                <MenuItem text="新建连接" userData="connection"/>
-            </Menu>
-<!--            <Menu text="窗口(W)">-->
-<!--                <MenuItem text="首选项" userData="setting"/>-->
-<!--            </Menu>-->
-            <Menu text="帮助(H)">
-                <MenuItem text="关于" userData="about"/>
-            </Menu>
-        </MenuBar>
+        <VBox>
+            <MenuBar fx:id="menuBar" styleClass="menu-bar">
+                <Menu text="文件(F)">
+                    <MenuItem text="打开文件" userData="open"/>
+                    <MenuItem text="刷新" userData="flush"/>
+                    <!--                <MenuItem text="导入" userData="import"/>-->
+                    <!--                <MenuItem text="导出" userData="export"/>-->
+                    <MenuItem text="退出" userData="exit"/>
+                </Menu>
+                <!--            <Menu text="编辑(E)"/>-->
+                <!--            <Menu text="SQL编辑器">-->
+                <!--                <MenuItem text="SQL编辑器" userData="editor"/>-->
+                <!--            </Menu>-->
+                <Menu text="数据库(D)">
+                    <MenuItem text="新建连接" userData="connection"/>
+                </Menu>
+                <!--            <Menu text="窗口(W)">-->
+                <!--                <MenuItem text="首选项" userData="setting"/>-->
+                <!--            </Menu>-->
+                <Menu text="帮助(H)">
+                    <MenuItem text="关于" userData="about"/>
+                </Menu>
+            </MenuBar>
+            <ButtonBar styleClass="button-bar" nodeOrientation="RIGHT_TO_LEFT">
+                <buttons>
+                    <Button text="模型" contentDisplay="TOP">
+                        <graphic>
+                            <ImageView>
+                                <Image url="@/assets/images/model_view_icon.png" requestedWidth="28"
+                                       requestedHeight="30" smooth="true"/>
+                            </ImageView>
+                        </graphic>
+                    </Button>
+                    <Button text="用户" contentDisplay="TOP">
+                        <graphic>
+                            <ImageView>
+                                <Image url="@/assets/images/user_group_icon.png" requestedWidth="28"
+                                       requestedHeight="30" smooth="true"/>
+                            </ImageView>
+                        </graphic>
+                    </Button>
+                    <Button contentDisplay="TOP" text="新建查询" onAction="#createQueryTerminal">
+                        <graphic>
+                            <ImageView>
+                                <Image url="@/assets/images/query_icon.png" requestedHeight="28" requestedWidth="30"
+                                       smooth="true"/>
+                            </ImageView>
+                        </graphic>
+                    </Button>
+                </buttons>
+            </ButtonBar>
+        </VBox>
     </top>
     <center>
         <SplitPane fx:id="splitPane">
@@ -53,7 +83,8 @@
             <JFXButton>
                 <graphic>
                     <ImageView>
-                        <Image url="@/assets/images/system_log_icon.png" requestedHeight="18" requestedWidth="18" smooth="true"/>
+                        <Image url="@/assets/images/system_log_icon.png" requestedHeight="18" requestedWidth="18"
+                               smooth="true"/>
                     </ImageView>
                 </graphic>
                 <tooltip>
@@ -63,7 +94,8 @@
             <JFXButton>
                 <graphic>
                     <ImageView>
-                        <Image url="@/assets/images/monitor_icon.png" requestedHeight="18" requestedWidth="18" smooth="true"/>
+                        <Image url="@/assets/images/monitor_icon.png" requestedHeight="18" requestedWidth="18"
+                               smooth="true"/>
                     </ImageView>
                 </graphic>
                 <tooltip>

@@ -26,7 +26,7 @@ import java.util.*;
 import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
 
 /**
- * sql编辑器控制器
+ * sql editor controller
  *
  * @author yangkui
  * @since 1.0
@@ -50,15 +50,37 @@ public class SQLEditController extends BaseController<JsonObject> {
 
         var scheme = data.getString(Constants.SCHEME);
 
-        optional.ifPresent(param -> client = DATABASE_SOURCE.createPool(param, uuid, scheme, 1));
+        if (optional.isPresent()) {
+            if (StringUtils.nonEmpty(scheme)) {
+                client = DATABASE_SOURCE.createPool(optional.get(), uuid, scheme, 1);
+            } else {
+                client = DATABASE_SOURCE.createPool(optional.get(), uuid, 1);
+            }
+        } else {
+            DialogUtils.showAlertInfo("当前连接不可用!!");
+            stage.close();
+            return;
+        }
         //加载scheme
         var param = client.getConnectionParam();
-        var title = param.getName() + "<" + param.getHost() + "/" + scheme + ">";
-        var future = client.getConnection();
-
-        future.onFailure(t -> DialogUtils.showErrorDialog(t, "获取连接失败"));
-
+        final String title;
+        if (StringUtils.nonEmpty(scheme)) {
+            title = param.getName() + "<" + param.getHost() + "/" + scheme + ">";
+        } else {
+            title = param.getName() + "<" + param.getHost() + ">";
+        }
         stage.setTitle(title);
+
+        var future = client.getConnection();
+        future.onComplete(ar -> {
+            if (ar.failed()) {
+                DialogUtils.showErrorDialog(ar.cause(), "获取连接失败");
+                return;
+            }
+            var con = ar.result();
+            //place into database source pool
+            con.close();
+        });
 
         stage.setOnCloseRequest(event -> DATABASE_SOURCE.close(uuid));
     }

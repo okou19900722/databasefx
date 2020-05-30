@@ -60,10 +60,10 @@ public class SplashController extends BaseController<Void> {
 
 
     /**
-     * 更新进度
+     * update progress
      *
-     * @param title 进度描述
-     * @param value 进度值 0-100
+     * @param title progress describe
+     * @param value progress value 0-100
      */
     private void updateProgress(String title, double value) {
         Platform.runLater(() -> {

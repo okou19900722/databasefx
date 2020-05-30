@@ -9,6 +9,7 @@ import com.openjfx.database.app.component.impl.TableTab;
 import com.openjfx.database.app.controls.BaseTreeNode;
 import com.openjfx.database.app.config.DbPreference;
 import com.openjfx.database.app.controls.impl.DBTreeNode;
+import com.openjfx.database.app.controls.impl.SchemeTreeNode;
 import com.openjfx.database.app.controls.impl.TableTreeNode;
 import com.openjfx.database.app.enums.MenuItemOrder;
 import com.openjfx.database.app.enums.TabType;
@@ -16,6 +17,7 @@ import com.openjfx.database.app.model.BaseTabMode;
 import com.openjfx.database.app.model.impl.TableTabModel;
 import com.openjfx.database.app.stage.AboutStage;
 import com.openjfx.database.app.stage.CreateConnectionStage;
+import com.openjfx.database.app.stage.SQLEditStage;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.app.utils.TreeDataUtils;
 import com.openjfx.database.common.VertexUtils;
@@ -36,6 +38,7 @@ import java.util.stream.Collectors;
 
 import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
 import static com.openjfx.database.app.config.Constants.ACTION;
+import static com.openjfx.database.app.config.Constants.SCHEME;
 
 /**
  * app主界面控制器
@@ -289,6 +292,27 @@ public class DatabaseFxController extends BaseController<Void> {
                 item.flush();
             }
         }
+    }
+
+    @FXML
+    public void createQueryTerminal(ActionEvent event) {
+        var item = treeView.getSelectionModel().getSelectedItem();
+        if (item == null) {
+            return;
+        }
+        var param = new JsonObject();
+        if (item instanceof BaseTreeNode) {
+            param.put(Constants.UUID, ((BaseTreeNode<String>) item).getUuid());
+        }
+        String scheme = "";
+        if (item instanceof SchemeTreeNode) {
+            scheme = item.getValue();
+        }
+        if (item instanceof TableTreeNode) {
+            scheme = ((TableTreeNode) item).getDatabase();
+        }
+        param.put(SCHEME, scheme);
+        new SQLEditStage(param);
     }
 
     enum EventBusAction {

@@ -48,6 +48,16 @@ public class MySql extends AbstractDatabaseSource {
     }
 
     @Override
+    public AbstractDataBasePool createPool(ConnectionParam param, String uuid, int initPoolSize) {
+        var newParam = JsonObject.mapFrom(param).mapTo(ConnectionParam.class);
+        newParam.setUuid(uuid);
+        var mySqlPool = MysqlHelper.createPool(param, initPoolSize);
+        var pool = MysqlPoolImpl.create(mySqlPool);
+        _createPool(pool, newParam);
+        return pool;
+    }
+
+    @Override
     public void heartBeat() {
         //每隔20s向mysql服务器发送一次sql查询语句
         VertexUtils.getVertex().setPeriodic(20000, timer -> {
