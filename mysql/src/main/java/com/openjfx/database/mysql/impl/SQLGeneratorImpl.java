@@ -163,17 +163,15 @@ public class SQLGeneratorImpl implements SQLGenerator {
                 sb.append("' ");
             }
 
-            if (i < changeModels.size() - 1) {
+            if (i < rowChangeModels.size() - 1) {
                 sb.append(",");
             }
             i++;
+
+            System.out.println(rowChangeModels);
         }
         for (int j = 0; j < keys.size(); j++) {
-            var str = sb.toString().trim();
             if (j == 0) {
-//                if (!str.endsWith(",")) {
-//                    sb.append(",");
-//                }
                 sb.append(",PRIMARY KEY (");
             }
             var key = keys.get(j);

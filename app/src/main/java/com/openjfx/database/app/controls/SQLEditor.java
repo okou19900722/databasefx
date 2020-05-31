@@ -53,7 +53,9 @@ public class SQLEditor extends CodeArea {
             "SET",
             "COLLATE",
             "TABLE",
-            "COMMENT"
+            "COMMENT",
+            "NOT",
+            "NULL"
     };
     /**
      * 小写关键字
@@ -133,7 +135,7 @@ public class SQLEditor extends CodeArea {
         insertText(0, text);
     }
 
-    class InputMethodRequestsObject implements InputMethodRequests {
+    static class InputMethodRequestsObject implements InputMethodRequests {
 
         @Override
         public Point2D getTextLocation(int offset) {
