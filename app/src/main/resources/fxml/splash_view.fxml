@@ -4,7 +4,6 @@
 <?import javafx.scene.layout.*?>
 
 <?import java.net.URL?>
-<?import com.jfoenix.controls.JFXSlider?>
 <?import javafx.scene.control.Label?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
@@ -14,9 +13,8 @@
         <URL value="@/css/splash.css"/>
     </stylesheets>
     <bottom>
-        <VBox>
+        <HBox styleClass="bottom-box">
             <Label fx:id="title"/>
-            <JFXSlider fx:id="progress"/>
-        </VBox>
+        </HBox>
     </bottom>
 </BorderPane>

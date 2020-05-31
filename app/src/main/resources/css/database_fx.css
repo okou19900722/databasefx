@@ -4,7 +4,7 @@
     -fx-spacing: 6px;
 }
 
-.menu-bar {
+.menu-bar, .bottom-box > .button, .split-pane-divider, .bottom-box {
     -fx-background-color: #f5f5f5;
 }
 
@@ -26,27 +26,17 @@
     -fx-border-color: #AFAFAF;
 }
 
-.button-bar .button:hover {
+.button-bar .button:hover, .bottom-box > .button:hover {
     -fx-background-color: #FFFFFF;
     -fx-border-color: #AFAFAF;
 }
 
-.split-pane-divider, .bottom-box {
-    -fx-background-color: #f5f5f5;
-}
-
-.menu-bar {
-    -fx-background-color: #fafafa;
-}
-
-.tab-pane {
+.tab-pane, .tree-view {
     -fx-background-color: #ffffff;
 }
 
-.tree-view {
-    -fx-background-color: #ffffff;
-}
-
-.bottom-box > .jfx-button {
+.bottom-box > .button {
     -fx-padding: 3px;
+    -fx-border-color: #f5f5f5;
+    -fx-border-width: 1px;
 }

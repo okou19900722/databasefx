@@ -1,11 +1,11 @@
 package com.openjfx.database.app.component;
 
-import com.jfoenix.controls.JFXButton;
 import com.openjfx.database.common.Handler;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -90,9 +90,9 @@ public class SearchPopup extends HBox {
      * @param model Search box presentation
      */
     private SearchPopup(SearchPopupModel model) {
-        var up = new JFXButton();
-        var down = new JFXButton();
-        var close = new JFXButton();
+        var up = new Button();
+        var down = new Button();
+        var close = new Button();
         var lBox = new HBox();
         var rBox = new HBox();
 
