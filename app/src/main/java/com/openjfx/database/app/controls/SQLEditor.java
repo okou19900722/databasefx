@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 public class SQLEditor extends CodeArea {
     /**
-     * 大写关键字
+     * Capitalized keywords
      */
     private static final String[] UPPER_KEYWORD = new String[]{
             "ADD",
@@ -58,11 +58,11 @@ public class SQLEditor extends CodeArea {
             "NULL"
     };
     /**
-     * 小写关键字
+     * Lowercase keyword
      */
     private static final String[] LOW_KEYWORD = Arrays.stream(UPPER_KEYWORD).map(String::toLowerCase).toArray(String[]::new);
 
-    private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", UPPER_KEYWORD) + String.join("|", LOW_KEYWORD) + ")\\b";
+    private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", UPPER_KEYWORD) + "|" + String.join("|", LOW_KEYWORD) + ")\\b";
     private static final String PAREN_PATTERN = "[()]";
     private static final String BRACE_PATTERN = "[{}]";
     private static final String BRACKET_PATTERN = "[\\[\\]]";
