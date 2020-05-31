@@ -5,7 +5,7 @@ plugins {
 group 'com.openjfx.database'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 11
+sourceCompatibility = 14
 
 repositories {
     mavenCentral()
