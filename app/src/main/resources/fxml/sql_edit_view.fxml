@@ -2,33 +2,24 @@
 
 <?import javafx.scene.layout.*?>
 
-<?import org.fxmisc.richtext.CodeArea?>
 <?import javafx.scene.control.SplitPane?>
 <?import java.net.URL?>
-<?import com.jfoenix.controls.JFXButton?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.control.Tooltip?>
 <?import com.openjfx.database.app.controls.TableDataView?>
 <?import com.openjfx.database.app.controls.SQLEditor?>
+<?import javafx.scene.control.Button?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.openjfx.database.app.controller.SQLEditController"
             prefHeight="400.0" prefWidth="600.0">
     <stylesheets>
-        <URL value="@/css/sql_edit.css"/>
+        <URL value="@/css/sql_edit_view.css"/>
     </stylesheets>
-    <!--    <top>-->
-    <!--        <HBox styleClass="top-box">-->
-    <!--            <HBox>-->
-    <!--                <Label text="数据库:"/>-->
-    <!--                <ChoiceBox fx:id="scheme"/>-->
-    <!--            </HBox>-->
-    <!--        </HBox>-->
-    <!--    </top>-->
     <left>
         <VBox alignment="TOP_CENTER" styleClass="action-box">
-            <JFXButton onAction="#executeSql">
+            <Button onAction="#executeSql">
                 <graphic>
                     <ImageView>
                         <Image url="@/assets/images/start_icon.png" requestedWidth="20" requestedHeight="20"
@@ -38,8 +29,8 @@
                 <tooltip>
                     <Tooltip text="执行"/>
                 </tooltip>
-            </JFXButton>
-            <JFXButton onAction="#copySql">
+            </Button>
+            <Button onAction="#copySql">
                 <graphic>
                     <ImageView>
                         <Image url="@/assets/images/copy_icon.png" requestedWidth="20" requestedHeight="20"
@@ -49,8 +40,8 @@
                 <tooltip>
                     <Tooltip text="复制SQL"/>
                 </tooltip>
-            </JFXButton>
-            <JFXButton onAction="#clearSql">
+            </Button>
+            <Button onAction="#clearSql">
                 <graphic>
                     <ImageView>
                         <Image url="@/assets/images/clear_icon.png" requestedWidth="20" requestedHeight="20"
@@ -60,7 +51,7 @@
                 <tooltip>
                     <Tooltip text="清空SQL"/>
                 </tooltip>
-            </JFXButton>
+            </Button>
         </VBox>
     </left>
     <center>

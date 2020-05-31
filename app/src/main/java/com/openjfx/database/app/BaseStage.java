@@ -102,7 +102,7 @@ public class BaseStage<D> extends Stage {
         setMaximized(layout.maximized());
         setResizable(layout.resizable());
         if (StringUtils.isEmpty(getTitle())) {
-            setTitle(StringUtils.isEmpty(layout.title()) ? "DatabaseFX" : layout.title());
+            setTitle(StringUtils.isEmpty(layout.title()) ? "databasefx" : layout.title());
         }
         setAlwaysOnTop(layout.alwaysOnTop());
 
