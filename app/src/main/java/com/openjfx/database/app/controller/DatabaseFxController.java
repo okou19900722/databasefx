@@ -323,6 +323,16 @@ public class DatabaseFxController extends BaseController<Void> {
         new CreateConnectionStage();
     }
 
+    @FXML
+    public void showDatabaseUser() {
+        DialogUtils.showAlertInfo("功能开发中,尽请期待");
+    }
+
+    @FXML
+    public void showDatabaseModelView() {
+        DialogUtils.showAlertInfo("功能开发中,尽请期待");
+    }
+
     enum EventBusAction {
         /**
          * add connection

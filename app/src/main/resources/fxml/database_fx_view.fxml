@@ -40,7 +40,7 @@
             </MenuBar>
             <ButtonBar styleClass="button-bar" nodeOrientation="RIGHT_TO_LEFT">
                 <buttons>
-                    <Button text="模型" contentDisplay="TOP">
+                    <Button text="模型" contentDisplay="TOP" onAction="#showDatabaseModelView">
                         <graphic>
                             <ImageView>
                                 <Image url="@/assets/images/model_view_icon.png" requestedWidth="28"
@@ -48,7 +48,7 @@
                             </ImageView>
                         </graphic>
                     </Button>
-                    <Button text="用户" contentDisplay="TOP">
+                    <Button text="用户" contentDisplay="TOP" onAction="#showDatabaseUser">
                         <graphic>
                             <ImageView>
                                 <Image url="@/assets/images/user_group_icon.png" requestedWidth="28"
