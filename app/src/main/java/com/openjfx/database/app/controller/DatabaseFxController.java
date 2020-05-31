@@ -12,6 +12,7 @@ import com.openjfx.database.app.controls.impl.DBTreeNode;
 import com.openjfx.database.app.controls.impl.SchemeTreeNode;
 import com.openjfx.database.app.controls.impl.TableTreeNode;
 import com.openjfx.database.app.enums.MenuItemOrder;
+import com.openjfx.database.app.enums.NotificationType;
 import com.openjfx.database.app.enums.TabType;
 import com.openjfx.database.app.model.BaseTabMode;
 import com.openjfx.database.app.model.impl.TableTabModel;
@@ -28,6 +29,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Priority;
@@ -197,7 +199,7 @@ public class DatabaseFxController extends BaseController<Void> {
         var order = MenuItemOrder.valueOf(value.toUpperCase());
 
         if (order == MenuItemOrder.CONNECTION) {
-            new CreateConnectionStage();
+            createConnection();
         }
         if (order == MenuItemOrder.ABOUT) {
             new AboutStage();
@@ -298,6 +300,7 @@ public class DatabaseFxController extends BaseController<Void> {
     public void createQueryTerminal(ActionEvent event) {
         var item = treeView.getSelectionModel().getSelectedItem();
         if (item == null) {
+            DialogUtils.showNotification("请至少选中一个数据库", Pos.TOP_CENTER, NotificationType.INFORMATION);
             return;
         }
         var param = new JsonObject();
@@ -315,6 +318,11 @@ public class DatabaseFxController extends BaseController<Void> {
         new SQLEditStage(param);
     }
 
+    @FXML
+    public void createConnection() {
+        new CreateConnectionStage();
+    }
+
     enum EventBusAction {
         /**
          * add connection
@@ -328,9 +336,5 @@ public class DatabaseFxController extends BaseController<Void> {
          * flush scheme
          */
         FLUSH_SCHEME,
-        /**
-         * flush table
-         */
-        FLUSH_TABLE
     }
 }

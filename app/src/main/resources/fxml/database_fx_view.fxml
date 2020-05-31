@@ -18,6 +18,7 @@
         <VBox>
             <MenuBar fx:id="menuBar" styleClass="menu-bar">
                 <Menu text="文件(F)">
+                    <MenuItem text="新建连接" userData="connection"/>
                     <MenuItem text="打开文件" userData="open"/>
                     <MenuItem text="刷新" userData="flush"/>
                     <!--                <MenuItem text="导入" userData="import"/>-->
@@ -28,9 +29,9 @@
                 <!--            <Menu text="SQL编辑器">-->
                 <!--                <MenuItem text="SQL编辑器" userData="editor"/>-->
                 <!--            </Menu>-->
-                <Menu text="数据库(D)">
-                    <MenuItem text="新建连接" userData="connection"/>
-                </Menu>
+<!--                <Menu text="数据库(D)">-->
+                <!--                    <MenuItem text="新建连接" userData="connection"/>-->
+                <!--                </Menu>-->
                 <!--            <Menu text="窗口(W)">-->
                 <!--                <MenuItem text="首选项" userData="setting"/>-->
                 <!--            </Menu>-->
@@ -61,6 +62,14 @@
                             <ImageView>
                                 <Image url="@/assets/images/query_icon.png" requestedHeight="28" requestedWidth="30"
                                        smooth="true"/>
+                            </ImageView>
+                        </graphic>
+                    </Button>
+                    <Button contentDisplay="TOP" text="新建连接" onAction="#createConnection">
+                        <graphic>
+                            <ImageView>
+                                <Image url="@/assets/images/connection_icon.png" requestedHeight="28"
+                                       requestedWidth="30"/>
                             </ImageView>
                         </graphic>
                     </Button>
