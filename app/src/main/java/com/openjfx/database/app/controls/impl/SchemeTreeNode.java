@@ -156,6 +156,9 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
      * @since 1.0
      */
     public enum EventBusAction {
+        /**
+         * flush table of current scheme
+         */
         FLUSH_TABLE
     }
 }

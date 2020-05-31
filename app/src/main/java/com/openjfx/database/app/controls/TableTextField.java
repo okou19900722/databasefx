@@ -1,6 +1,5 @@
 package com.openjfx.database.app.controls;
 
-import com.jfoenix.controls.JFXButton;
 import com.openjfx.database.DataType;
 import com.openjfx.database.common.Handler;
 import com.openjfx.database.model.TableColumnMeta;
@@ -37,7 +36,7 @@ public class TableTextField extends HBox {
     private final DataType.DataTypeEnum inputType;
 
     public TableTextField(final String text, final TableColumnMeta meta) {
-        final var extension = new JFXButton();
+        final var extension = new Button();
         setText(text);
         HBox.setHgrow(textField, Priority.ALWAYS);
         getChildren().addAll(textField, extension);

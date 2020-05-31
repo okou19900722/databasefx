@@ -1,13 +1,11 @@
 package com.openjfx.database.app.skin;
 
-import com.jfoenix.controls.JFXButton;
 import com.openjfx.database.app.controls.DataLabel;
-import com.sun.javafx.scene.control.LabeledText;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
-import javafx.scene.control.TextField;
+import javafx.scene.control.Button;
 import javafx.scene.control.SkinBase;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
@@ -21,21 +19,14 @@ import javafx.scene.text.Text;
  * @since 1.0
  */
 public class DataLabelSkin extends SkinBase<DataLabel> {
-    /**
-     * 用于显示文字信息
-     */
-    private final Text text;
-    /**
-     * 文字超过单元格范围显示扩展按钮，弹出window显示全部内容
-     */
-    private final JFXButton extendData;
-
-    private HBox hBox = new HBox();
 
     public DataLabelSkin(DataLabel control) {
         super(control);
-        extendData = new JFXButton("扩展");
-        text = new Text(control.getText());
+        // If the text exceeds the cell range, the extension button will be displayed, and a window will pop up to display all the contents
+        final var extendData = new Button("扩展");
+        //Used to display text messages
+        final var text = new Text(control.getText());
+        final var hBox = new HBox();
         hBox.getChildren().addAll(text, extendData);
         getChildren().add(hBox);
     }

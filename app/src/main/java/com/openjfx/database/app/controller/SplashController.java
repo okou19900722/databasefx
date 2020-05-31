@@ -1,6 +1,5 @@
 package com.openjfx.database.app.controller;
 
-import com.jfoenix.controls.JFXSlider;
 import com.openjfx.database.app.BaseController;
 import com.openjfx.database.app.config.DbPreference;
 import com.openjfx.database.app.stage.DatabaseFxStage;
@@ -10,6 +9,7 @@ import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -20,7 +20,7 @@ import static com.openjfx.database.app.config.FileConfig.loadConfig;
 import static com.openjfx.database.app.utils.DialogUtils.showErrorDialog;
 
 /**
- * Splash 启动页控制器
+ * Splash stage controller
  *
  * @author yangkui
  * @since 1.0
@@ -28,9 +28,6 @@ import static com.openjfx.database.app.utils.DialogUtils.showErrorDialog;
 public class SplashController extends BaseController<Void> {
     @FXML
     private Label title;
-
-    @FXML
-    private JFXSlider progress;
 
     @Override
     public void init() {
@@ -50,7 +47,7 @@ public class SplashController extends BaseController<Void> {
                 showErrorDialog(t, "启动失败");
                 return;
             }
-            updateProgress("启动成功", 100);
+            updateProgress("启动成功");
             Platform.runLater(() -> {
                 new DatabaseFxStage();
                 stage.close();
@@ -63,23 +60,19 @@ public class SplashController extends BaseController<Void> {
      * update progress
      *
      * @param title progress describe
-     * @param value progress value 0-100
      */
-    private void updateProgress(String title, double value) {
-        Platform.runLater(() -> {
-            this.title.setText(title);
-            progress.setValue(value);
-        });
+    private void updateProgress(String title) {
+        Platform.runLater(() -> this.title.setText(title));
     }
 
     private void init0() throws Exception {
         AssetUtils.loadAllFont();
-        updateProgress("初始化中....", 0);
+        updateProgress("初始化中....");
         Thread.sleep(250);
     }
 
     private void init1() throws InterruptedException {
-        updateProgress("加载配置信息...", 25);
+        updateProgress("加载配置信息...");
         var db = loadConfig(DB_CONFIG_FILE);
         var params = db.getJsonArray(DATABASE).stream()
                 .map(it -> ((JsonObject) it).mapTo(ConnectionParam.class))
@@ -89,7 +82,7 @@ public class SplashController extends BaseController<Void> {
     }
 
     private void init2() throws InterruptedException {
-        updateProgress("加载UI配置....", 75);
+        updateProgress("加载UI配置....");
         loadConfig(UI_CONFIG_FILE);
         Thread.sleep(250);
     }

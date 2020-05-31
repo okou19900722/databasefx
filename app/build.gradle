@@ -40,7 +40,7 @@ javafx {
 dependencies {
     compile project(":common")
     compile project(":mysql")
-    compile 'com.jfoenix:jfoenix:9.0.8'
+//    compile 'com.jfoenix:jfoenix:9.0.8'
     compile group: 'org.controlsfx', name: 'controlsfx', version: '11.0.1'
     compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.4'
 }
