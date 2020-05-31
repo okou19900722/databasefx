@@ -87,6 +87,10 @@
     -fx-border-style: solid;
 }
 
+.tab .progress-indicator {
+    -fx-pref-width: 20px;
+}
+
 .tab:selected {
     -fx-background-color: #ffffff;
 }

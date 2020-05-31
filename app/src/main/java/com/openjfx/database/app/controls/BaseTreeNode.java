@@ -102,7 +102,7 @@ public abstract class BaseTreeNode<T> extends TreeItem<T> {
     }
 
     public String getServerName() {
-        return param.getName();
+        return param.get().getName();
     }
 
     /**

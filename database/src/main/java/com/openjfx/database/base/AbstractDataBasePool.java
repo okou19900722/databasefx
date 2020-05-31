@@ -4,7 +4,6 @@ import com.openjfx.database.*;
 import com.openjfx.database.model.ConnectionParam;
 import io.vertx.core.Future;
 import io.vertx.sqlclient.Pool;
-import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.SqlConnection;
 
 /**

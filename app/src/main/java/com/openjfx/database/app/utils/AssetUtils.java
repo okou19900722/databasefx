@@ -6,7 +6,6 @@ import javafx.scene.text.Font;
 import java.io.*;
 import java.net.JarURLConnection;
 import java.util.Objects;
-import java.util.jar.JarEntry;
 
 /**
  * Resource operation utils collection

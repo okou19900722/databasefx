@@ -260,13 +260,18 @@ public class TableTab extends BaseTab<TableTabModel> {
     }
 
     private void initTable() {
+        setLoading(true);
         var future = loadTableMeta().compose(v -> loadData()).compose(v -> countDataNumber());
-        future.onSuccess(v -> {
-            Platform.runLater(() -> {
-                tableView.refresh();
-                tableView.resetChange();
-            });
+        future.onComplete(v -> {
+            if (v.succeeded()) {
+                Platform.runLater(() -> {
+                    tableView.refresh();
+                    tableView.resetChange();
+                });
+            }
+            setLoading(false);
         });
+
         future.onFailure(t -> DialogUtils.showErrorDialog(t, "加载数据失败"));
     }
 
@@ -474,6 +479,18 @@ public class TableTab extends BaseTab<TableTabModel> {
             name = model.getServerName() + "/" + name;
         }
         setText(name);
-        setTooltip(new Tooltip(name));
+        final var temp = name;
+        //dynamic obtain table comment
+        var future = pool.getDql().getCreateTableComment(model.getTable());
+        future.onComplete(ar -> {
+            final String tooltip;
+            if (ar.succeeded() && StringUtils.nonEmpty(ar.result())) {
+                tooltip = ar.result();
+            } else {
+                tooltip = temp;
+            }
+            Platform.runLater(() -> setTooltip(new Tooltip(tooltip)));
+        });
+
     }
 }
