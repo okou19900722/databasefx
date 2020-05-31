@@ -1,38 +1,27 @@
-.top-box {
-    -fx-padding: 10px;
-    -fx-spacing: 10px;
-}
-.top-box HBox{
-    -fx-spacing: 5px;
-    -fx-alignment: CENTER;
-}
-.top-box {
-    -fx-pref-width: 100px;
-}
-
-.top-box .choice-box{
-    -fx-pref-width: 200px;
-}
-
 .keyword {
-    -fx-fill: purple;
+    -fx-fill: #097bf7;
     -fx-font-weight: bold;
 }
+
 .semicolon {
     -fx-font-weight: bold;
 }
+
 .paren {
     -fx-fill: firebrick;
     -fx-font-weight: bold;
 }
+
 .bracket {
     -fx-fill: darkgreen;
     -fx-font-weight: bold;
 }
+
 .brace {
     -fx-fill: teal;
     -fx-font-weight: bold;
 }
+
 .string {
     -fx-fill: blue;
 }
@@ -43,8 +32,4 @@
 
 .paragraph-box:has-caret {
     -fx-background-color: #f2f9fc;
-}
-
-.action-box{
-    -fx-padding: 5px;
 }

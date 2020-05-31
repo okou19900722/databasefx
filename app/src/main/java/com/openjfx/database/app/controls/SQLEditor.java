@@ -51,7 +51,9 @@ public class SQLEditor extends CodeArea {
             "DATABASE",
             "CHARACTER",
             "SET",
-            "COLLATE"
+            "COLLATE",
+            "TABLE",
+            "COMMENT"
     };
     /**
      * 小写关键字
@@ -98,6 +100,8 @@ public class SQLEditor extends CodeArea {
                 insertText(getCaretPosition(), event.getCommitted());
             }
         });
+        var form = ClassLoader.getSystemResource("css/sql_edit.css").toExternalForm();
+        getStylesheets().add(form);
     }
 
     private static StyleSpans<Collection<String>> computeHighlighting(String text) {

@@ -1,4 +1,4 @@
-# DatabaseFX
+# databasefx
 
 This is a free, cross platform, open source database management tool based on JavaFX and vertx SQL client.
 
@@ -13,13 +13,18 @@ To run the product, execute the following command:
 ```
 gradlew run
 ```
-NOTE : DatabaseFX requires Java 11 and above.
+NOTE : databasefx requires Java 14 and above.
 
 ## Snapshots
 
 ![Travis CI](./SNAPSHOTS/a.png)
 
 ![Travis CI](./SNAPSHOTS/b.png)
+
+![Travis CI](./SNAPSHOTS/c.png)
+
+![Travis CI](./SNAPSHOTS/d.png)
+
 
 
 
