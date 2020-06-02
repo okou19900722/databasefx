@@ -16,13 +16,13 @@
     <top>
         <VBox>
             <MenuBar fx:id="menuBar" styleClass="menu-bar">
-                <Menu text="文件(F)">
-                    <MenuItem text="新建连接" userData="connection"/>
-                    <MenuItem text="打开文件" userData="open"/>
-                    <MenuItem text="刷新" userData="flush"/>
+                <Menu text="%view.databasefx.menu.file">
+                    <MenuItem text="%view.databasefx.menu.file.create.con" userData="connection"/>
+                    <MenuItem text="%view.databasefx.menu.file.open" userData="open"/>
+                    <MenuItem text="%view.databasefx.menu.file.flush" userData="flush"/>
                     <!--                <MenuItem text="导入" userData="import"/>-->
                     <!--                <MenuItem text="导出" userData="export"/>-->
-                    <MenuItem text="退出" userData="exit"/>
+                    <MenuItem text="%view.databasefx.menu.file.exit" userData="exit"/>
                 </Menu>
                 <!--            <Menu text="编辑(E)"/>-->
                 <!--            <Menu text="SQL编辑器">-->
@@ -34,13 +34,14 @@
                 <!--            <Menu text="窗口(W)">-->
                 <!--                <MenuItem text="首选项" userData="setting"/>-->
                 <!--            </Menu>-->
-                <Menu text="帮助(H)">
-                    <MenuItem text="关于" userData="about"/>
+                <Menu text="%view.databasefx.menu.help">
+                    <MenuItem text="%view.databasefx.menu.help.about" userData="about"/>
                 </Menu>
             </MenuBar>
             <ButtonBar styleClass="button-bar" nodeOrientation="RIGHT_TO_LEFT">
                 <buttons>
-                    <Button text="模型" contentDisplay="TOP" onAction="#showDatabaseModelView">
+                    <Button text="%view.databasefx.database.model" contentDisplay="TOP"
+                            onAction="#showDatabaseModelView">
                         <graphic>
                             <ImageView>
                                 <Image url="@/assets/images/model_view_icon.png" requestedWidth="28"
@@ -48,7 +49,8 @@
                             </ImageView>
                         </graphic>
                     </Button>
-                    <Button text="用户" contentDisplay="TOP" onAction="#showDatabaseUser">
+                    <Button text="%view.databasefx.database.user" contentDisplay="TOP"
+                            onAction="#showDatabaseUser">
                         <graphic>
                             <ImageView>
                                 <Image url="@/assets/images/user_group_icon.png" requestedWidth="28"
@@ -56,7 +58,8 @@
                             </ImageView>
                         </graphic>
                     </Button>
-                    <Button contentDisplay="TOP" text="新建查询" onAction="#createQueryTerminal">
+                    <Button contentDisplay="TOP" text="%view.databasefx.menu.file.create.terminal"
+                            onAction="#createQueryTerminal">
                         <graphic>
                             <ImageView>
                                 <Image url="@/assets/images/query_icon.png" requestedHeight="28" requestedWidth="30"
@@ -64,7 +67,8 @@
                             </ImageView>
                         </graphic>
                     </Button>
-                    <Button contentDisplay="TOP" text="新建连接" onAction="#createConnection">
+                    <Button contentDisplay="TOP" text="%view.databasefx.menu.file.create.con"
+                            onAction="#createConnection">
                         <graphic>
                             <ImageView>
                                 <Image url="@/assets/images/connection_icon.png" requestedHeight="28"
@@ -96,7 +100,7 @@
                     </ImageView>
                 </graphic>
                 <tooltip>
-                    <Tooltip text="系统日志"/>
+                    <Tooltip text="%app.system.log"/>
                 </tooltip>
             </Button>
             <Button>
@@ -107,7 +111,7 @@
                     </ImageView>
                 </graphic>
                 <tooltip>
-                    <Tooltip text="监视器"/>
+                    <Tooltip text="%app.system.monitor"/>
                 </tooltip>
             </Button>
         </HBox>

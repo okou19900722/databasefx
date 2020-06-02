@@ -27,7 +27,7 @@
                     </ImageView>
                 </graphic>
                 <tooltip>
-                    <Tooltip text="执行"/>
+                    <Tooltip text="%view.sql.editor.execute"/>
                 </tooltip>
             </Button>
             <Button onAction="#copySql">
@@ -38,7 +38,7 @@
                     </ImageView>
                 </graphic>
                 <tooltip>
-                    <Tooltip text="复制SQL"/>
+                    <Tooltip text="%view.sql.editor.copy"/>
                 </tooltip>
             </Button>
             <Button onAction="#clearSql">
@@ -49,7 +49,7 @@
                     </ImageView>
                 </graphic>
                 <tooltip>
-                    <Tooltip text="清空SQL"/>
+                    <Tooltip text="%view.sql.editor.clear"/>
                 </tooltip>
             </Button>
         </VBox>

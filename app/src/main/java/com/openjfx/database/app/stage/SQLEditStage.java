@@ -12,7 +12,7 @@ import javafx.stage.Modality;
  * @author yangkui
  * @since 1.0
  */
-@Layout(layout = "sql_edit_view.fxml", title = "SQL编辑器")
+@Layout(layout = "sql_edit_view.fxml", title = "app.stage.editor")
 public class SQLEditStage extends BaseStage<JsonObject> {
     public SQLEditStage(JsonObject data) {
         super(data);

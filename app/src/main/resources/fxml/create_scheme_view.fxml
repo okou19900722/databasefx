@@ -19,24 +19,24 @@
     </stylesheets>
     <center>
         <TabPane fx:id="tabPane">
-            <Tab text="常规">
+            <Tab text="%app.routine" closable="false">
                 <GridPane hgap="20" vgap="20" styleClass="grid-pane">
-                    <Label text="数据库名:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <Label text="%database.name" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
                     <EditChoiceBox GridPane.rowIndex="0" GridPane.columnIndex="1" fx:id="schemeNameBox"/>
-                    <Label text="字符集:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <Label text="%database.charset" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
                     <EditChoiceBox GridPane.rowIndex="1" GridPane.columnIndex="1" fx:id="charsetBox"/>
-                    <Label text="排序规则:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <Label text="%database.collation" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
                     <EditChoiceBox GridPane.rowIndex="2" GridPane.columnIndex="1" fx:id="collationBox"/>
                 </GridPane>
             </Tab>
-            <Tab text="预览">
+            <Tab text="%app.preview" closable="false">
                 <SQLEditor fx:id="sqlEditor"/>
             </Tab>
         </TabPane>
     </center>
     <bottom>
         <HBox styleClass="bottom-box">
-            <Button text="确定" fx:id="create">
+            <Button text="%app.ok" fx:id="create">
                 <graphic>
                     <ImageView>
                         <Image url="@/assets/images/create_scheme_icon.png" requestedWidth="18" requestedHeight="18"
@@ -44,10 +44,11 @@
                     </ImageView>
                 </graphic>
             </Button>
-            <Button text="取消" fx:id="cancel">
+            <Button text="%app.cancel" fx:id="cancel">
                 <graphic>
                     <ImageView>
-                        <Image url="@/assets/images/create_scheme_cancel_icon.png" requestedWidth="18" requestedHeight="18"
+                        <Image url="@/assets/images/create_scheme_cancel_icon.png" requestedWidth="18"
+                               requestedHeight="18"
                                smooth="true"/>
                     </ImageView>
                 </graphic>

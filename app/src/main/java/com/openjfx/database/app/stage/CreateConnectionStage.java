@@ -10,7 +10,7 @@ import com.openjfx.database.model.ConnectionParam;
  * @author yangkui
  * @since 1.0
  */
-@Layout(layout = "create_connection_view.fxml", title = "新建连接", resizable = false)
+@Layout(layout = "create_connection_view.fxml", title = "app.stage.create.con", resizable = false)
 public class CreateConnectionStage extends BaseStage<String> {
     public CreateConnectionStage() {
     }

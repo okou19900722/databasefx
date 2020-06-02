@@ -62,8 +62,8 @@ public class CreateConnectionController extends BaseController<String> {
             return;
         }
         var future = MysqlHelper.testConnection(param);
-        future.onSuccess(r -> showNotification("连接成功", Pos.TOP_CENTER, NotificationType.INFORMATION));
-        future.onFailure(t -> showErrorDialog(t, "连接失败"));
+        future.onSuccess(r -> showNotification(resourceBundle.getString("controller.create.con.test.success"), Pos.TOP_CENTER, NotificationType.INFORMATION));
+        future.onFailure(t -> showErrorDialog(t, resourceBundle.getString("controller.create.con.test.fail")));
     }
 
     @FXML
@@ -81,9 +81,9 @@ public class CreateConnectionController extends BaseController<String> {
         //update connection
         if (Objects.nonNull(data)) {
             updateConnection(param);
-            flag = DialogUtils.showAlertConfirm("连接已更改是否重连?");
+            flag = DialogUtils.showAlertConfirm(resourceBundle.getString("controller.create.con.change.tips"));
         } else {
-            var ok = DialogUtils.showAlertConfirm("是否将连接保存到本地,方便下次使用?");
+            var ok = DialogUtils.showAlertConfirm(resourceBundle.getString("controller.create.con.save.tips"));
             //save connection to disk
             if (ok) {
                 saveConnection(param);
@@ -113,7 +113,7 @@ public class CreateConnectionController extends BaseController<String> {
         var e = name.getText();
 
         if (isEmpty(a) || isEmpty(b) || isEmpty(c)) {
-            showNotification("参数不全", Pos.TOP_CENTER, NotificationType.WARNING);
+            showNotification(resourceBundle.getString("app.miss.parameter"), Pos.TOP_CENTER, NotificationType.WARNING);
             return null;
         }
 

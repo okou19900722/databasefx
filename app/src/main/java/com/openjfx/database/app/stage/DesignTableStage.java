@@ -12,7 +12,7 @@ import io.vertx.core.json.JsonObject;
  * @author yangkui
  * @since 1.0
  */
-@Layout(layout = "design_table_view.fxml",title = "设计表")
+@Layout(layout = "design_table_view.fxml",title = "app.stage.design")
 public class DesignTableStage extends BaseStage<JsonObject> {
     public DesignTableStage(JsonObject data) {
         super(data);

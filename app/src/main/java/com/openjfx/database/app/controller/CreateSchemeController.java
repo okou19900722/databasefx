@@ -87,7 +87,7 @@ public class CreateSchemeController extends BaseController<String> {
                 //close current stage
                 Platform.runLater(stage::close);
             });
-            future.onFailure(t -> DialogUtils.showErrorDialog(t, "创建scheme失败"));
+            future.onFailure(t -> DialogUtils.showErrorDialog(t, resourceBundle.getString("controller.create.scheme.fail")));
         });
     }
 

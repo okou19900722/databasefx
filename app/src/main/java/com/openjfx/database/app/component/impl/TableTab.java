@@ -36,6 +36,7 @@ import javafx.scene.layout.Priority;
 import java.util.*;
 
 import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
+import static com.openjfx.database.app.DatabaseFX.I18N;
 import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
 import static com.openjfx.database.common.config.StringConstants.NULL;
 
@@ -109,10 +110,10 @@ public class TableTab extends BaseTab<TableTabModel> {
         delete.setGraphic(new ImageView(DELETE_ICON));
         numberTextField.setPrefWidth(60);
 
-        addData.setTooltip(new Tooltip("新增数据"));
-        flush.setTooltip(new Tooltip("刷新"));
-        submit.setTooltip(new Tooltip("保存更改"));
-        delete.setTooltip(new Tooltip("删除"));
+        addData.setTooltip(new Tooltip(I18N.getString("databasefx.table.action.add")));
+        flush.setTooltip(new Tooltip(I18N.getString("databasefx.table.action.flush")));
+        submit.setTooltip(new Tooltip(I18N.getString("databasefx.table.action.save")));
+        delete.setTooltip(new Tooltip(I18N.getString("databasefx.table.action.delete")));
 
 
         var lBox = new HBox();
@@ -272,7 +273,7 @@ public class TableTab extends BaseTab<TableTabModel> {
             setLoading(false);
         });
 
-        future.onFailure(t -> DialogUtils.showErrorDialog(t, "加载数据失败"));
+        future.onFailure(t -> DialogUtils.showErrorDialog(t, I18N.getString("databasefx.table.init.fail")));
     }
 
 
@@ -341,7 +342,7 @@ public class TableTab extends BaseTab<TableTabModel> {
             initTable();
             return;
         }
-        var result = DialogUtils.showAlertConfirm("检测到数据已经更新是否同步到数据库?");
+        var result = DialogUtils.showAlertConfirm(I18N.getString("databasefx.table.update.tips"));
         // Synchronous data change to database
         if (result) {
             var dml = DATABASE_SOURCE.getDataBaseSource(model.getUuid()).getDml();
@@ -356,7 +357,7 @@ public class TableTab extends BaseTab<TableTabModel> {
                     }
                 });
             });
-            future.onFailure(t -> DialogUtils.showErrorDialog(t, "更新失败"));
+            future.onFailure(t -> DialogUtils.showErrorDialog(t, I18N.getString("databasefx.table.update.fail")));
         } else {
             tableView.resetChange();
             initTable();
@@ -455,7 +456,8 @@ public class TableTab extends BaseTab<TableTabModel> {
      */
     private boolean updated() {
         if (Objects.isNull(primaryKeyMeta)) {
-            DialogUtils.showNotification("当前表不存在主键,为了数据安全,禁止更新.", Pos.TOP_CENTER, NotificationType.WARNING);
+            var tips = I18N.getString("databasefx.table.prohibit.update");
+            DialogUtils.showNotification(tips, Pos.TOP_CENTER, NotificationType.WARNING);
             return true;
         }
         return false;

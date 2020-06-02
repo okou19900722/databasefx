@@ -14,21 +14,33 @@
         <URL value="@/css/about.css"/>
     </stylesheets>
     <center>
-       <HBox styleClass="center-box">
-           <HBox alignment="CENTER">
-               <ImageView>
-                   <Image url="@/assets/images/icon.png"/>
-               </ImageView>
-           </HBox>
-           <Separator orientation="VERTICAL"/>
-           <VBox alignment="CENTER_LEFT" styleClass="app-info">
-               <Label text="软件名称:DatabaseFx"/>
-               <Label text="软件版本:1.0.0-beta1"/>
-               <Label text="发布日期:2020年5月9日"/>
-               <Label text="联系方式:752544765@qq.com"/>
-               <Label text="软件官网:http://navigational.cn"/>
-           </VBox>
-       </HBox>
+        <HBox styleClass="center-box">
+            <HBox alignment="CENTER">
+                <ImageView>
+                    <Image url="@/assets/images/icon.png"/>
+                </ImageView>
+            </HBox>
+            <Separator orientation="VERTICAL"/>
+            <VBox alignment="CENTER_LEFT" styleClass="app-info">
+                <HBox>
+                    <Label text="%view.about.name"/>
+                    <Label text="databasefx"/>
+                </HBox>
+                <HBox>
+                    <Label text="%view.about.version"/>
+                    <Label text="1.0.0-alpha"/>
+                </HBox>
+                <HBox>
+                    <Label text="%view.about.contact"/>
+                    <Label text=":752544765@qq.com"/>
+                </HBox>
+                <HBox>
+                    <Label text="%view.about.website"/>
+                    <Label text="http://navigational.cn"/>
+                </HBox>
+
+            </VBox>
+        </HBox>
     </center>
 
 </BorderPane>

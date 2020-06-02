@@ -9,7 +9,7 @@ import com.openjfx.database.app.annotation.Layout;
  * @author yangkui
  * @since 1.0
  */
-@Layout(layout = "create_scheme_view.fxml", resizable = false)
+@Layout(layout = "create_scheme_view.fxml", resizable = false,title = "app.stage.create.database")
 public class CreateSchemeStage extends BaseStage<String> {
     public CreateSchemeStage(String data) {
         super(data);

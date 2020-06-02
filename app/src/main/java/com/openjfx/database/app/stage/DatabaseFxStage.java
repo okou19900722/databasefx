@@ -10,6 +10,6 @@ import com.openjfx.database.app.annotation.Layout;
  * @author yangkui
  * @since 1.0
  */
-@Layout(layout = "database_fx_view.fxml")
+@Layout(layout = "database_fx_view.fxml",title = "app.stage.databasefx")
 public class DatabaseFxStage extends BaseStage {
 }

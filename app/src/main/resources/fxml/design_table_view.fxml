@@ -24,7 +24,7 @@
     </stylesheets>
     <top>
         <HBox BorderPane.alignment="CENTER" styleClass="top-box" fx:id="topBox">
-            <Button text="保存" onAction="#save">
+            <Button text="%app.save" onAction="#save">
                 <graphic>
                     <ImageView>
                         <Image url="@/assets/images/design_save_icon.png" requestedHeight="18" requestedWidth="18"
@@ -32,7 +32,7 @@
                     </ImageView>
                 </graphic>
             </Button>
-            <Button text="添加字段" onAction="#createNewField">
+            <Button text="%view.design.table.field.add" onAction="#createNewField">
                 <graphic>
                     <ImageView>
                         <Image url="@/assets/images/design_add_icon.png" requestedHeight="18" requestedWidth="18"
@@ -40,7 +40,7 @@
                     </ImageView>
                 </graphic>
             </Button>
-            <Button text="删除字段" onAction="#deleteField">
+            <Button text="%view.design.table.field.delete" onAction="#deleteField">
                 <graphic>
                     <ImageView>
                         <Image url="@/assets/images/design_delete_icon.png" requestedHeight="18" requestedWidth="18"
@@ -48,7 +48,7 @@
                     </ImageView>
                 </graphic>
             </Button>
-            <Button text="主键" onAction="#setPrimaryKey">
+            <Button text="%view.design.table.field.primary" onAction="#setPrimaryKey">
                 <graphic>
                     <ImageView>
                         <Image url="@/assets/images/key_icon.png" requestedHeight="18" requestedWidth="18"
@@ -61,24 +61,24 @@
     <center>
         <SplitPane dividerPositions="0.8" orientation="VERTICAL" BorderPane.alignment="CENTER" fx:id="splitPane">
             <TabPane fx:id="tabPane">
-                <Tab text="字段">
+                <Tab text="%view.design.table.field">
                     <DesignTableView fx:id="fieldTable">
                         <columns>
-                            <TableColumn text="名"/>
-                            <TableColumn text="类型"/>
-                            <TableColumn text="长度"/>
-                            <TableColumn text="小数点"/>
-                            <TableColumn text="不是null"/>
+                            <TableColumn text="%view.design.table.field.name"/>
+                            <TableColumn text="%view.design.table.field.type"/>
+                            <TableColumn text="%view.design.table.field.length"/>
+                            <TableColumn text="%view.design.table.field.decimal"/>
+                            <TableColumn text="%view.design.table.field.null"/>
                             <!--                            <TableColumn text="虚拟"/>-->
-                            <TableColumn text="键"/>
-                            <TableColumn text="注释"/>
+                            <TableColumn text="%view.design.table.field.key"/>
+                            <TableColumn text="%view.design.table.field.comment"/>
                         </columns>
                     </DesignTableView>
                 </Tab>
-                <Tab text="注释">
+                <Tab text="%view.design.table.comment">
                     <TextArea fx:id="commentTextArea"/>
                 </Tab>
-                <Tab text="SQL预览">
+                <Tab text="%view.design.table.preview">
                     <SQLEditor fx:id="sqlEditor" editable="false"/>
                 </Tab>
             </TabPane>

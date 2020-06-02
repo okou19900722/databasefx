@@ -14,11 +14,12 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 
 
+import static com.openjfx.database.app.DatabaseFX.I18N;
 import static com.openjfx.database.app.config.Constants.*;
 import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
 
 /**
- * 数据库表节点
+ * Database table node
  *
  * @author yangkui
  * @since 1.0
@@ -32,7 +33,7 @@ public class TableTreeNode extends BaseTreeNode<String> {
     );
 
     /**
-     * 所属数据库
+     * database
      */
     private final String database;
 
@@ -49,13 +50,14 @@ public class TableTreeNode extends BaseTreeNode<String> {
 
         setValue(tableName);
 
-        var design = new MenuItem("设计表");
-        var delete = new MenuItem("删除");
+        var design = new MenuItem(I18N.getString("menu.databasefx.tree.design.table"));
+        var delete = new MenuItem(I18N.getString("menu.databasefx.tree.delete.table"));
 
 
         design.setOnAction(e -> new DesignTableStage(params));
         delete.setOnAction(e -> {
-            var result = DialogUtils.showAlertConfirm("确定要删除" + tableName + "表?");
+            var tips = I18N.getString("menu.databasefx.tree.delete.table.tips") + " " + tableName + "?";
+            var result = DialogUtils.showAlertConfirm(tips);
             if (!result) {
                 return;
             }
@@ -71,7 +73,7 @@ public class TableTreeNode extends BaseTreeNode<String> {
                 Platform.runLater(() -> getParent().getChildren().remove(this));
             });
 
-            future.onFailure(t -> DialogUtils.showErrorDialog(t, "删除表失败"));
+            future.onFailure(t -> DialogUtils.showErrorDialog(t, I18N.getString("menu.databasefx.tree.delete.table.fail")));
         });
         addMenuItem(design, delete);
     }

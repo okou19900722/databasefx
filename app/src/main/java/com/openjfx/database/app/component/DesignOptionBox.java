@@ -8,8 +8,17 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 
-import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
+import java.util.ResourceBundle;
 
+import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
+import static com.openjfx.database.app.DatabaseFX.I18N;
+
+/**
+ * Design table option
+ *
+ * @author yangkui
+ * @since 1.0
+ */
 public class DesignOptionBox extends VBox {
 
     private final EditChoiceBox<String> defaultBox = new EditChoiceBox<>();
@@ -25,14 +34,14 @@ public class DesignOptionBox extends VBox {
     public DesignOptionBox() {
         defaultBox.setHideSelector(true);
 
-        var autoIncrement = new Label("自增");
+        var autoIncrement = new Label(I18N.getString("view.design.table.option.auto"));
         var grid = new GridPane();
         grid.addRow(0, autoIncrement, incrementCheck);
-        var defaultLabel = new Label("默认值:");
+        var defaultLabel = new Label(I18N.getString("view.design.table.option.default"));
         grid.addRow(1, defaultLabel, defaultBox);
-        var charsetLabel = new Label("字符集:");
+        var charsetLabel = new Label(I18N.getString("view.design.table.option.charset"));
         grid.addRow(2, charsetLabel, charsetBox);
-        var collationLabel = new Label("排序规则:");
+        var collationLabel = new Label(I18N.getString("view.design.table.option.collation"));
         grid.addRow(3, collationLabel, collationBox);
 
         grid.setHgap(10);

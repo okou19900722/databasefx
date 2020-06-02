@@ -8,6 +8,9 @@ import javafx.application.Application;
 
 import javafx.stage.Stage;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 /**
  * JavaFX program entry
  *
@@ -17,6 +20,8 @@ import javafx.stage.Stage;
 public class DatabaseFX extends Application {
 
     public final static AbstractDatabaseSource DATABASE_SOURCE = new MySql();
+
+    public final static ResourceBundle I18N = ResourceBundle.getBundle("i18n/databasefx");
 
     @Override
     public void start(Stage stage) {

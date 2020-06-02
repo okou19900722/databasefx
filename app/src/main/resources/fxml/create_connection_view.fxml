@@ -17,8 +17,8 @@
     <top>
         <HBox styleClass="top-box">
             <VBox HBox.hgrow="ALWAYS" spacing="10">
-                <Label text="连接设置"/>
-                <Label text="数据库连接设置"/>
+                <Label text="%view.create.con.setting.tips"/>
+                <Label text="%view.create.con.setting"/>
             </VBox>
             <VBox>
                 <Label>
@@ -36,25 +36,25 @@
         <VBox styleClass="config-box">
             <VBox styleClass="server">
                 <HBox>
-                    <Label text="连接名称:"/>
+                    <Label text="%view.create.con.name"/>
                     <TextField HBox.hgrow="ALWAYS" fx:id="name" text="localhost"/>
                 </HBox>
                 <HBox>
-                    <Label text="服务器地址:"/>
+                    <Label text="%view.create.con.host"/>
                     <TextField HBox.hgrow="ALWAYS" fx:id="server" text="localhost"/>
                 </HBox>
                 <HBox>
-                    <Label text="端口:"/>
+                    <Label text="%view.create.con.port"/>
                     <TextField HBox.hgrow="ALWAYS" fx:id="port" text="3306"/>
                 </HBox>
             </VBox>
             <VBox styleClass="auth">
                 <HBox>
-                    <Label text="用户名:"/>
+                    <Label text="%view.create.con.username"/>
                     <TextField HBox.hgrow="ALWAYS" fx:id="user" text="root"/>
                 </HBox>
                 <HBox>
-                    <Label text="密码:"/>
+                    <Label text="%view.create.con.password"/>
                     <PasswordField HBox.hgrow="ALWAYS" fx:id="password"/>
                 </HBox>
             </VBox>
@@ -63,11 +63,11 @@
     <bottom>
         <HBox styleClass="bottom-box">
             <HBox>
-                <Button text="测试连接" onAction="#test"/>
+                <Button text="%view.create.con.test" onAction="#test"/>
             </HBox>
             <HBox HBox.hgrow="ALWAYS">
-                <Button text="取消" onAction="#close"/>
-                <Button text="完成" onAction="#save"/>
+                <Button text="%app.cancel" onAction="#close"/>
+                <Button text="%app.ok" onAction="#save"/>
             </HBox>
         </HBox>
     </bottom>

@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
@@ -60,7 +61,7 @@ public class BaseStage<D> extends Stage {
     private Layout getLayout() {
         Layout layout = this.getClass().getAnnotation(Layout.class);
         if (Objects.isNull(layout)) {
-            throw new RuntimeException("layout 不能为空");
+            throw new RuntimeException(DatabaseFX.I18N.getString("base.stage.layout.null"));
         }
         return layout;
     }
@@ -69,18 +70,17 @@ public class BaseStage<D> extends Stage {
      * init controller
      */
     private void initController() {
-        Layout layout = this.getClass().getAnnotation(Layout.class);
-        if (Objects.isNull(layout)) {
-            throw new RuntimeException("layout 不能为空");
-        }
-        String path = "fxml/" + layout.layout();
-        URL url = ClassLoader.getSystemResource(path);
-        FXMLLoader loader = new FXMLLoader(url);
+        var layout = getLayout();
+
+        var path = "fxml/" + layout.layout();
+        var url = ClassLoader.getSystemResource(path);
+        var loader = new FXMLLoader(url);
+        loader.setResources(DatabaseFX.I18N);
         Parent root;
         try {
             root = loader.load();
         } catch (IOException e) {
-            DialogUtils.showErrorDialog(e, "加载页面失败");
+            DialogUtils.showErrorDialog(e, DatabaseFX.I18N.getString("base.stage.layout.load.fail"));
             throw new RuntimeException(e);
         }
         scene = new Scene(root);
@@ -102,7 +102,8 @@ public class BaseStage<D> extends Stage {
         setMaximized(layout.maximized());
         setResizable(layout.resizable());
         if (StringUtils.isEmpty(getTitle())) {
-            setTitle(StringUtils.isEmpty(layout.title()) ? "databasefx" : layout.title());
+            var title = StringUtils.isEmpty(layout.title()) ? "" : DatabaseFX.I18N.getString(layout.title());
+            setTitle(title);
         }
         setAlwaysOnTop(layout.alwaysOnTop());
 

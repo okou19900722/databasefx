@@ -28,20 +28,19 @@ import static com.openjfx.database.common.config.StringConstants.NULL;
  */
 public class TableDataCell extends TableCell<ObservableList<StringProperty>, String> {
 
-    //    private TextField textField;
     private TableTextField textField;
 
     /**
-     * 空值样式
+     * Null style
      */
     private final String NULL_STYLE = "null-style";
     /**
-     * 值改变样式
+     * Value change style
      */
     private final String CHANGE_STYLE = "change-style";
 
     {
-        //禁止换行,防止文字显示过长
+        //Do not wrap to prevent text from being too long
         setWrapText(false);
     }
 
@@ -126,7 +125,7 @@ public class TableDataCell extends TableCell<ObservableList<StringProperty>, Str
         var colIndex = getTableView().getEditingCell().getColumn();
         var rowIndex = getTableRow().getIndex();
 
-        //值变化
+        //Value change
         if (!oldValue.equals(newValue)) {
             var dataView = (TableDataView) getTableView();
 
@@ -146,15 +145,15 @@ public class TableDataCell extends TableCell<ObservableList<StringProperty>, Str
                     dataView.removeChange(model);
                     removeStyle(CHANGE_STYLE);
                 } else {
-                    //更新值
+                    //Value update
                     model.setChangeData(newValue);
                 }
             }
         }
-        //更新值
+        //Value change
         updateItem(newValue, false);
         super.commitEdit(newValue);
-        //聚焦当前tableCell
+        //focus current tableCell
         getTableView().requestFocus();
         getTableView().getSelectionModel().select(rowIndex, getTableColumn());
 
@@ -165,22 +164,22 @@ public class TableDataCell extends TableCell<ObservableList<StringProperty>, Str
     }
 
     /**
-     * 增加样式
+     * Add style
      *
-     * @param className 样式名称
+     * @param className Style name
      */
     private void addClass(String className) {
         boolean a = this.getStyleClass().contains(className);
-        //如果之前没有添加样式->添加
+        //If no style has been added before - > Add
         if (!a) {
             this.getStyleClass().add(className);
         }
     }
 
     /**
-     * 移出样式名
+     * Move out style name
      *
-     * @param className 样式名
+     * @param className style name
      */
     private void removeStyle(String className) {
         ObservableList<String> list = getStyleClass();
@@ -191,7 +190,7 @@ public class TableDataCell extends TableCell<ObservableList<StringProperty>, Str
                 dd.add(i);
             }
         }
-        //移出样式
+        //move out style
         for (Integer integer : dd) {
             list.remove(integer.intValue());
         }

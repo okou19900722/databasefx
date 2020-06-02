@@ -57,7 +57,7 @@ public class SQLEditController extends BaseController<JsonObject> {
                 client = DATABASE_SOURCE.createPool(optional.get(), uuid, 1);
             }
         } else {
-            DialogUtils.showAlertInfo("当前连接不可用!!");
+            DialogUtils.showAlertInfo(resourceBundle.getString("controller.sql.editor.disable"));
             stage.close();
             return;
         }
@@ -74,7 +74,7 @@ public class SQLEditController extends BaseController<JsonObject> {
         var future = client.getConnection();
         future.onComplete(ar -> {
             if (ar.failed()) {
-                DialogUtils.showErrorDialog(ar.cause(), "获取连接失败");
+                DialogUtils.showErrorDialog(ar.cause(), resourceBundle.getString("controller.sql.editor.disable"));
                 return;
             }
             var con = ar.result();
@@ -90,7 +90,7 @@ public class SQLEditController extends BaseController<JsonObject> {
     public void executeSql() {
         var sql = sqlEditor.getText();
         if (StringUtils.isEmpty(sql)) {
-            DialogUtils.showNotification("sql语句不能为空", Pos.TOP_CENTER, NotificationType.WARNING);
+            DialogUtils.showNotification(resourceBundle.getString("controller.sql.editor.sql.empty"), Pos.TOP_CENTER, NotificationType.WARNING);
             return;
         }
         var fut = client.getPool().query(sql);
@@ -108,14 +108,14 @@ public class SQLEditController extends BaseController<JsonObject> {
             createData(columnNames, values);
             DialogUtils.showNotification("execute sql success!", Pos.TOP_CENTER, NotificationType.INFORMATION);
         });
-        fut.onFailure(t -> DialogUtils.showErrorDialog(t, "execute sql failed"));
+        fut.onFailure(t -> DialogUtils.showErrorDialog(t, resourceBundle.getString("controller.sql.editor.sql.executor.fail")));
     }
 
     @FXML
     public void copySql(ActionEvent event) {
         var sql = sqlEditor.getText();
         if (StringUtils.isEmpty(sql)) {
-            DialogUtils.showNotification("sql不能为空", Pos.TOP_CENTER, NotificationType.INFORMATION);
+            DialogUtils.showNotification(resourceBundle.getString("controller.sql.editor.sql.empty"), Pos.TOP_CENTER, NotificationType.INFORMATION);
             return;
         }
         RobotUtils.addStrClipboard(sql);

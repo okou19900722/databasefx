@@ -16,6 +16,7 @@ import javafx.scene.layout.Priority;
 import java.util.function.UnaryOperator;
 
 import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
+import static com.openjfx.database.app.DatabaseFX.I18N;
 import static com.openjfx.database.app.utils.AssetUtils.*;
 import static com.openjfx.database.common.config.StringConstants.NULL;
 
@@ -58,7 +59,7 @@ public class TableTextField extends HBox {
             var optional = dialog.showAndWait();
             optional.ifPresent(textField::setText);
         });
-        registerFormatter(textField);
+//        registerFormatter(textField);
         //add css class
         getStyleClass().add("table-text-field");
         getStylesheets().add("css/table-text-field.css");
@@ -130,7 +131,7 @@ public class TableTextField extends HBox {
         }
     }
 
-    private class InputDialog extends TextInputDialog {
+    private static class InputDialog extends TextInputDialog {
         /**
          * @param text target text
          */
@@ -142,12 +143,12 @@ public class TableTextField extends HBox {
             }
             pane.setHeader(new Label());
             textArea.setWrapText(true);
-            registerFormatter(textArea);
+//            registerFormatter(textArea);
             textArea.setPadding(Insets.EMPTY);
             pane.setContent(textArea);
             pane.setPadding(Insets.EMPTY);
             pane.getStylesheets().add("css/base.css");
-            setTitle("数据编辑框");
+            setTitle(I18N.getString("databasefx.table.edit.dialog"));
             setResultConverter(buttonType -> {
                 if (buttonType == ButtonType.CANCEL) {
                     return text;

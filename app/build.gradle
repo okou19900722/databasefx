@@ -10,6 +10,7 @@ sourceCompatibility = 14
 
 applicationDefaultJvmArgs = ['-Djdk.gtk.version=2', '-Dsun.java2d.opengl=true']
 
+
 gluonClient {
     graalvmHome = "/home/yangkui/application/graalvm"
 }

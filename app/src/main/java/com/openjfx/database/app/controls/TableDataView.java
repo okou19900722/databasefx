@@ -10,10 +10,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Skin;
 import javafx.scene.control.TableView;
+
 import java.util.*;
 
 /**
- * 自定义表格视图
+ * Custom table view
  *
  * @author yangkui
  * @since 1.0
@@ -21,38 +22,38 @@ import java.util.*;
 public class TableDataView extends TableView<ObservableList<StringProperty>> {
 
     /**
-     * 缓存被删除的行数据
+     * Cache Deleted Row Data
      */
     private final List<ObservableList<StringProperty>> deletes = FXCollections.observableArrayList();
 
     /**
-     * 将更改的列信息存储到集合之中
+     * Store the changed column information in the collection
      */
     private final List<TableDataChangeMode> changeModes = new ArrayList<>();
 
     /**
-     * 新建的行数据
+     * New row data
      */
     private final List<ObservableList<StringProperty>> newRows = new ArrayList<>();
 
     /**
-     * 当前表数据是否改变
+     * Whether the current table data changes
      */
     private final BooleanProperty changeStatus = new SimpleBooleanProperty();
 
 
     public TableDataView() {
-        //禁用排序
+        //Disable sorting
         setSortPolicy(callback -> null);
-        //启用选择单元格功能
+        //Enable cell selection
         getSelectionModel().setCellSelectionEnabled(true);
     }
 
 
     /**
-     * 将被删除的行数添加到缓存集合之中
+     * Add the number of deleted rows to the cache collection
      *
-     * @param item 目标数据
+     * @param item target data
      */
     public void addDeleteItem(ObservableList<StringProperty> item) {
         if (deletes.contains(item)) {
@@ -62,17 +63,17 @@ public class TableDataView extends TableView<ObservableList<StringProperty>> {
         boolean a = getItems().remove(item);
         if (a) {
 
-            //检查被删除数据是否在改动列表之中
+            //Check whether the deleted data is in the change list
             var optional = changeModes.stream()
                     .filter(i -> i.getRowIndex() == index)
                     .findAny();
 
             optional.ifPresent(changeModes::remove);
 
-            //检查数据是否在新增列之中
+            //Check whether the data is in the new column
             var b = newRows.contains(item);
             if (b) {
-                //移除数据
+                //Remove data
                 newRows.remove(item);
             } else {
                 deletes.add(item);
@@ -119,7 +120,7 @@ public class TableDataView extends TableView<ObservableList<StringProperty>> {
     }
 
     /**
-     * 更新改变状态
+     * Update change status
      */
     private void updateChange() {
         boolean a = (changeModes.isEmpty() && deletes.isEmpty() && newRows.isEmpty());
@@ -130,12 +131,12 @@ public class TableDataView extends TableView<ObservableList<StringProperty>> {
         if (a && isChangeStatus()) {
             setChangeStatus(false);
         }
-        //刷新视图
+        //refresh the view
         refresh();
     }
 
     /**
-     * 重置缓存信息
+     * Reset cache information
      */
     public void resetChange() {
         this.deletes.clear();
@@ -145,9 +146,9 @@ public class TableDataView extends TableView<ObservableList<StringProperty>> {
     }
 
     /**
-     * 重新排序
+     * Reorder
      *
-     * @param index 被删除行系数
+     * @param index Deleted Row factor
      */
     private void sortChange(int index) {
         changeModes.stream()

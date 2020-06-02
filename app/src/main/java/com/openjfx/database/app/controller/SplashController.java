@@ -44,10 +44,10 @@ public class SplashController extends BaseController<Void> {
         future.whenComplete((r, t) -> {
             if (Objects.nonNull(t)) {
                 System.out.println("application startup failed cause:" + t.getMessage());
-                showErrorDialog(t, "启动失败");
+                showErrorDialog(t, resourceBundle.getString("app.startup.fail"));
                 return;
             }
-            updateProgress("启动成功");
+            updateProgress(resourceBundle.getString("app.startup.success"));
             Platform.runLater(() -> {
                 new DatabaseFxStage();
                 stage.close();
@@ -67,12 +67,12 @@ public class SplashController extends BaseController<Void> {
 
     private void init0() throws Exception {
         AssetUtils.loadAllFont();
-        updateProgress("初始化中....");
+        updateProgress(resourceBundle.getString("app.startup.init"));
         Thread.sleep(250);
     }
 
     private void init1() throws InterruptedException {
-        updateProgress("加载配置信息...");
+        updateProgress(resourceBundle.getString("app.startup.load.config"));
         var db = loadConfig(DB_CONFIG_FILE);
         var params = db.getJsonArray(DATABASE).stream()
                 .map(it -> ((JsonObject) it).mapTo(ConnectionParam.class))
@@ -82,7 +82,7 @@ public class SplashController extends BaseController<Void> {
     }
 
     private void init2() throws InterruptedException {
-        updateProgress("加载UI配置....");
+        updateProgress(resourceBundle.getString("app.startup.load.ui.config"));
         loadConfig(UI_CONFIG_FILE);
         Thread.sleep(250);
     }

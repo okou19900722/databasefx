@@ -43,7 +43,7 @@ import static com.openjfx.database.app.config.Constants.ACTION;
 import static com.openjfx.database.app.config.Constants.SCHEME;
 
 /**
- * app主界面控制器
+ * App main interface controller
  *
  * @author yangkui
  * @since 1.0
@@ -51,7 +51,7 @@ import static com.openjfx.database.app.config.Constants.SCHEME;
 public class DatabaseFxController extends BaseController<Void> {
 
     /**
-     * 顶部菜单栏
+     * Top menu bar
      */
     @FXML
     private MenuBar menuBar;
@@ -92,8 +92,8 @@ public class DatabaseFxController extends BaseController<Void> {
     @Override
     public void init() {
         initDbList();
-        //注册MenuItem上的点击事件
-        ObservableList<Menu> menus = menuBar.getMenus();
+        //Register a click event on a MenuItem
+        var menus = menuBar.getMenus();
         for (Menu menu : menus) {
             for (MenuItem item : menu.getItems()) {
                 item.addEventHandler(ActionEvent.ACTION, event -> {
@@ -133,7 +133,7 @@ public class DatabaseFxController extends BaseController<Void> {
                 if (!(selectedItem instanceof TableTreeNode)) {
                     ((BaseTreeNode) selectedItem).init();
                 } else {
-                    //加载表数据
+                    //Load table data
                     var tableTreeNode = ((TableTreeNode) selectedItem);
                     var model = new TableTabModel(tableTreeNode.getServerName(), tableTreeNode.getUuid(), tableTreeNode.getDatabase(), tableTreeNode.getValue());
                     addTab(model.getFlag(), model, TabType.TABLE);
@@ -209,7 +209,7 @@ public class DatabaseFxController extends BaseController<Void> {
         }
 
         if (order == MenuItemOrder.FLUSH) {
-            var result = DialogUtils.showAlertConfirm("你确定要刷新,刷新将断开所有连接!");
+            var result = DialogUtils.showAlertConfirm(resourceBundle.getString("controller.databasefx.flush.tips"));
             if (result) {
                 tabPane.getTabs().clear();
                 DATABASE_SOURCE.closeAll();
@@ -300,7 +300,7 @@ public class DatabaseFxController extends BaseController<Void> {
     public void createQueryTerminal(ActionEvent event) {
         var item = treeView.getSelectionModel().getSelectedItem();
         if (item == null) {
-            DialogUtils.showNotification("请至少选中一个数据库", Pos.TOP_CENTER, NotificationType.INFORMATION);
+            DialogUtils.showNotification(resourceBundle.getString("controller.databasefx.select.tips"), Pos.TOP_CENTER, NotificationType.INFORMATION);
             return;
         }
         var param = new JsonObject();
@@ -325,12 +325,12 @@ public class DatabaseFxController extends BaseController<Void> {
 
     @FXML
     public void showDatabaseUser() {
-        DialogUtils.showAlertInfo("功能开发中,尽请期待");
+        DialogUtils.showAlertInfo(resourceBundle.getString("app.function.future"));
     }
 
     @FXML
     public void showDatabaseModelView() {
-        DialogUtils.showAlertInfo("功能开发中,尽请期待");
+        DialogUtils.showAlertInfo(resourceBundle.getString("app.function.future"));
     }
 
     enum EventBusAction {

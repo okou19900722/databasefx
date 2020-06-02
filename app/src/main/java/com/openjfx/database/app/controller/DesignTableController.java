@@ -165,7 +165,7 @@ public class DesignTableController extends BaseController<JsonObject> {
                 return pool.getDql().getCreateTableComment(tableName);
             });
             fut.onSuccess(comment -> Platform.runLater(() -> commentTextArea.setText(comment)));
-            fut.onFailure(t -> DialogUtils.showErrorDialog(t, "设计表初始化失败"));
+            fut.onFailure(t -> DialogUtils.showErrorDialog(t, resourceBundle.getString("controller.design.table.init.fail")));
         }
     }
 
@@ -196,9 +196,9 @@ public class DesignTableController extends BaseController<JsonObject> {
             tableFieldChangeModel.clear();
             //refresh data table
             initDataTable();
-            DialogUtils.showNotification("更新成功", Pos.TOP_CENTER, NotificationType.INFORMATION);
+            DialogUtils.showNotification(resourceBundle.getString("controller.design.table.update.success"), Pos.TOP_CENTER, NotificationType.INFORMATION);
         });
-        future.onFailure(t -> DialogUtils.showErrorDialog(t, "更新/创建表失败"));
+        future.onFailure(t -> DialogUtils.showErrorDialog(t, resourceBundle.getString("controller.design.table.update.fail")));
     }
 
     @FXML
@@ -254,9 +254,9 @@ public class DesignTableController extends BaseController<JsonObject> {
         //Prompt user for table name
         if ("Untitled".equals(temp)) {
             if (isInput) {
-                var table = DialogUtils.showInputDialog("请输入表名");
+                var table = DialogUtils.showInputDialog(resourceBundle.getString("controller.design.table.input"));
                 if (StringUtils.isEmpty(table)) {
-                    DialogUtils.showAlertInfo("表名不能为空");
+                    DialogUtils.showAlertInfo(resourceBundle.getString(resourceBundle.getString("controller.design.table.input.tips")));
                     return "";
                 }
                 tableName = array[1].trim() + "." + table;

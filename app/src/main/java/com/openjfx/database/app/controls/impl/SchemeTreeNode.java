@@ -17,6 +17,7 @@ import javafx.scene.image.Image;
 import java.util.stream.Collectors;
 
 import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
+import static com.openjfx.database.app.DatabaseFX.I18N;
 import static com.openjfx.database.app.config.Constants.ACTION;
 import static com.openjfx.database.app.config.Constants.FLAG;
 import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
@@ -33,11 +34,11 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
 
     private final String scheme;
 
-    private final MenuItem flush = new MenuItem("刷新");
+    private final MenuItem flush;
 
-    private final MenuItem open = new MenuItem("打开数据库");
+    private final MenuItem open;
 
-    private final MenuItem close = new MenuItem("关闭数据库");
+    private final MenuItem close;
     /**
      * event bus address
      */
@@ -45,23 +46,27 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
 
     public SchemeTreeNode(String scheme, ConnectionParam param) {
         super(param, ICON_IMAGE);
-        this.eventBusAddress = getUuid() + "_" + scheme;
 
+        flush = new MenuItem(I18N.getString("menu.databasefx.tree.flush"));
+        open = new MenuItem(I18N.getString("menu.databasefx.tree.open.database"));
+        close = new MenuItem(I18N.getString("menu.databasefx.tree.close.database"));
+
+        this.eventBusAddress = getUuid() + "_" + scheme;
         this.scheme = scheme;
 
         setValue(scheme);
 
 
-        final var deleteMenu = new MenuItem("删除数据库");
-        final var sqlEditor = new MenuItem("SQL编辑器");
-        final var createTable = new MenuItem("新建表");
+        final var deleteMenu = new MenuItem(I18N.getString("menu.databasefx.tree.delete.database"));
+        final var sqlEditor = new MenuItem(I18N.getString("men.databasefx.tree.sql.editor"));
+        final var createTable = new MenuItem(I18N.getString("menu.databasefx.tree.create.table"));
 
         addMenuItem(open, createTable, sqlEditor, deleteMenu);
 
         flush.setOnAction(e -> flush());
 
         deleteMenu.setOnAction(event -> {
-            var result = DialogUtils.showAlertConfirm("你确定要删除" + scheme + "?");
+            var result = DialogUtils.showAlertConfirm(I18N.getString("menu.databasefx.tree.delete.database.tips") + " " + scheme + "?");
             if (result) {
                 var dml = DATABASE_SOURCE.getDataBaseSource(getUuid()).getDdl();
                 var future = dml.dropDatabase(scheme);
@@ -70,7 +75,7 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
                     //delete current node from parent node
                     getParent().getChildren().remove(this);
                 });
-                future.onFailure(t -> DialogUtils.showErrorDialog(t, "删除schema失败"));
+                future.onFailure(t -> DialogUtils.showErrorDialog(t, I18N.getString("menu.databasefx.tree.delete.database.fail.tips")));
             }
         });
 
@@ -146,7 +151,7 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
             });
             setLoading(false);
         });
-        future.onFailure(t -> initFailed(t, "获取scheme失败"));
+        future.onFailure(t -> initFailed(t, I18N.getString("menu.databasefx.tree.database.init.fail")));
     }
 
     /**

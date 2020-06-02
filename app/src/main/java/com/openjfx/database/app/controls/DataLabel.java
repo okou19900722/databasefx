@@ -5,11 +5,10 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
 
 /**
+ * Custom data label display component
  *
- * 自定义数据label显示组件
  * @author yangkui
  * @since 1.0
- *
  */
 public class DataLabel extends Control {
 
@@ -23,7 +22,7 @@ public class DataLabel extends Control {
     }
 
     @Override
-    protected Skin<?> createDefaultSkin(){
+    protected Skin<?> createDefaultSkin() {
         return new DataLabelSkin(this);
     }
 

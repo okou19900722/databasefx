@@ -17,6 +17,7 @@ import javafx.scene.image.Image;
 import java.util.stream.Collectors;
 
 import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
+import static com.openjfx.database.app.DatabaseFX.I18N;
 import static com.openjfx.database.app.config.Constants.*;
 import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
 
@@ -28,13 +29,13 @@ import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
  */
 public class DBTreeNode extends BaseTreeNode<String> {
 
-    private final MenuItem loseConnect = new MenuItem("断开连接");
+    private final MenuItem loseConnect;
 
-    private final MenuItem createScheme = new MenuItem("新建数据库");
+    private final MenuItem createScheme;
 
-    private final MenuItem flush = new MenuItem("刷新连接");
+    private final MenuItem flush;
 
-    private final MenuItem openConnect = new MenuItem("打开连接");
+    private final MenuItem openConnect;
 
     private static final Image ICON_IMAGE = getLocalImage(
             20,
@@ -45,9 +46,15 @@ public class DBTreeNode extends BaseTreeNode<String> {
     public DBTreeNode(ConnectionParam param) {
         super(param, ICON_IMAGE);
 
-        var editMenu = new MenuItem("编辑");
+        loseConnect = new MenuItem(I18N.getString("menu.databasefx.tree.lose.connection"));
+        createScheme = new MenuItem(I18N.getString("menu.databasefx.tree.create.connection"));
+        flush = new MenuItem(I18N.getString("menu.databasefx.tree.flush"));
+        openConnect = new MenuItem(I18N.getString("menu.databasefx.tree.open.connection"));
 
-        var deleteMenu = new MenuItem("删除连接");
+
+        var editMenu = new MenuItem(I18N.getString("menu.databasefx.tree.edit"));
+
+        var deleteMenu = new MenuItem(I18N.getString("menu.databasefx.tree.delete"));
 
         setValue(param.getName());
 
@@ -70,7 +77,7 @@ public class DBTreeNode extends BaseTreeNode<String> {
         });
 
         deleteMenu.setOnAction(e -> {
-            var r = DialogUtils.showAlertConfirm("确定要删除连接?");
+            var r = DialogUtils.showAlertConfirm(I18N.getString("menu.databasefx.tree.delete.tips"));
             if (r) {
                 //Delete disk cache
                 DbPreference.deleteConnect(getUuid());
@@ -116,7 +123,7 @@ public class DBTreeNode extends BaseTreeNode<String> {
             });
 
         });
-        future.onFailure(t -> initFailed(t, "连接数据库失败"));
+        future.onFailure(t -> initFailed(t, I18N.getString("menu.databasefx.tree.open.tips")));
     }
 
     private void removeAllTab() {
