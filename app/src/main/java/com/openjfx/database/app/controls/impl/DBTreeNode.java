@@ -31,9 +31,6 @@ public class DBTreeNode extends BaseTreeNode<String> {
 
     private final MenuItem loseConnect;
 
-    private final MenuItem createScheme;
-
-    private final MenuItem flush;
 
     private final MenuItem openConnect;
 
@@ -47,8 +44,7 @@ public class DBTreeNode extends BaseTreeNode<String> {
         super(param, ICON_IMAGE);
 
         loseConnect = new MenuItem(I18N.getString("menu.databasefx.tree.lose.connection"));
-        createScheme = new MenuItem(I18N.getString("menu.databasefx.tree.create.connection"));
-        flush = new MenuItem(I18N.getString("menu.databasefx.tree.flush"));
+
         openConnect = new MenuItem(I18N.getString("menu.databasefx.tree.open.connection"));
 
 
@@ -58,9 +54,6 @@ public class DBTreeNode extends BaseTreeNode<String> {
 
         setValue(param.getName());
 
-        createScheme.setOnAction(event -> new CreateSchemeStage(getUuid()));
-
-        flush.setOnAction((e) -> this.flush());
 
         editMenu.setOnAction(e -> new CreateConnectionStage(getUuid()));
 
@@ -71,8 +64,6 @@ public class DBTreeNode extends BaseTreeNode<String> {
             removeAllTab();
             //dynamic remove MenuItem
             removeMenu(loseConnect);
-            removeMenu(flush);
-            removeMenu(createScheme);
             addMenuItem(0, openConnect);
         });
 
@@ -105,23 +96,22 @@ public class DBTreeNode extends BaseTreeNode<String> {
         }
         //Start connecting to database
         var pool = DATABASE_SOURCE.createPool(param.get());
-        var future = pool.getDql().showDatabase();
+        //test connection
+        var future = pool.getDql().heartBeatQuery();
         future.onSuccess(sc ->
         {
-            var schemeTreeNodes = sc.stream().map(s -> new SchemeTreeNode(s, param.get())).collect(Collectors.toList());
-            Platform.runLater(() -> getChildren().addAll(schemeTreeNodes));
-            setLoading(false);
             Platform.runLater(() -> {
                 //dynamic add MenuItem
                 addMenuItem(0, loseConnect);
-                addMenuItem(1, createScheme);
-                addMenuItem(flush);
                 removeMenu(openConnect);
                 if (!isExpanded()) {
                     setExpanded(true);
                 }
+                var database = new SchemeFolderNode(param.get());
+                var user = new UserFolderNode(getParam());
+                getChildren().addAll(database, user);
             });
-
+            setLoading(false);
         });
         future.onFailure(t -> initFailed(t, I18N.getString("menu.databasefx.tree.open.tips")));
     }

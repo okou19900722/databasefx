@@ -137,21 +137,24 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
         setLoading(true);
         var dcl = DATABASE_SOURCE.getDataBaseSource(getUuid()).getDql();
         var future = dcl.showTables(getValue());
-        future.onSuccess(tables ->
+        future.onComplete(ar ->
         {
-            var tas = tables.stream().map(s -> new TableTreeNode(getValue(), s, param.get())).collect(Collectors.toList());
-            Platform.runLater(() -> {
-                getChildren().addAll(tas);
-                if (tas.size() > 0) {
-                    setExpanded(true);
-                }
-                addMenuItem(0, close);
-                addMenuItem(flush);
-                removeMenu(open);
-            });
+            if (ar.failed()) {
+                DialogUtils.showErrorDialog(ar.cause(), I18N.getString("menu.databasefx.tree.database.init.fail"));
+            } else {
+                var tas = ar.result().stream().map(s -> new TableTreeNode(getValue(), s, param.get())).collect(Collectors.toList());
+                Platform.runLater(() -> {
+                    getChildren().addAll(tas);
+                    if (tas.size() > 0) {
+                        setExpanded(true);
+                    }
+                    addMenuItem(0, close);
+                    addMenuItem(flush);
+                    removeMenu(open);
+                });
+            }
             setLoading(false);
         });
-        future.onFailure(t -> initFailed(t, I18N.getString("menu.databasefx.tree.database.init.fail")));
     }
 
     /**

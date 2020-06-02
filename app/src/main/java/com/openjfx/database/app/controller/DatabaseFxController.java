@@ -324,11 +324,6 @@ public class DatabaseFxController extends BaseController<Void> {
     }
 
     @FXML
-    public void showDatabaseUser() {
-        DialogUtils.showAlertInfo(resourceBundle.getString("app.function.future"));
-    }
-
-    @FXML
     public void showDatabaseModelView() {
         DialogUtils.showAlertInfo(resourceBundle.getString("app.function.future"));
     }

@@ -211,4 +211,26 @@ public class DQLImpl implements DQL {
         future.onFailure(promise::fail);
         return promise.future();
     }
+
+    @Override
+    public Future<List<String[]>> getCurrentDatabaseUserList() {
+        var promise = Promise.<List<String[]>>promise();
+        var sql = "SELECT Host,User FROM mysql.user";
+        client.query(sql).onComplete(ar -> {
+            if (ar.failed()) {
+                promise.fail(ar.cause());
+                return;
+            }
+            var list = new ArrayList<String[]>();
+            for (Row row : ar.result()) {
+                var field = new String[2];
+                field[0] = row.getBuffer(0).toString();
+                field[1] = row.getBuffer(1).toString();
+                System.out.println(row);
+                list.add(field);
+            }
+            promise.complete(list);
+        });
+        return promise.future();
+    }
 }

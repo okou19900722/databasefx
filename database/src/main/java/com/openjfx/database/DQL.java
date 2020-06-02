@@ -86,4 +86,11 @@ public interface DQL {
      */
     Future<String> getCreateTableComment(String table);
 
+    /**
+     * query current database all user
+     *
+     * @return user list
+     */
+    Future<List<String[]>> getCurrentDatabaseUserList();
+
 }

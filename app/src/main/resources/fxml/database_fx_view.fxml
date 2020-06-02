@@ -49,15 +49,6 @@
                             </ImageView>
                         </graphic>
                     </Button>
-                    <Button text="%view.databasefx.database.user" contentDisplay="TOP"
-                            onAction="#showDatabaseUser">
-                        <graphic>
-                            <ImageView>
-                                <Image url="@/assets/images/user_group_icon.png" requestedWidth="28"
-                                       requestedHeight="30" smooth="true"/>
-                            </ImageView>
-                        </graphic>
-                    </Button>
                     <Button contentDisplay="TOP" text="%view.databasefx.menu.file.create.terminal"
                             onAction="#createQueryTerminal">
                         <graphic>
