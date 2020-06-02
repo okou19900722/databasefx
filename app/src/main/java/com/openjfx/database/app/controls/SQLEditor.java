@@ -1,6 +1,7 @@
 package com.openjfx.database.app.controls;
 
 
+import com.openjfx.database.common.VertexUtils;
 import javafx.geometry.Point2D;
 import javafx.scene.input.InputMethodRequests;
 import javafx.scene.input.KeyCode;
@@ -17,46 +18,35 @@ import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * sql editor
+ *
+ * @author yangkui
+ * @since 1.0
+ */
 public class SQLEditor extends CodeArea {
     /**
      * Capitalized keywords
      */
-    private static final String[] UPPER_KEYWORD = new String[]{
-            "ADD",
-            "ALL",
-            "ALTER",
-            "ANALYZE",
-            "AND",
-            "AS",
-            "ASC",
-            "ASENSITIVE",
-            "BEFORE",
-            "BETWEEN",
-            "BIGINT",
-            "BINARY",
-            "SELECT",
-            "INSERT",
-            "UPDATE",
-            "DELETE",
-            "SHOW",
-            "DROP",
-            "WHERE",
-            "FROM",
-            "LIMIT",
-            "INNER",
-            "LEFT",
-            "RIGHT",
-            "LIMIT",
-            "CREATE",
-            "DATABASE",
-            "CHARACTER",
-            "SET",
-            "COLLATE",
-            "TABLE",
-            "COMMENT",
-            "NOT",
-            "NULL"
-    };
+    private static final String[] UPPER_KEYWORD;
+
+    //Dynamically load keyword list
+    static {
+        var path = "database/keyword.json";
+        var fileSystem = VertexUtils.getFileSystem();
+        if (!fileSystem.existsBlocking(path)) {
+            UPPER_KEYWORD = new String[0];
+        } else {
+            var buffer = fileSystem.readFileBlocking(path);
+            var array = buffer.toJsonArray();
+            UPPER_KEYWORD = new String[array.size()];
+            for (int i = 0; i < array.size(); i++) {
+                var keyword = array.getString(i);
+                UPPER_KEYWORD[i] = keyword.toUpperCase();
+            }
+        }
+    }
+
     /**
      * Lowercase keyword
      */
@@ -107,12 +97,11 @@ public class SQLEditor extends CodeArea {
     }
 
     private static StyleSpans<Collection<String>> computeHighlighting(String text) {
-        Matcher matcher = PATTERN.matcher(text);
-        int lastKwEnd = 0;
-        StyleSpansBuilder<Collection<String>> spansBuilder
-                = new StyleSpansBuilder<>();
+        var matcher = PATTERN.matcher(text);
+        var lastKwEnd = 0;
+        var spansBuilder = new StyleSpansBuilder<Collection<String>>();
         while (matcher.find()) {
-            String styleClass =
+            var styleClass =
                     matcher.group("KEYWORD") != null ? "keyword" :
                             matcher.group("PAREN") != null ? "paren" :
                                     matcher.group("BRACE") != null ? "brace" :
