@@ -15,18 +15,17 @@
     -fx-background-color: #ffffff;
 }
 
-.table-view .column-header-background .nested-column-header, .table-view .column-header-background .filler {
-    -fx-border-color: #7F7F7F;
-    -fx-border-width: 0 0 1px 0;
+.table-view .column-header-background .nested-column-header {
+    -fx-border-color: #f4f4f4;
+    -fx-border-width: 2px 0 0 0;
+}
+.table-view .column-header-background .filler{
+    -fx-border-color: #f4f4f4;
+    -fx-border-width: 0 0 2px 0;
 }
 
 .table-view .table-column {
     -fx-alignment: center-left;
-}
-
-.table-view .table-cell * {
-    -fx-font-family: "WenQuanYi Zen Hei Mono";
-    -fx-font-weight: bold;
 }
 
 .table-view .table-row-cell:even {
