@@ -52,7 +52,8 @@ public class AssetUtils {
             var file = new File(url.getFile());
             for (File item : Objects.requireNonNull(file.listFiles())) {
                 var in = new FileInputStream(item);
-                Font.loadFont(in, DEFAULT_FONT_SIZE);
+                var font = Font.loadFont(in, DEFAULT_FONT_SIZE);
+                System.out.println(font.getFamily());
             }
             return;
         }

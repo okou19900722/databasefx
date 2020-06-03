@@ -1,6 +1,6 @@
 * {
-    -fx-font-size: 14px;
-    -fx-font-family: "Source Han Sans CN Regular";
+    -fx-font-size: 16px;
+    -fx-font-family: "WenQuanYi Zen Hei Mono";
 }
 
 .table-view {
@@ -8,7 +8,7 @@
 }
 
 .table-view * {
-    -fx-font-size: 13px;
+    -fx-font-size: 15px;
 }
 
 .table-view .column-header-background .filler {
@@ -24,12 +24,9 @@
     -fx-alignment: center-left;
 }
 
-.table-view * {
-    -fx-font-family: "Source Han Sans CN Normal";
-}
-
 .table-view .table-cell * {
-    -fx-font-family: "Source Han Sans CN Medium";
+    -fx-font-family: "WenQuanYi Zen Hei Mono";
+    -fx-font-weight: bold;
 }
 
 .table-view .table-row-cell:even {
