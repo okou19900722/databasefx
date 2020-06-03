@@ -107,7 +107,7 @@ public class DBTreeNode extends BaseTreeNode<String> {
                 if (!isExpanded()) {
                     setExpanded(true);
                 }
-                var database = new SchemeFolderNode(param.get());
+                var database = new SchemeFolderNode(getParam());
                 var user = new UserFolderNode(getParam());
                 getChildren().addAll(database, user);
             });

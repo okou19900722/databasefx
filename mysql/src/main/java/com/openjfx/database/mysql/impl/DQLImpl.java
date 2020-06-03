@@ -47,9 +47,9 @@ public class DQLImpl implements DQL {
 
     @Override
     public Future<List<String>> showTables(String scheme) {
-        var sql = "SHOW TABLES FROM " + scheme + "";
         var promise = Promise.<List<String>>promise();
-        var future = client.query(sql);
+        var sql = "SELECT TABLE_NAME FROM `information_schema`.`TABLES` WHERE (`table_type` ='BASE TABLE' OR `TABLE_TYPE`='SYSTEM VIEW') AND table_schema =?";
+        var future = client.preparedQuery(sql, Tuple.of(scheme));
         future.onSuccess(r -> {
             var schemes = new ArrayList<String>();
             r.forEach(row -> {
@@ -57,6 +57,23 @@ public class DQLImpl implements DQL {
                 schemes.add(table);
             });
             promise.complete(schemes);
+        });
+        future.onFailure(promise::fail);
+        return promise.future();
+    }
+
+    @Override
+    public Future<List<String>> showViews(String scheme) {
+        var sql = "SELECT TABLE_NAME FROM `information_schema`.`TABLES` WHERE `TABLE_TYPE` ='VIEW' AND table_schema =?";
+        var promise = Promise.<List<String>>promise();
+        var future = client.preparedQuery(sql, Tuple.of(scheme));
+        future.onSuccess(rs -> {
+            var views = new ArrayList<String>();
+            rs.forEach(row -> {
+                var table = row.getString(0);
+                views.add(table);
+            });
+            promise.complete(views);
         });
         future.onFailure(promise::fail);
         return promise.future();

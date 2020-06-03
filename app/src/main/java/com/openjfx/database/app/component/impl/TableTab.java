@@ -50,7 +50,9 @@ import static com.openjfx.database.common.config.StringConstants.NULL;
 public class TableTab extends BaseTab<TableTabModel> {
     private static final double ICON_WIDTH = 0x14;
     private static final double ICON_HEIGHT = 0x14;
-
+    /**
+     * Data table related control icons
+     */
     private static final Image ADD_DATA_ICON = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "add_data.png");
     private static final Image FLUSH_ICON = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "flush_icon.png");
     private static final Image NEXT_ICON = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "next_icon.png");
@@ -58,6 +60,11 @@ public class TableTab extends BaseTab<TableTabModel> {
     private static final Image SUBMIT_ICON = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "save_icon.png");
     private static final Image DELETE_ICON = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "delete_icon.png");
     private static final Image FLAG_IMAGE = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "point.png");
+    /**
+     * Set table icon dynamically for current table typex
+     */
+    private static final Image TABLE_VIEW_ICON = getLocalImage(20, 20, "table_view_icon.png");
+    private static final Image TABLE_ICON = getLocalImage(20, 20, "table_icon.png");
 
     private static final String STYLE_SHEETS = "css/table_tab.css";
 
@@ -97,6 +104,11 @@ public class TableTab extends BaseTab<TableTabModel> {
 
     public TableTab(TableTabModel model) {
         super(model);
+        if (model.getTableType() == TableTabModel.TableType.BASE_TABLE) {
+            setTabIcon(TABLE_ICON);
+        } else {
+            setTabIcon(TABLE_VIEW_ICON);
+        }
         pool = DATABASE_SOURCE.getDataBaseSource(model.getUuid());
     }
 

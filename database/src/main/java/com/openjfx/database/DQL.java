@@ -30,6 +30,13 @@ public interface DQL {
     Future<List<String>> showTables(String scheme);
 
     /**
+     * Query the view under a scheme
+     *
+     * @return view list
+     */
+    Future<List<String>> showViews(String scheme);
+
+    /**
      * 获取某个表的column情况
      *
      * @param table table

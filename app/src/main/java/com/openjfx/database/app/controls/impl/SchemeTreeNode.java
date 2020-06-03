@@ -34,10 +34,6 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
 
     private final String scheme;
 
-    private final MenuItem flush;
-
-    private final MenuItem open;
-
     private final MenuItem close;
     /**
      * event bus address
@@ -46,24 +42,23 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
 
     public SchemeTreeNode(String scheme, ConnectionParam param) {
         super(param, ICON_IMAGE);
-
-        flush = new MenuItem(I18N.getString("menu.databasefx.tree.flush"));
-        open = new MenuItem(I18N.getString("menu.databasefx.tree.open.database"));
-        close = new MenuItem(I18N.getString("menu.databasefx.tree.close.database"));
-
-        this.eventBusAddress = getUuid() + "_" + scheme;
         this.scheme = scheme;
-
+        this.eventBusAddress = getUuid() + "_" + scheme;
         setValue(scheme);
 
+        var tableFolder = new TableFolderNode(getParam(), scheme);
+        var viewFolder = new ViewFolderNode(getParam(), scheme);
+
+
+        getChildren().addAll(tableFolder, viewFolder);
+
+        close = new MenuItem(I18N.getString("menu.databasefx.tree.close.database"));
 
         final var deleteMenu = new MenuItem(I18N.getString("menu.databasefx.tree.delete.database"));
         final var sqlEditor = new MenuItem(I18N.getString("men.databasefx.tree.sql.editor"));
-        final var createTable = new MenuItem(I18N.getString("menu.databasefx.tree.create.table"));
 
-        addMenuItem(open, createTable, sqlEditor, deleteMenu);
+        addMenuItem(sqlEditor, deleteMenu);
 
-        flush.setOnAction(e -> flush());
 
         deleteMenu.setOnAction(event -> {
             var result = DialogUtils.showAlertConfirm(I18N.getString("menu.databasefx.tree.delete.database.tips") + " " + scheme + "?");
@@ -88,27 +83,14 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
             }
         });
 
-        //show create table stage
-        createTable.setOnAction(event -> {
-            var params = new JsonObject();
-            params.put(Constants.UUID, getUuid());
-            params.put(Constants.SCHEME, scheme);
-            params.put(Constants.TYPE, 0);
-            new DesignTableStage(params);
-        });
 
         //close scheme->close relative tab
         close.setOnAction(e -> {
             setExpanded(false);
             getChildren().clear();
             closeOpenTab();
-            removeMenu(flush);
             removeMenu(close);
-            addMenuItem(0, open);
         });
-
-        //open database scheme
-        open.setOnAction(event -> init());
 
         //open sql editor
         sqlEditor.setOnAction(e -> {
@@ -131,30 +113,6 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
 
     @Override
     public void init() {
-        if (getChildren().size() > 0 || isLoading()) {
-            return;
-        }
-        setLoading(true);
-        var dcl = DATABASE_SOURCE.getDataBaseSource(getUuid()).getDql();
-        var future = dcl.showTables(getValue());
-        future.onComplete(ar ->
-        {
-            if (ar.failed()) {
-                DialogUtils.showErrorDialog(ar.cause(), I18N.getString("menu.databasefx.tree.database.init.fail"));
-            } else {
-                var tas = ar.result().stream().map(s -> new TableTreeNode(getValue(), s, param.get())).collect(Collectors.toList());
-                Platform.runLater(() -> {
-                    getChildren().addAll(tas);
-                    if (tas.size() > 0) {
-                        setExpanded(true);
-                    }
-                    addMenuItem(0, close);
-                    addMenuItem(flush);
-                    removeMenu(open);
-                });
-            }
-            setLoading(false);
-        });
     }
 
     /**

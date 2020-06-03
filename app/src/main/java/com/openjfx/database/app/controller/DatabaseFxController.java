@@ -11,6 +11,7 @@ import com.openjfx.database.app.config.DbPreference;
 import com.openjfx.database.app.controls.impl.DBTreeNode;
 import com.openjfx.database.app.controls.impl.SchemeTreeNode;
 import com.openjfx.database.app.controls.impl.TableTreeNode;
+import com.openjfx.database.app.controls.impl.TableViewNode;
 import com.openjfx.database.app.enums.MenuItemOrder;
 import com.openjfx.database.app.enums.NotificationType;
 import com.openjfx.database.app.enums.TabType;
@@ -130,13 +131,14 @@ public class DatabaseFxController extends BaseController<Void> {
                 if (selectedItem == null) {
                     return;
                 }
-                if (!(selectedItem instanceof TableTreeNode)) {
+                var a = selectedItem instanceof TableTreeNode;
+                var b = selectedItem instanceof TableViewNode;
+                if (!a && !b) {
                     ((BaseTreeNode) selectedItem).init();
                 } else {
                     //Load table data
-                    var tableTreeNode = ((TableTreeNode) selectedItem);
-                    var model = new TableTabModel(tableTreeNode.getServerName(), tableTreeNode.getUuid(), tableTreeNode.getDatabase(), tableTreeNode.getValue());
-                    addTab(model.getFlag(), model, TabType.TABLE);
+                    var model = TableTabModel.build(selectedItem);
+                    addTab(model, TabType.TABLE);
                 }
             }
         });
@@ -233,10 +235,10 @@ public class DatabaseFxController extends BaseController<Void> {
         treeItemRoot.getChildren().addAll(nodes);
     }
 
-    private void addTab(String flag, BaseTabMode mode, TabType tabType) {
+    private void addTab(BaseTabMode mode, TabType tabType) {
         var tabs = tabPane.getTabs();
         var optional = tabs.stream().map(it -> (BaseTab) it)
-                .filter(t -> t.getModel().getFlag().equals(flag)).findAny();
+                .filter(t -> t.getModel().getFlag().equals(mode.getFlag())).findAny();
 
         if (optional.isPresent()) {
             //change tab

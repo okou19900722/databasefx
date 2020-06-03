@@ -19,7 +19,8 @@
     -fx-border-color: #f4f4f4;
     -fx-border-width: 2px 0 0 0;
 }
-.table-view .column-header-background .filler{
+
+.table-view .column-header-background .filler {
     -fx-border-color: #f4f4f4;
     -fx-border-width: 0 0 2px 0;
 }
@@ -78,8 +79,8 @@
 
 .tab {
     -fx-background-color: #F5F5F5;
-    -fx-border-color: #7F7F7F;
-    -fx-border-width: 0px 1px 0 0;
+    -fx-border-color: #f4f4f4;
+    -fx-border-width: 0 2px 0 0;
     -fx-border-style: solid;
 }
 
@@ -124,4 +125,10 @@
 .edit-choice-box {
     -fx-border-color: #afafaf;
     -fx-border-width: 1px;
+}
+
+.context-menu {
+    -fx-background-color: #ffffff;
+    -fx-border-width: 1px;
+    -fx-border-color: #BDBDBD;
 }

@@ -8,6 +8,10 @@ import javafx.scene.Node;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tab;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
+import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
 
 /**
  * base tab
@@ -27,20 +31,35 @@ public class BaseTab<T extends BaseTabMode> extends Tab {
      */
     private final ProgressIndicator progressBar = new ProgressIndicator();
 
+    private ImageView tabIcon;
+
     protected T model;
 
     public BaseTab(T model) {
         this.model = model;
         //listener current tab loading status
         loading.addListener(((observable, oldValue, newValue) -> {
-            final ProgressIndicator indicator;
+            final Node indicator;
             if (newValue) {
                 indicator = progressBar;
             } else {
-                indicator = null;
+                indicator = tabIcon;
             }
             Platform.runLater(() -> setGraphic(indicator));
         }));
+    }
+
+    /**
+     * Set the tab icon dynamically, which will be displayed when loading is completed / fails
+     *
+     * @param image {@link Image}
+     */
+    protected void setTabIcon(final Image image) {
+        if (image != null) {
+            tabIcon = new ImageView(image);
+        } else {
+            tabIcon = null;
+        }
     }
 
     public boolean isLoading() {
