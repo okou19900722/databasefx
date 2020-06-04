@@ -1,14 +1,18 @@
 package com.openjfx.database.app.enums;
 
 /**
- * tab 类型
+ * tab type
  *
  * @author yangkui
  * @since 1.0
  */
 public enum TabType {
     /**
-     * 数据表
+     * database table
      */
-    TABLE
+    TABLE,
+    /**
+     * database user
+     */
+    DATABASE_USER
 }

@@ -30,7 +30,7 @@ public class TableFolderNode extends BaseTreeNode<String> {
     public TableFolderNode(ConnectionParam param, String scheme) {
         super(param, ICON_IMAGE);
         this.scheme = scheme;
-        setValue("表");
+        setValue(I18N.getString("database.table"));
         final var createTable = new MenuItem(I18N.getString("menu.databasefx.tree.create.table"));
         final var flush = new MenuItem(I18N.getString("menu.databasefx.tree.flush"));
         //flush table list

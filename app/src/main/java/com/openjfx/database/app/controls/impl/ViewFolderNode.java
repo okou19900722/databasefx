@@ -44,7 +44,7 @@ public class ViewFolderNode extends BaseTreeNode<String> {
                     setExpanded(true);
                 });
             } else {
-                initFailed(ar.cause(), "加载视图失败");
+                initFailed(ar.cause(), I18N.getString("databasefx.tree.view.load.fail"));
             }
             setLoading(false);
         });

@@ -243,7 +243,6 @@ public class DQLImpl implements DQL {
                 var field = new String[2];
                 field[0] = row.getBuffer(0).toString();
                 field[1] = row.getBuffer(1).toString();
-                System.out.println(row);
                 list.add(field);
             }
             promise.complete(list);

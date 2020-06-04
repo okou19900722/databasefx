@@ -3,20 +3,19 @@ package com.openjfx.database.app.controller;
 import com.openjfx.database.app.BaseController;
 import com.openjfx.database.app.component.BaseTab;
 import com.openjfx.database.app.component.SearchPopup;
+import com.openjfx.database.app.component.tabs.UserTab;
 import com.openjfx.database.app.config.Constants;
 import com.openjfx.database.app.component.MainTabPane;
-import com.openjfx.database.app.component.impl.TableTab;
+import com.openjfx.database.app.component.tabs.TableTab;
 import com.openjfx.database.app.controls.BaseTreeNode;
 import com.openjfx.database.app.config.DbPreference;
-import com.openjfx.database.app.controls.impl.DBTreeNode;
-import com.openjfx.database.app.controls.impl.SchemeTreeNode;
-import com.openjfx.database.app.controls.impl.TableTreeNode;
-import com.openjfx.database.app.controls.impl.TableViewNode;
+import com.openjfx.database.app.controls.impl.*;
 import com.openjfx.database.app.enums.MenuItemOrder;
 import com.openjfx.database.app.enums.NotificationType;
 import com.openjfx.database.app.enums.TabType;
 import com.openjfx.database.app.model.BaseTabMode;
 import com.openjfx.database.app.model.impl.TableTabModel;
+import com.openjfx.database.app.model.impl.UserTabModel;
 import com.openjfx.database.app.stage.AboutStage;
 import com.openjfx.database.app.stage.CreateConnectionStage;
 import com.openjfx.database.app.stage.SQLEditStage;
@@ -27,7 +26,6 @@ import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -133,12 +131,15 @@ public class DatabaseFxController extends BaseController<Void> {
                 }
                 var a = selectedItem instanceof TableTreeNode;
                 var b = selectedItem instanceof TableViewNode;
-                if (!a && !b) {
-                    ((BaseTreeNode) selectedItem).init();
-                } else {
+                if (a || b) {
                     //Load table data
                     var model = TableTabModel.build(selectedItem);
                     addTab(model, TabType.TABLE);
+                } else if (selectedItem instanceof UserTreeNode) {
+                    var model = UserTabModel.build((UserTreeNode) selectedItem);
+                    addTab(model, TabType.DATABASE_USER);
+                } else {
+                    ((BaseTreeNode) selectedItem).init();
                 }
             }
         });
@@ -167,17 +168,6 @@ public class DatabaseFxController extends BaseController<Void> {
             selectIndex = 0;
         });
 
-        tabPane.getTabs().addListener((ListChangeListener<Tab>) c -> {
-            var tabs = tabPane.getTabs();
-            var n = tabs.stream().map(it -> (BaseTab) it)
-                    .map(it -> it.getModel().getUuid()).distinct().count();
-            var b = n > 1;
-            for (Tab tab : tabs) {
-                if (tab instanceof TableTab) {
-                    ((TableTab) tab).updateValue(b);
-                }
-            }
-        });
         stage.widthProperty().addListener((observable, oldValue, newValue) -> {
             var t = 800;
             var position = 0.2;
@@ -246,15 +236,15 @@ public class DatabaseFxController extends BaseController<Void> {
             tabPane.getSelectionModel().select(index);
             return;
         }
-        final Tab tab;
+        final BaseTab tab;
         if (tabType == TabType.TABLE) {
             //create tab
             tab = new TableTab((TableTabModel) mode);
-            tabPane.getTabs().add(tab);
-            ((TableTab) tab).init();
         } else {
-            tab = new Tab();
+            tab = new UserTab((UserTabModel) mode);
         }
+        tabPane.getTabs().add(tab);
+        tab.init();
         tabPane.getSelectionModel().select(tab);
     }
 

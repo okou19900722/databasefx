@@ -26,11 +26,7 @@ import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
  */
 public class TableTreeNode extends BaseTreeNode<String> {
 
-    private static final Image ICON_IMAGE = getLocalImage(
-            20,
-            20,
-            "table_icon.png"
-    );
+    private static final Image ICON_IMAGE = getLocalImage(20, 20, "table_icon.png");
 
     /**
      * database

@@ -49,11 +49,11 @@
 }
 
 .table-view .scroll-bar:vertical, .tree-view .scroll-bar:vertical {
-    -fx-pref-width: 15px;
+    -fx-pref-width: 13px;
 }
 
 .table-view .scroll-bar:horizontal, .tree-view .scroll-bar:horizontal {
-    -fx-pref-height: 15px;
+    -fx-pref-height: 13px;
 }
 
 .scroll-bar .decrement-button {

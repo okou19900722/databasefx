@@ -19,7 +19,7 @@ import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
  * @author yangkui
  * @since 1.0
  */
-public class BaseTab<T extends BaseTabMode> extends Tab {
+public abstract class BaseTab<T extends BaseTabMode> extends Tab {
 
     /**
      * Loading state, prevent repeated loading true means false is not in loading
@@ -60,7 +60,20 @@ public class BaseTab<T extends BaseTabMode> extends Tab {
         } else {
             tabIcon = null;
         }
+        setGraphic(tabIcon);
     }
+
+//    /**
+//     * When there are multiple database tabs, you can rewrite the logic to distinguish the older database
+//     *
+//     * @param t Whether there are multiple database tabs
+//     */
+//    public abstract void updateValue(boolean t);
+
+    /**
+     * Called on subclass initialization
+     */
+    public abstract void init();
 
     public boolean isLoading() {
         return loading.get();

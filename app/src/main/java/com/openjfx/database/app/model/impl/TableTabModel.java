@@ -7,48 +7,60 @@ import com.openjfx.database.app.model.BaseTabMode;
 import javafx.scene.control.TreeItem;
 
 /**
- * tab数据
+ * Table tab metadata
  *
  * @author yangkui
  * @since 1.0
  */
 public class TableTabModel extends BaseTabMode {
     /**
-     * 数据库名称
+     * Database name
      */
     private final String database;
     /**
-     * 表名
+     * Table name
      */
     private final String tableName;
     /**
-     * 连接名称
+     * Server name
      */
     private final String serverName;
-
+    /**
+     * Table type
+     */
     private TableType tableType;
 
-    public TableTabModel(String serverName, String uuid, String database, String tableName) {
-        super(uuid + "_" + database + "_" + tableName);
-        this.uuid = uuid;
+    public TableTabModel(String uuid, String flag, String database, String tableName, String serverName, TableType tableType) {
+        super(uuid, flag);
         this.database = database;
         this.tableName = tableName;
         this.serverName = serverName;
+        this.tableType = tableType;
     }
 
-
     public static TableTabModel build(TreeItem<String> treeNode) {
-        final TableTabModel model;
+        final String database;
+        final String serverName;
+        final String tableName;
+        final TableType tableType;
+        final String uuid;
         if (treeNode instanceof TableTreeNode) {
             var tableNode = (TableTreeNode) treeNode;
-            model = new TableTabModel(tableNode.getServerName(), tableNode.getUuid(), tableNode.getDatabase(), tableNode.getValue());
-            model.setTableType(TableType.BASE_TABLE);
+            database = tableNode.getDatabase();
+            serverName = tableNode.getServerName();
+            tableName = tableNode.getValue();
+            tableType = TableType.BASE_TABLE;
+            uuid = tableNode.getUuid();
         } else {
             var viewNode = (TableViewNode) treeNode;
-            model = new TableTabModel(viewNode.getServerName(), viewNode.getUuid(), viewNode.getDatabase(), viewNode.getValue());
-            model.setTableType(TableType.VIEW);
+            database = viewNode.getDatabase();
+            serverName = viewNode.getServerName();
+            tableName = viewNode.getValue();
+            tableType = TableType.VIEW;
+            uuid = viewNode.getUuid();
         }
-        return model;
+        var flag = uuid + "_" + database + "_" + tableName;
+        return new TableTabModel(uuid, flag, database, tableName, serverName, tableType);
     }
 
     public String getDatabase() {
@@ -81,7 +93,7 @@ public class TableTabModel extends BaseTabMode {
      * @author yangkui
      * @since 1.0
      */
-    public static enum TableType {
+    public enum TableType {
         /**
          * system view
          */

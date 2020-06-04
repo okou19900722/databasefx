@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tab?>
+<?import java.net.URL?>
+<BorderPane xmlns="http://javafx.com/javafx" prefHeight="400.0" prefWidth="600.0">
+    <stylesheets>
+        <URL value="@/css/user_tab_style.css"/>
+    </stylesheets>
+    <top>
+        <HBox styleClass="top-box">
+            <Button text="%app.save"/>
+        </HBox>
+    </top>
+    <center>
+        <TabPane>
+            <Tab text="%app.routine" closable="false"/>
+            <Tab text="高级" closable="false"/>
+            <Tab text="服务器权限" closable="false"/>
+            <Tab text="%app.preview" closable="false"/>
+        </TabPane>
+    </center>
+</BorderPane>

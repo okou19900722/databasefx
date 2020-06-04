@@ -10,13 +10,14 @@ public class BaseTabMode {
     /**
      * 数据库标识
      */
-    protected String uuid;
+    protected final String uuid;
     /**
      * Tab 独立标识
      */
     protected final String flag;
 
-    public BaseTabMode(String flag) {
+    public BaseTabMode(String uuid, String flag) {
+        this.uuid = uuid;
         this.flag = flag;
     }
 

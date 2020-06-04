@@ -1,4 +1,4 @@
-package com.openjfx.database.app.component.impl;
+package com.openjfx.database.app.component.tabs;
 
 import com.openjfx.database.DML;
 import com.openjfx.database.app.TableDataHelper;
@@ -110,8 +110,22 @@ public class TableTab extends BaseTab<TableTabModel> {
             setTabIcon(TABLE_VIEW_ICON);
         }
         pool = DATABASE_SOURCE.getDataBaseSource(model.getUuid());
+        var title = model.getTableName() + "@" + model.getDatabase() + "(" + model.getServerName() + ")";
+        setText(title);
+        //dynamic obtain table comment
+        var future = pool.getDql().getCreateTableComment(model.getTable());
+        future.onComplete(ar -> {
+            final String tooltip;
+            if (ar.succeeded() && StringUtils.nonEmpty(ar.result())) {
+                tooltip = ar.result();
+            } else {
+                tooltip = title;
+            }
+            Platform.runLater(() -> setTooltip(new Tooltip(tooltip)));
+        });
     }
 
+    @Override
     public void init() {
         flag.setGraphic(new ImageView(FLAG_IMAGE));
         addData.setGraphic(new ImageView(ADD_DATA_ICON));
@@ -473,38 +487,5 @@ public class TableTab extends BaseTab<TableTabModel> {
             return true;
         }
         return false;
-    }
-
-    /**
-     * Dynamically update tab value
-     *
-     * @param t Show full table name or not serverName+'/'+tableName
-     */
-    public void updateValue(boolean t) {
-        if (Objects.nonNull(getText())) {
-            var a = getText().contains("/");
-            var b = !t && !a || t && a;
-            if (b) {
-                return;
-            }
-        }
-        var name = model.getTableName();
-        if (t) {
-            name = model.getServerName() + "/" + name;
-        }
-        setText(name);
-        final var temp = name;
-        //dynamic obtain table comment
-        var future = pool.getDql().getCreateTableComment(model.getTable());
-        future.onComplete(ar -> {
-            final String tooltip;
-            if (ar.succeeded() && StringUtils.nonEmpty(ar.result())) {
-                tooltip = ar.result();
-            } else {
-                tooltip = temp;
-            }
-            Platform.runLater(() -> setTooltip(new Tooltip(tooltip)));
-        });
-
     }
 }

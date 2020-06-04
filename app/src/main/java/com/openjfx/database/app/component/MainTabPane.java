@@ -1,6 +1,7 @@
 package com.openjfx.database.app.component;
 
-import com.openjfx.database.app.component.impl.TableTab;
+import com.openjfx.database.app.component.tabs.TableTab;
+import com.openjfx.database.app.model.BaseTabMode;
 import com.openjfx.database.common.VertexUtils;
 import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;
@@ -9,7 +10,6 @@ import javafx.scene.control.TabPane;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.openjfx.database.app.config.Constants.*;
@@ -45,8 +45,9 @@ public class MainTabPane extends TabPane {
             }
             //Move out multiple tabs
             if (busAction == EventBusAction.REMOVE_MANY) {
-                var tt = getTabs().stream().filter(it -> ((TableTab) it).getModel()
-                        .getFlag().startsWith(flag)).collect(Collectors.toList());
+                var tt = getTabs()
+                        .stream().filter(it -> ((BaseTab) it).getModel().getFlag().startsWith(flag))
+                        .collect(Collectors.toList());
                 tabs.addAll(tt);
             }
             //Clear tab
