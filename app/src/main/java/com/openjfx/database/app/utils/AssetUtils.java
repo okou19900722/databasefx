@@ -53,7 +53,6 @@ public class AssetUtils {
             for (File item : Objects.requireNonNull(file.listFiles())) {
                 var in = new FileInputStream(item);
                 var font = Font.loadFont(in, DEFAULT_FONT_SIZE);
-                System.out.println(font.getFamily());
             }
             return;
         }

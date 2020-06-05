@@ -7,7 +7,7 @@ import com.openjfx.database.app.component.SearchPopup;
 import com.openjfx.database.app.controls.TableDataView;
 import com.openjfx.database.app.enums.NotificationType;
 import com.openjfx.database.app.model.TableSearchResultModel;
-import com.openjfx.database.app.model.impl.TableTabModel;
+import com.openjfx.database.app.model.tab.meta.TableTabModel;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.app.utils.TableColumnUtils;
 import com.openjfx.database.app.utils.TableDataUtils;
@@ -23,6 +23,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -31,7 +32,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 
 import java.util.*;
 
@@ -48,59 +48,58 @@ import static com.openjfx.database.common.config.StringConstants.NULL;
  * @since 1.0
  */
 public class TableTab extends BaseTab<TableTabModel> {
-    private static final double ICON_WIDTH = 0x14;
-    private static final double ICON_HEIGHT = 0x14;
     /**
      * Data table related control icons
      */
-    private static final Image ADD_DATA_ICON = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "add_data.png");
-    private static final Image FLUSH_ICON = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "flush_icon.png");
-    private static final Image NEXT_ICON = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "next_icon.png");
-    private static final Image LAST_ICON = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "last_icon.png");
-    private static final Image SUBMIT_ICON = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "save_icon.png");
-    private static final Image DELETE_ICON = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "delete_icon.png");
-    private static final Image FLAG_IMAGE = getLocalImage(ICON_WIDTH, ICON_HEIGHT, "point.png");
+    private static final Image FLAG_IMAGE = getLocalImage(20, 20, "point.png");
     /**
-     * Set table icon dynamically for current table typex
+     * Set table icon dynamically for current table type
      */
     private static final Image TABLE_VIEW_ICON = getLocalImage(20, 20, "table_view_icon.png");
     private static final Image TABLE_ICON = getLocalImage(20, 20, "table_icon.png");
 
-    private static final String STYLE_SHEETS = "css/table_tab.css";
+    @FXML
+    private BorderPane borderPane;
+
+    @FXML
+    private TableDataView tableView;
+    @FXML
+    private Button addData;
+    @FXML
+    private Button flush;
+    @FXML
+    private Button next;
+    @FXML
+    private Button last;
+    @FXML
+    private Button submit;
+    @FXML
+    private Button delete;
+    @FXML
+    private TextField numberTextField;
+    @FXML
+    private Label totalLabel;
+    @FXML
+    private Label indexCounter;
+    @FXML
+    private Label pageCounter;
 
     private final AbstractDataBasePool pool;
+
     private final Label flag = new Label();
-
-    private final BorderPane borderPane = new BorderPane();
-    private final TableDataView tableView = new TableDataView();
-
-    private final HBox bottomBox = new HBox();
-
-    private int pageIndex = 1;
-    private int pageSize = 100;
-
-    private final Button addData = new Button();
-    private final Button flush = new Button();
-    private final Button next = new Button();
-    private final Button last = new Button();
-    private final Button submit = new Button();
-    private final Button delete = new Button();
-    private final TextField numberTextField = new TextField(String.valueOf(pageSize));
-
     private final List<TableColumnMeta> metas = new ArrayList<>();
-    private final Label totalLabel = new Label("共0行");
-    private final Label indexCounter = new Label();
-    private final Label pageCounter = new Label();
-
+    private final List<TableSearchResultModel> searchList = new ArrayList<>();
     private final SearchPopup searchPopup = SearchPopup.complexPopup();
 
-    private final List<TableSearchResultModel> searchList = new ArrayList<>();
     /**
      * Determine whether the primary key exists in the current table.
      * If it does not exist, it is not allowed to update.
      * Because there is no primary key, it is likely to cause data update failure.
      */
     private TableColumnMeta primaryKeyMeta = null;
+
+    private int pageIndex = 1;
+    private int pageSize = 100;
 
     public TableTab(TableTabModel model) {
         super(model);
@@ -123,43 +122,14 @@ public class TableTab extends BaseTab<TableTabModel> {
             }
             Platform.runLater(() -> setTooltip(new Tooltip(tooltip)));
         });
+        loadView("table_tab_view.fxml");
     }
 
     @Override
     public void init() {
         flag.setGraphic(new ImageView(FLAG_IMAGE));
-        addData.setGraphic(new ImageView(ADD_DATA_ICON));
-        flush.setGraphic(new ImageView(FLUSH_ICON));
-        next.setGraphic(new ImageView(NEXT_ICON));
-        last.setGraphic(new ImageView(LAST_ICON));
-        submit.setGraphic(new ImageView(SUBMIT_ICON));
-        delete.setGraphic(new ImageView(DELETE_ICON));
-        numberTextField.setPrefWidth(60);
-
-        addData.setTooltip(new Tooltip(I18N.getString("databasefx.table.action.add")));
-        flush.setTooltip(new Tooltip(I18N.getString("databasefx.table.action.flush")));
-        submit.setTooltip(new Tooltip(I18N.getString("databasefx.table.action.save")));
-        delete.setTooltip(new Tooltip(I18N.getString("databasefx.table.action.delete")));
-
-
-        var lBox = new HBox();
-        var rBox = new HBox();
-        var rrBox = new HBox();
-
-        lBox.getChildren().addAll(addData, delete, submit);
-        rrBox.getChildren().addAll(indexCounter, totalLabel, pageCounter);
-        rBox.getChildren().addAll(rrBox, last, next, numberTextField, flush);
-
-        HBox.setHgrow(rBox, Priority.ALWAYS);
-
-
-        bottomBox.getChildren().addAll(lBox, rBox);
-        rrBox.getStyleClass().add("rrbox");
-        bottomBox.getStyleClass().add("bottom-box");
 
         flush.setOnAction(e -> checkChange(true));
-
-        borderPane.getStylesheets().add(STYLE_SHEETS);
 
         submit.setOnAction(e -> checkChange(false));
 
@@ -278,11 +248,6 @@ public class TableTab extends BaseTab<TableTabModel> {
             //select target column
             tableView.getSelectionModel().select(model.getRowIndex(), column);
         });
-
-        borderPane.setCenter(tableView);
-        borderPane.setBottom(bottomBox);
-
-        setContent(borderPane);
         initTable();
     }
 

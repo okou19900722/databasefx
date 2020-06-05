@@ -1,7 +1,7 @@
-package com.openjfx.database.app.model.impl;
+package com.openjfx.database.app.model.tab.meta;
 
 import com.openjfx.database.app.controls.impl.UserTreeNode;
-import com.openjfx.database.app.model.BaseTabMode;
+import com.openjfx.database.app.model.tab.BaseTabMode;
 
 /**
  * user tab model

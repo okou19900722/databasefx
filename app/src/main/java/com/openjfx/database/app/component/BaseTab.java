@@ -1,17 +1,23 @@
 package com.openjfx.database.app.component;
 
-import com.openjfx.database.app.model.BaseTabMode;
+import com.openjfx.database.app.model.tab.BaseTabMode;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.ProgressBar;
+import javafx.scene.Parent;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
+
+import static com.openjfx.database.app.DatabaseFX.I18N;
 
 /**
  * base tab
@@ -19,7 +25,7 @@ import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
  * @author yangkui
  * @since 1.0
  */
-public abstract class BaseTab<T extends BaseTabMode> extends Tab {
+public abstract class BaseTab<T extends BaseTabMode> extends Tab implements Initializable {
 
     /**
      * Loading state, prevent repeated loading true means false is not in loading
@@ -30,10 +36,23 @@ public abstract class BaseTab<T extends BaseTabMode> extends Tab {
      * loading status show
      */
     private final ProgressIndicator progressBar = new ProgressIndicator();
+    /**
+     * view base path
+     */
+    private final String VIEW_BASE_PATH = "fxml/component/";
+    /**
+     * resource bundle
+     */
+    private ResourceBundle resourceBundle = I18N;
 
     private ImageView tabIcon;
 
     protected T model;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        this.resourceBundle = resources;
+    }
 
     public BaseTab(T model) {
         this.model = model;
@@ -89,5 +108,19 @@ public abstract class BaseTab<T extends BaseTabMode> extends Tab {
 
     public T getModel() {
         return model;
+    }
+
+    protected void loadView(final String view) {
+        var path = VIEW_BASE_PATH + view;
+        try {
+            var url = ClassLoader.getSystemResource(path);
+            var fxml = new FXMLLoader(url);
+            fxml.setResources(I18N);
+            fxml.setController(this);
+            var parent = (Node) fxml.load();
+            setContent(parent);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

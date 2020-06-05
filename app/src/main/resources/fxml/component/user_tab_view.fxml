@@ -7,7 +7,8 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.Tab?>
 <?import java.net.URL?>
-<BorderPane xmlns="http://javafx.com/javafx" prefHeight="400.0" prefWidth="600.0">
+<BorderPane xmlns="http://javafx.com/javafx" prefHeight="400.0" prefWidth="600.0"
+            xmlns:fx="http://javafx.com/fxml">
     <stylesheets>
         <URL value="@/css/user_tab_style.css"/>
     </stylesheets>
@@ -17,7 +18,7 @@
         </HBox>
     </top>
     <center>
-        <TabPane>
+        <TabPane fx:id="tabPane">
             <Tab text="%app.routine" closable="false"/>
             <Tab text="高级" closable="false"/>
             <Tab text="服务器权限" closable="false"/>

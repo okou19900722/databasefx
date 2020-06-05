@@ -8,8 +8,7 @@ plugins {
 mainClassName = 'com.openjfx.database.app.DatabaseFX'
 sourceCompatibility = 14
 
-applicationDefaultJvmArgs = ['-Djdk.gtk.version=2', '-Dsun.java2d.opengl=true']
-
+applicationDefaultJvmArgs = ['-Djdk.gtk.version=2', '-Dsun.java2d.opengl=true', '-XX:+UnlockExperimentalVMOptions', '-XX:+UseZGC', '-Xms512M', '-Xmx1024M']
 
 gluonClient {
     graalvmHome = "/home/yangkui/application/graalvm"

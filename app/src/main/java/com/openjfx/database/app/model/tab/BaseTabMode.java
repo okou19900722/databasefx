@@ -1,4 +1,4 @@
-package com.openjfx.database.app.model;
+package com.openjfx.database.app.model.tab;
 
 /**
  * base tab model

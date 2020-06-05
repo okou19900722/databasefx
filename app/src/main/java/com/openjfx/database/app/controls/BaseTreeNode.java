@@ -9,6 +9,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TreeItem;
@@ -50,40 +51,27 @@ public abstract class BaseTreeNode<T> extends TreeItem<T> {
     protected List<MenuItem> menus = new ArrayList<>();
 
     /**
-     * Load progress information
-     */
-    private final ProgressIndicator indicator = new ProgressIndicator();
-
-    /**
      * Node constructor
      *
      * @param param Link parameters
      */
     public BaseTreeNode(ConnectionParam param, Image image) {
         this.param.set(param);
+
         var icon = new ImageView(image);
-        var stackPane = new StackPane();
+        var indicator = new ProgressIndicator();
 
-        indicator.setPrefWidth(20);
-        indicator.setPrefHeight(20);
-        indicator.setVisible(false);
-
-        stackPane.setAlignment(Pos.CENTER);
-        stackPane.getChildren().addAll(indicator, icon);
-        setGraphic(stackPane);
+        setGraphic(icon);
         //Detect status changes
-        loading.addListener((observable, oldValue, newValue) ->
-                Platform.runLater(() ->
-                        {
-                            if (newValue) {
-                                icon.setVisible(false);
-                                indicator.setVisible(true);
-                            } else {
-                                indicator.setVisible(false);
-                                icon.setVisible(true);
-                            }
-                        }
-                ));
+        loading.addListener((observable, oldValue, newValue) -> {
+            final Node graphic;
+            if (newValue) {
+                graphic = indicator;
+            } else {
+                graphic = icon;
+            }
+            Platform.runLater(() -> setGraphic(graphic));
+        });
     }
 
     /**

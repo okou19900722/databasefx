@@ -28,19 +28,15 @@
     -fx-alignment: center;
 }
 
-.bottom-box .jfx-text-field {
-    -fx-pref-width: 70px;
-    -fx-alignment: center;
-}
-
-.bottom-box .jfx-button {
-    -fx-padding: 2px;
-}
-
 .table-cell {
     -fx-text-fill: black;
 }
 
 .table-view * {
     -fx-font-size: 14px;
+}
+
+.number-text-field {
+    -fx-pref-width: 60px;
+    -fx-alignment: center;
 }

@@ -1,7 +1,6 @@
 package com.openjfx.database.app.component;
 
 import com.openjfx.database.app.component.tabs.TableTab;
-import com.openjfx.database.app.model.BaseTabMode;
 import com.openjfx.database.common.VertexUtils;
 import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;

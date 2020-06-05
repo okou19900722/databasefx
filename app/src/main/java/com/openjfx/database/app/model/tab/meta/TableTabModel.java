@@ -1,10 +1,13 @@
-package com.openjfx.database.app.model.impl;
+package com.openjfx.database.app.model.tab.meta;
 
-import com.openjfx.database.app.controls.BaseTreeNode;
 import com.openjfx.database.app.controls.impl.TableTreeNode;
 import com.openjfx.database.app.controls.impl.TableViewNode;
-import com.openjfx.database.app.model.BaseTabMode;
+import com.openjfx.database.app.model.tab.BaseTabMode;
+import javafx.fxml.Initializable;
 import javafx.scene.control.TreeItem;
+
+import java.net.URL;
+import java.util.ResourceBundle;
 
 /**
  * Table tab metadata
@@ -12,7 +15,7 @@ import javafx.scene.control.TreeItem;
  * @author yangkui
  * @since 1.0
  */
-public class TableTabModel extends BaseTabMode {
+public class TableTabModel extends BaseTabMode implements Initializable {
     /**
      * Database name
      */
@@ -29,6 +32,13 @@ public class TableTabModel extends BaseTabMode {
      * Table type
      */
     private TableType tableType;
+
+    private ResourceBundle resourceBundle;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        this.resourceBundle = resources;
+    }
 
     public TableTabModel(String uuid, String flag, String database, String tableName, String serverName, TableType tableType) {
         super(uuid, flag);

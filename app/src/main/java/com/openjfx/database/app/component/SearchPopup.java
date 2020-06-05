@@ -1,7 +1,9 @@
 package com.openjfx.database.app.component;
 
 import com.openjfx.database.common.Handler;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -20,7 +22,8 @@ import javafx.scene.layout.VBox;
 import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
 
 /**
- * <p>This component provides basic search function, search completion keyword callback and up and down coefficient callback</p>
+ * <p>This component provides basic search function,
+ * search completion keyword callback and up and down coefficient callback</p>
  *
  * @author yangkui
  * @since 1.0
@@ -84,12 +87,12 @@ public class SearchPopup extends HBox {
         return new SearchPopup(SearchPopupModel.COMPLEX);
     }
 
+    private final ObjectProperty<SearchPopupModel> popupModel = new SimpleObjectProperty<>(SearchPopupModel.SIMPLE);
+
     /**
-     * Private methods do not allow external calls
-     *
-     * @param model Search box presentation
+     * private methods do not allow external calls
      */
-    private SearchPopup(SearchPopupModel model) {
+    public SearchPopup(SearchPopupModel model) {
         var up = new Button();
         var down = new Button();
         var close = new Button();
@@ -102,6 +105,7 @@ public class SearchPopup extends HBox {
 
         setAlignment(Pos.CENTER);
         lBox.getChildren().add(textField);
+
         if (model == SearchPopupModel.COMPLEX) {
             lBox.getChildren().addAll(label, up, down);
         }
@@ -193,6 +197,18 @@ public class SearchPopup extends HBox {
 
     public void setIndexProperty(int indexProperty) {
         this.indexProperty.set(indexProperty);
+    }
+
+    public SearchPopupModel getPopupModel() {
+        return popupModel.get();
+    }
+
+    public ObjectProperty<SearchPopupModel> popupModelProperty() {
+        return popupModel;
+    }
+
+    public void setPopupModel(SearchPopupModel popupModel) {
+        this.popupModel.set(popupModel);
     }
 
     /**

@@ -98,11 +98,11 @@
 }
 
 .null-style {
-    -fx-text-fill: #D7e7f5 !important;
+    -fx-text-fill: #D1d4d7 !important;
 }
 
 .change-style {
-    -fx-background-color: #FFE48F !important;
+    -fx-background-color: #FFF0FF !important;
 }
 
 .tree-view .tree-cell:selected, .table-view .table-cell:selected {
@@ -131,4 +131,9 @@
     -fx-background-color: #ffffff;
     -fx-border-width: 1px;
     -fx-border-color: #BDBDBD;
+}
+
+.progress-indicator {
+    -fx-pref-width: 20px;
+    -fx-pref-height: 20px;
 }

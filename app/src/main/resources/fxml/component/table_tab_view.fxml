@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+
+<?import com.openjfx.database.app.controls.TableDataView?>
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            prefHeight="400.0" prefWidth="600.0" fx:id="borderPane">
+    <stylesheets>
+        <URL value="@/css/table_tab.css"/>
+    </stylesheets>
+    <center>
+        <TableDataView fx:id="tableView"/>
+    </center>
+    <bottom>
+        <HBox styleClass="bottom-box">
+            <HBox>
+                <Button fx:id="addData">
+                    <tooltip>
+                        <Tooltip text="%databasefx.table.action.add"/>
+                    </tooltip>
+                    <graphic>
+                        <ImageView>
+                            <Image url="@/assets/images/add_data.png" requestedWidth="20" requestedHeight="20"
+                                   smooth="true"/>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="delete">
+                    <tooltip>
+                        <Tooltip text="%databasefx.table.action.delete"/>
+                    </tooltip>
+                    <graphic>
+                        <ImageView>
+                            <Image url="@/assets/images/delete_icon.png" requestedWidth="20" requestedHeight="20"
+                                   smooth="true"/>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="submit">
+                    <tooltip>
+                        <Tooltip text="%databasefx.table.action.save"/>
+                    </tooltip>
+                    <graphic>
+                        <ImageView>
+                            <Image url="@/assets/images/save_icon.png" requestedWidth="20" requestedHeight="20"
+                                   smooth="true"/>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </HBox>
+            <HBox HBox.hgrow="ALWAYS">
+                <HBox styleClass="rrbox">
+                    <Label fx:id="indexCounter"/>
+                    <Label fx:id="totalLabel"/>
+                    <Label fx:id="pageCounter"/>
+                </HBox>
+                <Button fx:id="last">
+                    <graphic>
+                        <ImageView>
+                            <Image url="@/assets/images/last_icon.png" requestedWidth="20" requestedHeight="20"
+                                   smooth="true"/>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="next">
+                    <graphic>
+                        <ImageView>
+                            <Image url="@/assets/images/next_icon.png" requestedWidth="20" requestedHeight="20"
+                                   smooth="true"/>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <TextField fx:id="numberTextField" text="100" styleClass="number-text-field"/>
+                <Button fx:id="flush">
+                    <tooltip>
+                        <Tooltip text="%databasefx.table.action.flush"/>
+                    </tooltip>
+                    <graphic>
+                        <ImageView>
+                            <Image url="@/assets/images/flush_icon.png" requestedWidth="20" requestedHeight="20"
+                                   smooth="true"/>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </HBox>
+        </HBox>
+    </bottom>
+</BorderPane>
