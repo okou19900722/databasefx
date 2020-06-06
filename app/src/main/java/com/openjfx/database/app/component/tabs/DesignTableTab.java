@@ -3,11 +3,8 @@ package com.openjfx.database.app.component.tabs;
 
 import com.openjfx.database.app.component.BaseTab;
 import com.openjfx.database.app.component.DesignOptionBox;
-import com.openjfx.database.app.config.Constants;
 import com.openjfx.database.app.controls.DesignTableView;
 import com.openjfx.database.app.controls.SQLEditor;
-import com.openjfx.database.app.controls.impl.SchemeTreeNode;
-import com.openjfx.database.app.controls.impl.TableFolderNode;
 import com.openjfx.database.app.enums.NotificationType;
 import com.openjfx.database.app.model.DesignTableModel;
 import com.openjfx.database.app.model.TableFieldChangeModel;
@@ -16,12 +13,10 @@ import com.openjfx.database.app.utils.AssetUtils;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.app.utils.EventBusUtils;
 import com.openjfx.database.base.AbstractDataBasePool;
-import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.common.utils.StringUtils;
 import com.openjfx.database.enums.DesignTableOperationSource;
 import com.openjfx.database.enums.DesignTableOperationType;
 import com.openjfx.database.model.TableColumnMeta;
-import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -38,7 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
-import static com.openjfx.database.app.config.Constants.*;
 
 
 /**
