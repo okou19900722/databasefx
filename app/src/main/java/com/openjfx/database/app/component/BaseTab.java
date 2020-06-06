@@ -45,7 +45,7 @@ public abstract class BaseTab<T extends BaseTabMode> extends Tab implements Init
      */
     private ResourceBundle resourceBundle = I18N;
 
-    private ImageView tabIcon;
+    protected ImageView tabIcon;
 
     protected T model;
 
@@ -122,5 +122,9 @@ public abstract class BaseTab<T extends BaseTabMode> extends Tab implements Init
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    protected String i18nStr(String key) {
+        return resourceBundle.getString(key);
     }
 }

@@ -1,9 +1,11 @@
 package com.openjfx.database.app.controls.impl;
 
 import com.openjfx.database.app.config.Constants;
+import com.openjfx.database.app.controller.DatabaseFxController;
 import com.openjfx.database.app.controls.BaseTreeNode;
-import com.openjfx.database.app.stage.DesignTableStage;
+import com.openjfx.database.app.model.tab.meta.DesignTabModel;
 import com.openjfx.database.app.utils.DialogUtils;
+import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.model.ConnectionParam;
 import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;
@@ -14,6 +16,7 @@ import java.util.stream.Collectors;
 
 import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
 import static com.openjfx.database.app.DatabaseFX.I18N;
+import static com.openjfx.database.app.config.Constants.ACTION;
 import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
 
 /**
@@ -27,24 +30,42 @@ public class TableFolderNode extends BaseTreeNode<String> {
     private static final Image ICON_IMAGE = getLocalImage(20, 20, "folder_icon.png");
     private final String scheme;
 
+    /**
+     * event bus address
+     */
+    public final String eventBusAddress;
+
     public TableFolderNode(ConnectionParam param, String scheme) {
         super(param, ICON_IMAGE);
         this.scheme = scheme;
+        this.eventBusAddress = getUuid() + "_" + scheme;
         setValue(I18N.getString("database.table"));
         final var createTable = new MenuItem(I18N.getString("menu.databasefx.tree.create.table"));
         final var flush = new MenuItem(I18N.getString("menu.databasefx.tree.flush"));
         //flush table list
         flush.setOnAction((event) -> flush());
-        //show create table stage
-        createTable.setOnAction(event -> {
+
+        //register event bus
+        VertexUtils.eventBus().<JsonObject>consumer(eventBusAddress, msg -> {
+            var body = msg.body();
+            var action = body.getString(ACTION);
+            if (EventBusAction.FLUSH_TABLE == EventBusAction.valueOf(action)) {
+                flush();
+            }
+        });
+
+        createTable.setOnAction(e -> {
+            //open design tab
             var params = new JsonObject();
             params.put(Constants.UUID, getUuid());
             params.put(Constants.SCHEME, scheme);
-            params.put(Constants.TYPE, 0);
-            new DesignTableStage(params);
+            params.put(Constants.TYPE, DesignTabModel.DesignTableType.CREATE);
+            params.put(Constants.ACTION, DatabaseFxController.EventBusAction.OPEN_DESIGN_TAB);
+            VertexUtils.send(DatabaseFxController.EVENT_ADDRESS, params);
         });
 
         addMenuItem(flush, createTable);
+
     }
 
     @Override
@@ -69,5 +90,18 @@ public class TableFolderNode extends BaseTreeNode<String> {
             setLoading(false);
         });
 
+    }
+
+    /**
+     * Event bus address
+     *
+     * @author yangkui
+     * @since 1.0
+     */
+    public enum EventBusAction {
+        /**
+         * flush table of current scheme
+         */
+        FLUSH_TABLE
     }
 }

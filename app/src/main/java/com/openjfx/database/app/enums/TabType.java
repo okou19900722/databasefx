@@ -14,5 +14,9 @@ public enum TabType {
     /**
      * database user
      */
-    DATABASE_USER
+    DATABASE_USER,
+    /**
+     * design table
+     */
+    DESIGN_TABLE
 }

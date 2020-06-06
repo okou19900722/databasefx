@@ -49,28 +49,28 @@ public class TableTabModel extends BaseTabMode implements Initializable {
     }
 
     public static TableTabModel build(TreeItem<String> treeNode) {
-        final String database;
+        final String scheme;
         final String serverName;
         final String tableName;
         final TableType tableType;
         final String uuid;
         if (treeNode instanceof TableTreeNode) {
             var tableNode = (TableTreeNode) treeNode;
-            database = tableNode.getDatabase();
+            scheme = tableNode.getScheme();
             serverName = tableNode.getServerName();
             tableName = tableNode.getValue();
             tableType = TableType.BASE_TABLE;
             uuid = tableNode.getUuid();
         } else {
             var viewNode = (TableViewNode) treeNode;
-            database = viewNode.getDatabase();
+            scheme = viewNode.getScheme();
             serverName = viewNode.getServerName();
             tableName = viewNode.getValue();
             tableType = TableType.VIEW;
             uuid = viewNode.getUuid();
         }
-        var flag = uuid + "_" + database + "_" + tableName;
-        return new TableTabModel(uuid, flag, database, tableName, serverName, tableType);
+        var flag = uuid + "_" + scheme + "_" + tableName;
+        return new TableTabModel(uuid, flag, scheme, tableName, serverName, tableType);
     }
 
     public String getDatabase() {

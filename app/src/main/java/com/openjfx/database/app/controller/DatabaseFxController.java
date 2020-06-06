@@ -3,6 +3,7 @@ package com.openjfx.database.app.controller;
 import com.openjfx.database.app.BaseController;
 import com.openjfx.database.app.component.BaseTab;
 import com.openjfx.database.app.component.SearchPopup;
+import com.openjfx.database.app.component.tabs.DesignTableTab;
 import com.openjfx.database.app.component.tabs.UserTab;
 import com.openjfx.database.app.config.Constants;
 import com.openjfx.database.app.component.MainTabPane;
@@ -14,6 +15,7 @@ import com.openjfx.database.app.enums.MenuItemOrder;
 import com.openjfx.database.app.enums.NotificationType;
 import com.openjfx.database.app.enums.TabType;
 import com.openjfx.database.app.model.tab.BaseTabMode;
+import com.openjfx.database.app.model.tab.meta.DesignTabModel;
 import com.openjfx.database.app.model.tab.meta.TableTabModel;
 import com.openjfx.database.app.model.tab.meta.UserTabModel;
 import com.openjfx.database.app.stage.AboutStage;
@@ -239,12 +241,17 @@ public class DatabaseFxController extends BaseController<Void> {
         if (tabType == TabType.TABLE) {
             //create tab
             tab = new TableTab((TableTabModel) mode);
-        } else {
+        } else if (tabType == TabType.DATABASE_USER) {
             tab = new UserTab((UserTabModel) mode);
+        } else {
+            tab = new DesignTableTab((DesignTabModel) mode);
         }
-        tabPane.getTabs().add(tab);
-        tab.init();
-        tabPane.getSelectionModel().select(tab);
+
+        Platform.runLater(() -> {
+            tabPane.getTabs().add(tab);
+            tab.init();
+            tabPane.getSelectionModel().select(tab);
+        });
     }
 
     /**
@@ -257,7 +264,7 @@ public class DatabaseFxController extends BaseController<Void> {
 
         var action = EventBusAction.valueOf(body.getString(ACTION));
 
-        var uuid = body.getString(Constants.UUID);
+        var uuid = body.getString(Constants.UUID, "");
         //create connection
         if (action == EventBusAction.ADD_CONNECTION) {
             DbPreference.getConnectionParam(uuid).ifPresent(db -> {
@@ -285,6 +292,12 @@ public class DatabaseFxController extends BaseController<Void> {
                 item.flush();
             }
         }
+
+        //open design table
+        if (action == EventBusAction.OPEN_DESIGN_TAB) {
+            var model = DesignTabModel.build(body);
+            addTab(model, TabType.DESIGN_TABLE);
+        }
     }
 
     @FXML
@@ -303,7 +316,7 @@ public class DatabaseFxController extends BaseController<Void> {
             scheme = item.getValue();
         }
         if (item instanceof TableTreeNode) {
-            scheme = ((TableTreeNode) item).getDatabase();
+            scheme = ((TableTreeNode) item).getScheme();
         }
         param.put(SCHEME, scheme);
         new SQLEditStage(param);
@@ -319,7 +332,7 @@ public class DatabaseFxController extends BaseController<Void> {
         DialogUtils.showAlertInfo(resourceBundle.getString("app.function.future"));
     }
 
-    enum EventBusAction {
+    public enum EventBusAction {
         /**
          * add connection
          */
@@ -332,5 +345,9 @@ public class DatabaseFxController extends BaseController<Void> {
          * flush scheme
          */
         FLUSH_SCHEME,
+        /**
+         * open tab
+         */
+        OPEN_DESIGN_TAB
     }
 }

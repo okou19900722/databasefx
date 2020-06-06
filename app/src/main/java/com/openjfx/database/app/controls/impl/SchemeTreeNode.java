@@ -4,17 +4,14 @@ package com.openjfx.database.app.controls.impl;
 import com.openjfx.database.app.controls.BaseTreeNode;
 import com.openjfx.database.app.component.MainTabPane;
 import com.openjfx.database.app.config.Constants;
-import com.openjfx.database.app.stage.DesignTableStage;
 import com.openjfx.database.app.stage.SQLEditStage;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.model.ConnectionParam;
 import io.vertx.core.json.JsonObject;
-import javafx.application.Platform;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 
-import java.util.stream.Collectors;
 
 import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
 import static com.openjfx.database.app.DatabaseFX.I18N;
@@ -35,15 +32,10 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
     private final String scheme;
 
     private final MenuItem close;
-    /**
-     * event bus address
-     */
-    public final String eventBusAddress;
 
     public SchemeTreeNode(String scheme, ConnectionParam param) {
         super(param, ICON_IMAGE);
         this.scheme = scheme;
-        this.eventBusAddress = getUuid() + "_" + scheme;
         setValue(scheme);
 
         var tableFolder = new TableFolderNode(getParam(), scheme);
@@ -74,16 +66,6 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
             }
         });
 
-        //register event bus
-        VertexUtils.eventBus().<JsonObject>consumer(eventBusAddress, msg -> {
-            var body = msg.body();
-            var action = body.getString(ACTION);
-            if (EventBusAction.FLUSH_TABLE == EventBusAction.valueOf(action)) {
-                flush();
-            }
-        });
-
-
         //close scheme->close relative tab
         close.setOnAction(e -> {
             setExpanded(false);
@@ -113,18 +95,5 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
 
     @Override
     public void init() {
-    }
-
-    /**
-     * Event bus address
-     *
-     * @author yangkui
-     * @since 1.0
-     */
-    public enum EventBusAction {
-        /**
-         * flush table of current scheme
-         */
-        FLUSH_TABLE
     }
 }

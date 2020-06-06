@@ -1,11 +1,87 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.*?>
 
-<?import com.openjfx.database.app.controls.TableDataView?>
-<?import com.openjfx.database.app.component.SearchPopup?>
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            prefHeight="400.0" prefWidth="600.0">
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 
 
+<?import java.net.URL?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TextArea?>
+<?import com.openjfx.database.app.controls.SQLEditor?>
+<?import com.openjfx.database.app.controls.DesignTableView?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import com.openjfx.database.app.component.DesignOptionBox?>
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
+    <stylesheets>
+        <URL value="@/css/design_table.css"/>
+        <URL value="@/css/base.css"/>
+    </stylesheets>
+    <top>
+        <HBox BorderPane.alignment="CENTER" styleClass="top-box" fx:id="topBox">
+            <Button text="%app.save" onAction="#save">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/assets/images/design_save_icon.png" requestedHeight="18" requestedWidth="18"
+                               smooth="true"/>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button text="%view.design.table.field.add" onAction="#createNewField">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/assets/images/design_add_icon.png" requestedHeight="18" requestedWidth="18"
+                               smooth="true"/>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button text="%view.design.table.field.delete" onAction="#deleteField">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/assets/images/design_delete_icon.png" requestedHeight="18" requestedWidth="18"
+                               smooth="true"/>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button text="%view.design.table.field.primary" onAction="#setPrimaryKey">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/assets/images/key_icon.png" requestedHeight="18" requestedWidth="18"
+                               smooth="true"/>
+                    </ImageView>
+                </graphic>
+            </Button>
+        </HBox>
+    </top>
+    <center>
+        <SplitPane dividerPositions="0.8" orientation="VERTICAL" BorderPane.alignment="CENTER" fx:id="splitPane">
+            <TabPane fx:id="tabPane">
+                <Tab text="%view.design.table.field">
+                    <DesignTableView fx:id="fieldTable">
+                        <columns>
+                            <TableColumn text="%view.design.table.field.name"/>
+                            <TableColumn text="%view.design.table.field.type"/>
+                            <TableColumn text="%view.design.table.field.length"/>
+                            <TableColumn text="%view.design.table.field.decimal"/>
+                            <TableColumn text="%view.design.table.field.null"/>
+                            <!--                            <TableColumn text="虚拟"/>-->
+                            <TableColumn text="%view.design.table.field.key"/>
+                            <TableColumn text="%view.design.table.field.comment"/>
+                        </columns>
+                    </DesignTableView>
+                </Tab>
+                <Tab text="%view.design.table.comment">
+                    <TextArea fx:id="commentTextArea"/>
+                </Tab>
+                <Tab text="%view.design.table.preview">
+                    <SQLEditor fx:id="sqlEditor" editable="false"/>
+                </Tab>
+            </TabPane>
+            <DesignOptionBox fx:id="box"/>
+        </SplitPane>
+    </center>
 </BorderPane>
