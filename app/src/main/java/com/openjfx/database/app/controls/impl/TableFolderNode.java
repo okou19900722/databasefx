@@ -5,6 +5,7 @@ import com.openjfx.database.app.controller.DatabaseFxController;
 import com.openjfx.database.app.controls.BaseTreeNode;
 import com.openjfx.database.app.model.tab.meta.DesignTabModel;
 import com.openjfx.database.app.utils.DialogUtils;
+import com.openjfx.database.app.utils.EventBusUtils;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.model.ConnectionParam;
 import io.vertx.core.json.JsonObject;
@@ -54,15 +55,7 @@ public class TableFolderNode extends BaseTreeNode<String> {
             }
         });
 
-        createTable.setOnAction(e -> {
-            //open design tab
-            var params = new JsonObject();
-            params.put(Constants.UUID, getUuid());
-            params.put(Constants.SCHEME, scheme);
-            params.put(Constants.TYPE, DesignTabModel.DesignTableType.CREATE);
-            params.put(Constants.ACTION, DatabaseFxController.EventBusAction.OPEN_DESIGN_TAB);
-            VertexUtils.send(DatabaseFxController.EVENT_ADDRESS, params);
-        });
+        createTable.setOnAction(e -> EventBusUtils.openDesignTab(getUuid(), scheme, null, DesignTabModel.DesignTableType.CREATE));
 
         addMenuItem(flush, createTable);
 

@@ -131,7 +131,7 @@ public class DatabaseFxController extends BaseController<Void> {
                     return;
                 }
                 var a = selectedItem instanceof TableTreeNode;
-                var b = selectedItem instanceof TableViewNode;
+                var b = selectedItem instanceof TableViewTreeNode;
                 if (a || b) {
                     //Load table data
                     var model = TableTabModel.build(selectedItem);

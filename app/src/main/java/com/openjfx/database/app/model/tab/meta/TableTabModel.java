@@ -1,7 +1,7 @@
 package com.openjfx.database.app.model.tab.meta;
 
 import com.openjfx.database.app.controls.impl.TableTreeNode;
-import com.openjfx.database.app.controls.impl.TableViewNode;
+import com.openjfx.database.app.controls.impl.TableViewTreeNode;
 import com.openjfx.database.app.model.tab.BaseTabMode;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TreeItem;
@@ -62,7 +62,7 @@ public class TableTabModel extends BaseTabMode implements Initializable {
             tableType = TableType.BASE_TABLE;
             uuid = tableNode.getUuid();
         } else {
-            var viewNode = (TableViewNode) treeNode;
+            var viewNode = (TableViewTreeNode) treeNode;
             scheme = viewNode.getScheme();
             serverName = viewNode.getServerName();
             tableName = viewNode.getValue();

@@ -7,6 +7,7 @@ import com.openjfx.database.app.component.MainTabPane;
 import com.openjfx.database.app.stage.CreateConnectionStage;
 import com.openjfx.database.app.stage.CreateSchemeStage;
 import com.openjfx.database.app.utils.DialogUtils;
+import com.openjfx.database.app.utils.EventBusUtils;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.model.ConnectionParam;
 import io.vertx.core.json.JsonObject;
@@ -61,7 +62,7 @@ public class DBTreeNode extends BaseTreeNode<String> {
             DATABASE_SOURCE.close(getUuid());
             getChildren().clear();
             setLoading(false);
-            removeAllTab();
+            EventBusUtils.closeConnectionRelationTab(getUuid());
             //dynamic remove MenuItem
             removeMenu(loseConnect);
             addMenuItem(0, openConnect);
@@ -76,7 +77,7 @@ public class DBTreeNode extends BaseTreeNode<String> {
                 DATABASE_SOURCE.close(getUuid());
                 //Delete current node
                 getParent().getChildren().remove(this);
-                removeAllTab();
+                EventBusUtils.closeConnectionRelationTab(getUuid());
             }
         });
         openConnect.setOnAction(e -> init());
@@ -114,13 +115,5 @@ public class DBTreeNode extends BaseTreeNode<String> {
             setLoading(false);
         });
         future.onFailure(t -> initFailed(t, I18N.getString("menu.databasefx.tree.open.tips")));
-    }
-
-    private void removeAllTab() {
-        var message = new JsonObject();
-        message.put(ACTION, MainTabPane.EventBusAction.REMOVE_MANY);
-        message.put(FLAG, getUuid());
-        //Move out the tabs related to the current database
-        VertexUtils.send(MainTabPane.EVENT_BUS_ADDRESS, message);
     }
 }

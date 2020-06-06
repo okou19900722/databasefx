@@ -7,6 +7,7 @@ import com.openjfx.database.app.controller.DatabaseFxController;
 import com.openjfx.database.app.controls.BaseTreeNode;
 import com.openjfx.database.app.model.tab.meta.DesignTabModel;
 import com.openjfx.database.app.utils.DialogUtils;
+import com.openjfx.database.app.utils.EventBusUtils;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.model.ConnectionParam;
 import io.vertx.core.json.JsonObject;
@@ -19,12 +20,12 @@ import static com.openjfx.database.app.config.Constants.*;
 import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
 
 /**
- * Database table node
+ * Database table view node
  *
  * @author yangkui
  * @since 1.0
  */
-public class TableViewNode extends BaseTreeNode<String> {
+public class TableViewTreeNode extends BaseTreeNode<String> {
 
     private static final Image ICON_IMAGE = getLocalImage(20, 20, "table_view_icon.png");
 
@@ -33,7 +34,7 @@ public class TableViewNode extends BaseTreeNode<String> {
      */
     private final String scheme;
 
-    public TableViewNode(String scheme, String tableName, ConnectionParam param) {
+    public TableViewTreeNode(String scheme, String tableName, ConnectionParam param) {
         super(param, ICON_IMAGE);
 
         this.scheme = scheme;
@@ -44,15 +45,7 @@ public class TableViewNode extends BaseTreeNode<String> {
         var delete = new MenuItem(I18N.getString("menu.databasefx.tree.delete.table"));
 
 
-        design.setOnAction(e -> {
-            //open design tab
-//            var params = new JsonObject();
-//            params.put(Constants.UUID, getUuid());
-//            params.put(Constants.SCHEME, scheme);
-//            params.put(Constants.TYPE, DesignTabModel.DesignTableType.UPDATE);
-//            params.put(Constants.ACTION, DatabaseFxController.EventBusAction.OPEN_DESIGN_TAB);
-//            VertexUtils.send(DatabaseFxController.EVENT_ADDRESS, params);
-        });
+        design.setOnAction(e -> EventBusUtils.closeTableTab(getUuid(), scheme, tableName));
         delete.setOnAction(e -> {
             var tips = I18N.getString("menu.databasefx.tree.delete.table.tips") + " " + tableName + "?";
             var result = DialogUtils.showAlertConfirm(tips);

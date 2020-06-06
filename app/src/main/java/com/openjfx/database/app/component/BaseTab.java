@@ -37,10 +37,6 @@ public abstract class BaseTab<T extends BaseTabMode> extends Tab implements Init
      */
     private final ProgressIndicator progressBar = new ProgressIndicator();
     /**
-     * view base path
-     */
-    private final String VIEW_BASE_PATH = "fxml/component/";
-    /**
      * resource bundle
      */
     private ResourceBundle resourceBundle = I18N;
@@ -111,7 +107,8 @@ public abstract class BaseTab<T extends BaseTabMode> extends Tab implements Init
     }
 
     protected void loadView(final String view) {
-        var path = VIEW_BASE_PATH + view;
+        var viewBasePath = "fxml/component/";
+        var path = viewBasePath + view;
         try {
             var url = ClassLoader.getSystemResource(path);
             var fxml = new FXMLLoader(url);

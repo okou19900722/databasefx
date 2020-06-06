@@ -38,7 +38,7 @@ public class ViewFolderNode extends BaseTreeNode<String> {
         future.onComplete(ar -> {
             if (ar.succeeded()) {
                 var rs = ar.result();
-                var list = rs.stream().map(view -> new TableViewNode(scheme, view, getParam())).collect(Collectors.toList());
+                var list = rs.stream().map(view -> new TableViewTreeNode(scheme, view, getParam())).collect(Collectors.toList());
                 Platform.runLater(() -> {
                     getChildren().addAll(list);
                     setExpanded(true);

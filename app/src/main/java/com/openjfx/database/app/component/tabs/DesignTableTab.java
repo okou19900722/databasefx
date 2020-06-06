@@ -14,6 +14,7 @@ import com.openjfx.database.app.model.TableFieldChangeModel;
 import com.openjfx.database.app.model.tab.meta.DesignTabModel;
 import com.openjfx.database.app.utils.AssetUtils;
 import com.openjfx.database.app.utils.DialogUtils;
+import com.openjfx.database.app.utils.EventBusUtils;
 import com.openjfx.database.base.AbstractDataBasePool;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.common.utils.StringUtils;
@@ -185,11 +186,7 @@ public class DesignTableTab extends BaseTab<DesignTabModel> {
             if (model.getDesignTableType() == DesignTabModel.DesignTableType.CREATE) {
                 model.setDesignTableType(DesignTabModel.DesignTableType.UPDATE);
                 model.setTableName(tableName);
-                //notify scheme flush table list
-                var msg = new JsonObject();
-                var address = model.getUuid() + "_" + model.getScheme();
-                msg.put(ACTION, TableFolderNode.EventBusAction.FLUSH_TABLE);
-                VertexUtils.send(address, msg);
+                EventBusUtils.tableFolderFlushList(model.getUuid(), model.getScheme());
             }
             tableFieldChangeModel.clear();
             //refresh data table
