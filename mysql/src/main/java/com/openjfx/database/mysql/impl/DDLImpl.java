@@ -50,4 +50,20 @@ public class DDLImpl implements DDL {
         future.onFailure(promise::fail);
         return promise.future();
     }
+
+    @Override
+    public Future<Integer> dropView(String view) {
+        var viewName = SQLHelper.escapeMysqlField(view);
+        var sql = "DROP VIEW IF EXISTS " + viewName;
+        var promise = Promise.<Integer>promise();
+        var future = client.query(sql);
+        future.onComplete(ar -> {
+            if (ar.succeeded()) {
+                promise.complete(ar.result().rowCount());
+            } else {
+                promise.fail(ar.cause());
+            }
+        });
+        return promise.future();
+    }
 }

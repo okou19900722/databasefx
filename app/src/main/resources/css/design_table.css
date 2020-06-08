@@ -35,6 +35,11 @@
     -fx-padding: 10px;
 }
 
+.table-view .column-header-background .filler {
+    -fx-border-color: #f4f4f4;
+    -fx-border-width: 2px 0 2px 0 !important;
+}
+
 .table-view .table-row-cell:even {
     -fx-background: #FFFFFF !important;
 }

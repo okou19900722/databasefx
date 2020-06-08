@@ -1,0 +1,43 @@
+.work-station {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #50B1FF;
+    -fx-border-width: 1px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+}
+
+.list-view {
+    -fx-background-color: transparent;
+}
+
+.list-view * {
+    -fx-background-color: transparent;
+}
+
+.list-view .list-cell:hover {
+    -fx-background-color: #F6FBFE;
+}
+
+.list-view .list-cell:selected{
+    -fx-background-color: #7ac4f0;
+}
+
+.title-box {
+    -fx-background-color: #3783C0;
+    -fx-background-radius: 10px 10px 0 0;
+    -fx-alignment: center;
+    -fx-padding: 5px;
+}
+
+.title-box .label {
+    -fx-text-fill: #ffffff;
+}
+
+.title-box:hover {
+    -fx-background-color: #50B1FF;
+}
+
+.work-station-node {
+    -fx-alignment: center;
+    -fx-spacing: 10px;
+}
