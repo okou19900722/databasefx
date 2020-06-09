@@ -28,6 +28,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Border;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,18 +100,14 @@ public class DesignTableTab extends BaseTab<DesignTabModel> {
                 }
             }
         });
-
-        //listener fieldTable select change
-        fieldTable.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+        fieldTable.getSelectionModel().selectedIndexProperty().addListener(((observable, oldValue, newValue) -> {
             var index = newValue.intValue();
             if (index == -1) {
                 return;
             }
-            var item = fieldTable.getItems().get(index);
-            box.updateValue(item);
-            //listener field every value change
-            item.setCallback((meta, value, fieldName) -> tableFieldChangeModel.fieldChange(meta, DesignTableOperationType.UPDATE, index, fieldName, value));
-        });
+            var model = fieldTable.getItems().get(index);
+            box.updateValue(model);
+        }));
 
         //dynamic show/hide bottom DesignOptionBox
         tabPane.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
@@ -150,14 +147,8 @@ public class DesignTableTab extends BaseTab<DesignTabModel> {
             var fut = future.compose(rs -> {
                 columnMetas.clear();
                 columnMetas.addAll(rs);
-                var list = DesignTableModel.build(rs);
-                Platform.runLater(() -> {
-                    fieldTable.setItems(FXCollections.observableList(list));
-                    if (list.size() > 0) {
-                        //default select first row
-                        fieldTable.getSelectionModel().select(0);
-                    }
-                });
+                var list = DesignTableModel.build(rs, this);
+                Platform.runLater(() -> fieldTable.setItems(FXCollections.observableList(list)));
                 return pool.getDql().getCreateTableComment(tableName);
             });
             fut.onSuccess(comment -> Platform.runLater(() -> commentTextArea.setText(comment)));
@@ -192,7 +183,7 @@ public class DesignTableTab extends BaseTab<DesignTabModel> {
 
     @FXML
     public void createNewField() {
-        var model = new DesignTableModel();
+        var model = new DesignTableModel(this);
         var items = fieldTable.getItems();
         items.add(model);
         var index = items.size() - 1;
@@ -259,5 +250,18 @@ public class DesignTableTab extends BaseTab<DesignTabModel> {
         }
 
         Platform.runLater(() -> setText(title));
+    }
+
+    public void tableFieldChange(TableColumnMeta meta, DesignTableModel model, TableColumnMeta.TableColumnEnum field, String newValue) {
+        var i = fieldTable.getItems().indexOf(model);
+        if (i == -1) {
+            return;
+        }
+        var j = fieldTable.getSelectionModel().getSelectedIndex();
+        //if row index happen change then select current row
+        if (j != i) {
+            fieldTable.getSelectionModel().select(i);
+        }
+        tableFieldChangeModel.fieldChange(meta, DesignTableOperationType.UPDATE, i, field, newValue);
     }
 }

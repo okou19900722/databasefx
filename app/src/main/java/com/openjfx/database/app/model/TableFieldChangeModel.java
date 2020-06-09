@@ -69,6 +69,17 @@ public class TableFieldChangeModel {
             if (tableColumnEnum != null) {
                 var column = new ColumnChangeModel(tableColumnEnum);
                 var oldValue = meta == null ? "" : meta.getFieldValue(tableColumnEnum).toString();
+                if (meta == null) {
+                    oldValue = "";
+                } else {
+                    var temp = meta.getFieldValue(tableColumnEnum);
+                    if (tableColumnEnum == TableColumnMeta.TableColumnEnum.NULL) {
+                        var abc = (Boolean) temp;
+                        oldValue = Boolean.valueOf(!abc).toString();
+                    } else {
+                        oldValue = temp.toString();
+                    }
+                }
                 column.setFieldName(tableColumnEnum);
                 column.setOriginValue(oldValue);
                 column.setNewValue(newValue);

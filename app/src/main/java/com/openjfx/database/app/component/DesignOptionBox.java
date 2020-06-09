@@ -1,8 +1,10 @@
 package com.openjfx.database.app.component;
 
 import com.openjfx.database.DataCharset;
+import com.openjfx.database.app.component.tabs.DesignTableTab;
 import com.openjfx.database.app.controls.EditChoiceBox;
 import com.openjfx.database.app.model.DesignTableModel;
+import com.openjfx.database.app.model.tab.meta.DesignTabModel;
 import javafx.collections.FXCollections;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -32,6 +34,7 @@ public class DesignOptionBox extends VBox {
     private final DataCharset dataCharset = DATABASE_SOURCE.getCharset();
 
     public DesignOptionBox() {
+
         defaultBox.setHideSelector(true);
 
         var autoIncrement = new Label(I18N.getString("view.design.table.option.auto"));
@@ -76,9 +79,8 @@ public class DesignOptionBox extends VBox {
 
     private DesignTableModel model;
 
-    public void updateValue(final DesignTableModel model) {
+    public void updateValue(DesignTableModel model) {
         this.model = model;
-
         //update value
         this.charsetBox.setText(model.getCharset());
         this.collationBox.setText(model.getCollation());
