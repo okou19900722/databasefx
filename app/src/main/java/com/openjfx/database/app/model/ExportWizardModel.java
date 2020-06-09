@@ -2,6 +2,10 @@ package com.openjfx.database.app.model;
 
 import com.openjfx.database.app.component.paginations.ExportWizardFormatPage;
 import com.openjfx.database.app.component.paginations.ExportWizardSelectColumnPage;
+import com.openjfx.database.model.TableColumnMeta;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * export wizard model
@@ -22,6 +26,14 @@ public class ExportWizardModel {
      * table
      */
     private final String table;
+    /**
+     * custom export sql statement
+     */
+    private String customExportSql;
+    /**
+     * user select table column
+     */
+    private List<TableColumnMeta> selectTableColumn = new ArrayList<>();
 
     /**
      * export data format default txt
@@ -50,6 +62,22 @@ public class ExportWizardModel {
         return table;
     }
 
+    public String getCustomExportSql() {
+        return customExportSql;
+    }
+
+    public void setCustomExportSql(String customExportSql) {
+        this.customExportSql = customExportSql;
+    }
+
+    public List<TableColumnMeta> getSelectTableColumn() {
+        return selectTableColumn;
+    }
+
+    public void setSelectTableColumn(List<TableColumnMeta> selectTableColumn) {
+        this.selectTableColumn = selectTableColumn;
+    }
+
     public ExportWizardFormatPage.ExportDataType getExportDataType() {
         return exportDataType;
     }
@@ -66,4 +94,16 @@ public class ExportWizardModel {
         this.selectColumnPattern = selectColumnPattern;
     }
 
+    @Override
+    public String toString() {
+        return "ExportWizardModel{" +
+                "uuid='" + uuid + '\'' +
+                ", scheme='" + scheme + '\'' +
+                ", table='" + table + '\'' +
+                ", customExportSql='" + customExportSql + '\'' +
+                ", selectTableColumn=" + selectTableColumn +
+                ", exportDataType=" + exportDataType +
+                ", selectColumnPattern=" + selectColumnPattern +
+                '}';
+    }
 }

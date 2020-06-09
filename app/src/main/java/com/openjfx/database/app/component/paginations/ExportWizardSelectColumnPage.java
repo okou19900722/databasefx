@@ -45,8 +45,10 @@ public class ExportWizardSelectColumnPage extends BorderPane {
     private final ToggleGroup toggleGroup = new ToggleGroup();
     private final ListView<NormalColumnNode> listView = new ListView<>();
     private final SQLEditor sqlEditor = new SQLEditor();
+    private final ExportWizardModel model;
 
     public ExportWizardSelectColumnPage(ExportWizardModel model) {
+        this.model = model;
 
         var normal = new RadioButton("常规");
         var senior = new RadioButton("高级");
@@ -62,6 +64,8 @@ public class ExportWizardSelectColumnPage extends BorderPane {
         updatePattern(model);
         topBox.getStyleClass().add("top-box");
         getStyleClass().add("export-wizard-select-column-page");
+        //listener sql-editor text change
+        sqlEditor.textProperty().addListener((observable, oldValue, newValue) -> model.setCustomExportSql(newValue));
     }
 
     private void updatePattern(ExportWizardModel model) {
@@ -102,34 +106,33 @@ public class ExportWizardSelectColumnPage extends BorderPane {
         future.onFailure(t -> DialogUtils.showErrorDialog(t, "获取表列数据失败"));
     }
 
-    private static class NormalColumnNode extends HBox {
-        private final CheckBox checkBox = new CheckBox();
-        /**
-         * select property
-         */
-        private final BooleanProperty selectProperty = checkBox.selectedProperty();
-        /**
-         * table column meta
-         */
-        private final TableColumnMeta meta;
+    /**
+     * Dynamically change cache data based on user selected column state
+     *
+     * @param meta   change table column meta
+     * @param status select/un-select
+     */
+    private void selectChange(TableColumnMeta meta, Boolean status) {
+        if (status) {
+            model.getSelectTableColumn().add(meta);
+        } else {
+            model.getSelectTableColumn().remove(meta);
+        }
+    }
+
+    private class NormalColumnNode extends HBox {
 
         public NormalColumnNode(TableColumnMeta meta) {
-            this.meta = meta;
             var column = new Label();
             var hBox = new HBox();
             HBox.setHgrow(hBox, Priority.ALWAYS);
             column.setText(meta.getField());
             hBox.getChildren().add(column);
+            var checkBox = new CheckBox();
             getChildren().addAll(checkBox, hBox);
+            checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> selectChange(meta, newValue));
             getStyleClass().add("export-wizard-select-column-item");
-        }
 
-        public boolean isSelectProperty() {
-            return selectProperty.get();
-        }
-
-        public TableColumnMeta getMeta() {
-            return meta;
         }
     }
 }
