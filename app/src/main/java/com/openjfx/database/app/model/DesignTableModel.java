@@ -1,5 +1,6 @@
 package com.openjfx.database.app.model;
 
+import com.openjfx.database.app.component.tabs.DesignTableTab;
 import com.openjfx.database.app.controls.EditChoiceBox;
 import com.openjfx.database.common.MultipleHandler;
 import com.openjfx.database.model.TableColumnMeta;
@@ -42,10 +43,6 @@ public class DesignTableModel {
      * field is null?
      */
     private CheckBox nullable = new CheckBox();
-//    /**
-//     * field is virtual
-//     */
-//    private CheckBox virtual = new CheckBox();
     /**
      * field is key?
      */
@@ -71,11 +68,12 @@ public class DesignTableModel {
      */
     private final BooleanProperty autoIncrement = new SimpleBooleanProperty(false);
 
-    private MultipleHandler<TableColumnMeta, String, TableColumnMeta.TableColumnEnum> callback;
-
     private TableColumnMeta tableColumnMeta = null;
 
-    public DesignTableModel() {
+    private final DesignTableTab designTableTab;
+
+    public DesignTableModel(DesignTableTab designTableTab) {
+        this.designTableTab = designTableTab;
         var dataTypeList = DATABASE_SOURCE.getDataType().getDataTypeList();
         fieldType.getItems().addAll(dataTypeList);
         field.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue, TableColumnMeta.TableColumnEnum.FIELD));
@@ -83,21 +81,16 @@ public class DesignTableModel {
         fieldLength.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue, TableColumnMeta.TableColumnEnum.LENGTH));
         fieldPoint.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue, TableColumnMeta.TableColumnEnum.DECIMAL_POINT));
         nullable.selectedProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue.toString(), TableColumnMeta.TableColumnEnum.NULL));
-//        virtual.selectedProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(oldValue.toString(), newValue.toString(), "Virtual"));
         key.selectedProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue.toString(), TableColumnMeta.TableColumnEnum.PRIMARY_KEY));
         comment.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue, TableColumnMeta.TableColumnEnum.COMMENT));
         autoIncrement.addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue.toString(), TableColumnMeta.TableColumnEnum.AUTO_INCREMENT));
         defaultValue.addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue, TableColumnMeta.TableColumnEnum.DEFAULT));
         charset.addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue, TableColumnMeta.TableColumnEnum.CHARSET));
         collation.addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue, TableColumnMeta.TableColumnEnum.COLLATION));
-
     }
 
     private void updateCallbackValue(String newValue, TableColumnMeta.TableColumnEnum fieldName) {
-        if (callback == null) {
-            return;
-        }
-        callback.handler(tableColumnMeta, newValue, fieldName);
+        designTableTab.tableFieldChange(tableColumnMeta, this, fieldName, newValue);
     }
 
     public TextField getField() {
@@ -140,14 +133,6 @@ public class DesignTableModel {
         this.nullable = nullable;
     }
 
-//    public CheckBox getVirtual() {
-//        return virtual;
-//    }
-//
-//    public void setVirtual(CheckBox virtual) {
-//        this.virtual = virtual;
-//    }
-
     public CheckBox getKey() {
         return key;
     }
@@ -164,17 +149,8 @@ public class DesignTableModel {
         this.comment = comment;
     }
 
-    public MultipleHandler<TableColumnMeta, String, TableColumnMeta.TableColumnEnum> getCallback() {
-        return callback;
-    }
-
-    public void setCallback(MultipleHandler<TableColumnMeta, String, TableColumnMeta.TableColumnEnum> callback) {
-        this.callback = callback;
-    }
-
-    public static DesignTableModel build(final TableColumnMeta meta) {
-        var model = new DesignTableModel();
-
+    public static DesignTableModel build(final TableColumnMeta meta, final DesignTableTab tableTab) {
+        var model = new DesignTableModel(tableTab);
 
         model.getField().setText(meta.getField());
         model.getFieldType().setText(meta.getType());
@@ -194,8 +170,10 @@ public class DesignTableModel {
         return model;
     }
 
-    public static List<DesignTableModel> build(final List<TableColumnMeta> metas) {
-        return metas.stream().map(DesignTableModel::build).collect(Collectors.toList());
+    public static List<DesignTableModel> build(final List<TableColumnMeta> metas, DesignTableTab designTableTab) {
+        return metas.stream()
+                .map(meta -> build(meta, designTableTab))
+                .collect(Collectors.toList());
     }
 
     public String getDefaultValue() {
@@ -262,7 +240,6 @@ public class DesignTableModel {
                 ", fieldLength=" + fieldLength.getText() +
                 ", fieldPoint=" + fieldPoint.getText() +
                 ", nullable=" + nullable.getText() +
-//                ", virtual=" + virtual.getText() +
                 ", key=" + key.getText() +
                 ", comment=" + comment.getText() +
                 ", defaultValue=" + defaultValue.get() +

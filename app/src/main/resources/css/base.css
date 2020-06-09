@@ -92,11 +92,6 @@
     -fx-background-color: #ffffff;
 }
 
-.jfx-slider .thumb {
-    -fx-pref-width: 7px;
-    -fx-pref-height: 7px;
-}
-
 .null-style {
     -fx-text-fill: #D1d4d7 !important;
 }
@@ -136,4 +131,21 @@
 .progress-indicator {
     -fx-pref-width: 20px;
     -fx-pref-height: 20px;
+}
+
+.work-station-pane {
+    -fx-background-color: #ffffff;
+}
+
+.check-box {
+    -fx-border-width: 1px;
+    -fx-border-color: #949494;
+}
+
+.check-box * {
+    -fx-background-color: transparent;
+}
+
+.check-box:selected {
+    -fx-background-color: #50B1FF;
 }

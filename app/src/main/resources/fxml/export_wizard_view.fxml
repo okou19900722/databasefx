@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import java.net.URL?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.openjfx.database.app.controller.ExportWizardController">
+    <stylesheets>
+        <URL value="@/css/export_wizard_style.css"/>
+    </stylesheets>
+    <top>
+        <HBox styleClass="title-box">
+            <Label fx:id="wizardTitle" styleClass="wizard-title"/>
+        </HBox>
+    </top>
+    <center>
+        <Pagination pageCount="3" fx:id="pagination"/>
+    </center>
+    <bottom>
+        <HBox styleClass="bottom-box">
+            <HBox>
+                <Button text="%app.save"/>
+            </HBox>
+            <HBox HBox.hgrow="ALWAYS" styleClass="right-box">
+                <Button text="上一步" onAction="#last"/>
+                <Button text="下一步" onAction="#next"/>
+                <Button text="取消" onAction="#completeOrCancel" fx:id="startOrCancel"/>
+            </HBox>
+        </HBox>
+    </bottom>
+    <VBox>
+
+    </VBox>
+</BorderPane>

@@ -5,7 +5,9 @@ import com.openjfx.database.app.config.Constants;
 import com.openjfx.database.app.controller.DatabaseFxController;
 import com.openjfx.database.app.controls.BaseTreeNode;
 import com.openjfx.database.app.component.MainTabPane;
+import com.openjfx.database.app.model.ExportWizardModel;
 import com.openjfx.database.app.model.tab.meta.DesignTabModel;
+import com.openjfx.database.app.stage.ExportWizardStage;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.app.utils.EventBusUtils;
 import com.openjfx.database.common.VertexUtils;
@@ -44,6 +46,7 @@ public class TableTreeNode extends BaseTreeNode<String> {
 
         var design = new MenuItem(I18N.getString("menu.databasefx.tree.design.table"));
         var delete = new MenuItem(I18N.getString("menu.databasefx.tree.delete.table"));
+        var exportData = new MenuItem(I18N.getString("menu.databasefx.tree.export.data"));
 
         design.setOnAction(e -> EventBusUtils.openDesignTab(getUuid(), getScheme(), tableName, DesignTabModel.DesignTableType.UPDATE));
         delete.setOnAction(e -> {
@@ -62,7 +65,11 @@ public class TableTreeNode extends BaseTreeNode<String> {
 
             future.onFailure(t -> DialogUtils.showErrorDialog(t, I18N.getString("menu.databasefx.tree.delete.table.fail")));
         });
-        addMenuItem(design, delete);
+        exportData.setOnAction(event -> {
+            var model = new ExportWizardModel(getUuid(), scheme, tableName);
+            new ExportWizardStage(model);
+        });
+        addMenuItem(design, exportData, delete);
     }
 
     public String getScheme() {

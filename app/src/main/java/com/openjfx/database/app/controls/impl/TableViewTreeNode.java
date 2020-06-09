@@ -45,7 +45,7 @@ public class TableViewTreeNode extends BaseTreeNode<String> {
         var delete = new MenuItem(I18N.getString("menu.databasefx.tree.delete.table"));
 
 
-        design.setOnAction(e -> EventBusUtils.closeTableTab(getUuid(), scheme, tableName));
+        design.setOnAction(e -> EventBusUtils.openDesignTab(getUuid(), scheme, tableName, DesignTabModel.DesignTableType.UPDATE));
         delete.setOnAction(e -> {
             var tips = I18N.getString("menu.databasefx.tree.delete.table.tips") + " " + tableName + "?";
             var result = DialogUtils.showAlertConfirm(tips);
@@ -53,14 +53,10 @@ public class TableViewTreeNode extends BaseTreeNode<String> {
                 return;
             }
             var pool = DatabaseFX.DATABASE_SOURCE.getDataBaseSource(getUuid());
-            var future = pool.getDdl().dropTable(scheme + "." + tableName);
+            var future = pool.getDdl().dropView(scheme + "." + tableName);
 
             future.onSuccess(ar -> {
-                var message = new JsonObject();
-                var flag = getUuid() + "_" + scheme + "_" + tableName;
-                message.put(ACTION, MainTabPane.EventBusAction.REMOVE);
-                message.put(FLAG, flag);
-                VertexUtils.eventBus().send(MainTabPane.EVENT_BUS_ADDRESS, message);
+                EventBusUtils.closeTableTab(getUuid(), scheme, tableName);
                 Platform.runLater(() -> getParent().getChildren().remove(this));
             });
 
