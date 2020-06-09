@@ -70,7 +70,7 @@ public class DQLImpl implements DQL {
         future.onSuccess(rs -> {
             var views = new ArrayList<String>();
             rs.forEach(row -> {
-                var table = row.getString(0);
+                var table = StringUtils.getObjectStrElseGet(row.getValue(0), "");
                 views.add(table);
             });
             promise.complete(views);
@@ -96,11 +96,11 @@ public class DQLImpl implements DQL {
             for (var row : rows) {
 
                 var meta = new TableColumnMeta();
-                var type = StringUtils.getObjectStrElse(row.getValue("Type"), "");
-                var extra = StringUtils.getObjectStrElse(row.getValue("Extra"), "");
-                var key = StringUtils.getObjectStrElse(row.getValue("Key"), "");
-                var collation = StringUtils.getObjectStrElse(row.getValue("Collation"), "");
-                var defaultValue = StringUtils.getObjectStrElse(row.getValue("Default"), "");
+                var type = StringUtils.getObjectStrElseGet(row.getValue("Type"), "");
+                var extra = StringUtils.getObjectStrElseGet(row.getValue("Extra"), "");
+                var key = StringUtils.getObjectStrElseGet(row.getValue("Key"), "");
+                var collation = StringUtils.getObjectStrElseGet(row.getValue("Collation"), "");
+                var defaultValue = StringUtils.getObjectStrElseGet(row.getValue("Default"), "");
                 var comment = row.getValue("Comment").toString();
 
                 meta.setField(row.getString("Field"));
@@ -241,8 +241,8 @@ public class DQLImpl implements DQL {
             }
             var list = new ArrayList<String>();
             for (Row row : ar.result()) {
-                var user = StringUtils.getObjectStrElse(row.getValue("User"), "");
-                var host = StringUtils.getObjectStrElse(row.getValue("Host"), "");
+                var user = StringUtils.getObjectStrElseGet(row.getValue("User"), "");
+                var host = StringUtils.getObjectStrElseGet(row.getValue("Host"), "");
                 list.add(user + '@' + host);
             }
             promise.complete(list);

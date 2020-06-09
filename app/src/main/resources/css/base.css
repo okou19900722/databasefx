@@ -100,8 +100,12 @@
     -fx-background-color: #FFF0FF !important;
 }
 
-.tree-view .tree-cell:selected, .table-view .table-cell:selected {
-    -fx-background-color: #3962EF;
+/*.tree-view .tree-cell:selected, .table-view .table-cell:selected {*/
+/*    -fx-background-color: #3962EF;*/
+/*}*/
+
+.tree-view .tree-cell:selected, .table-view .table-cell:focused {
+    -fx-background-color: #C1CEFA;
 }
 
 .split-pane {
