@@ -35,7 +35,7 @@ public class DQLImpl implements DQL {
         future.onSuccess(r -> {
             var schemes = new ArrayList<String>();
             r.forEach(row -> {
-                var scheme = row.getString(0);
+                var scheme = row.getValue(0).toString();
                 schemes.add(scheme);
             });
             promise.complete(schemes);
@@ -53,7 +53,7 @@ public class DQLImpl implements DQL {
         future.onSuccess(r -> {
             var schemes = new ArrayList<String>();
             r.forEach(row -> {
-                var table = row.getString(0);
+                var table = row.getValue(0).toString();
                 schemes.add(table);
             });
             promise.complete(schemes);
@@ -94,13 +94,14 @@ public class DQLImpl implements DQL {
             var metas = new ArrayList<TableColumnMeta>();
 
             for (var row : rows) {
+
                 var meta = new TableColumnMeta();
-                var type = row.getString("Type");
-                var extra = row.getString("Extra");
-                var collation = row.getString("Collation");
-                var key = row.getString("Key");
-                var defaultValue = row.getString("Default");
-                var comment = row.getString("Comment");
+                var type = StringUtils.getObjectStrElse(row.getValue("Type"), "");
+                var extra = StringUtils.getObjectStrElse(row.getValue("Extra"), "");
+                var key = StringUtils.getObjectStrElse(row.getValue("Key"), "");
+                var collation = StringUtils.getObjectStrElse(row.getValue("Collation"), "");
+                var defaultValue = StringUtils.getObjectStrElse(row.getValue("Default"), "");
+                var comment = row.getValue("Comment").toString();
 
                 meta.setField(row.getString("Field"));
                 meta.setOriginalType(type);
@@ -112,7 +113,7 @@ public class DQLImpl implements DQL {
                 meta.setKey(key);
                 meta.setPrimaryKey(key.contains("PRI"));
                 meta.setCharset(charset.getCharset(collation));
-                meta.setDefault(defaultValue == null ? "" : defaultValue);
+                meta.setDefault(defaultValue);
                 meta.setDecimalPoint(dataType.getDataFieldDecimalPoint(type));
                 meta.setExtra(extra);
                 meta.setPrivileges(row.getString("Privileges"));
@@ -230,20 +231,19 @@ public class DQLImpl implements DQL {
     }
 
     @Override
-    public Future<List<String[]>> getCurrentDatabaseUserList() {
-        var promise = Promise.<List<String[]>>promise();
-        var sql = "SELECT Host,User FROM mysql.user";
+    public Future<List<String>> getCurrentDatabaseUserList() {
+        var promise = Promise.<List<String>>promise();
+        var sql = "SELECT * FROM mysql.user";
         client.query(sql).onComplete(ar -> {
             if (ar.failed()) {
                 promise.fail(ar.cause());
                 return;
             }
-            var list = new ArrayList<String[]>();
+            var list = new ArrayList<String>();
             for (Row row : ar.result()) {
-                var field = new String[2];
-                field[0] = row.getBuffer(0).toString();
-                field[1] = row.getBuffer(1).toString();
-                list.add(field);
+                var user = StringUtils.getObjectStrElse(row.getValue("User"), "");
+                var host = StringUtils.getObjectStrElse(row.getValue("Host"), "");
+                list.add(user + '@' + host);
             }
             promise.complete(list);
         });

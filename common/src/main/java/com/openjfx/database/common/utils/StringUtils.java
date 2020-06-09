@@ -36,4 +36,21 @@ public class StringUtils {
         var format = DateTimeFormatter.ofPattern(pattern);
         return dateTime.format(format);
     }
+
+    /**
+     * obtain object str value {@link Object#toString()}
+     *
+     * @param obj          target object
+     * @param defaultValue default value
+     * @return str
+     */
+    public static String getObjectStrElse(Object obj, String defaultValue) {
+        final String str;
+        if (obj != null) {
+            str = obj.toString();
+        } else {
+            str = defaultValue;
+        }
+        return str;
+    }
 }

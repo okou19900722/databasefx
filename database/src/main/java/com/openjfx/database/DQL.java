@@ -98,6 +98,6 @@ public interface DQL {
      *
      * @return user list
      */
-    Future<List<String[]>> getCurrentDatabaseUserList();
+    Future<List<String>> getCurrentDatabaseUserList();
 
 }

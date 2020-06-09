@@ -39,8 +39,7 @@ public class UserFolderNode extends BaseTreeNode<String> {
         var future = pool.getDql().getCurrentDatabaseUserList();
         future.onSuccess(list -> {
             var children = new ArrayList<UserTreeNode>();
-            for (String[] strings : list) {
-                var user = strings[1] + "@" + strings[0];
+            for (String user : list) {
                 var node = new UserTreeNode(param.get(), user);
                 children.add(node);
             }

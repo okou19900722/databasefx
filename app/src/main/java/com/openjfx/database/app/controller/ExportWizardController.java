@@ -4,6 +4,7 @@ import com.openjfx.database.app.BaseController;
 import com.openjfx.database.app.component.paginations.ExportWizardFormatPage;
 import com.openjfx.database.app.component.paginations.ExportWizardInfoPage;
 import com.openjfx.database.app.component.paginations.ExportWizardSelectColumnPage;
+import com.openjfx.database.app.factory.ExportFactory;
 import com.openjfx.database.app.model.ExportWizardModel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -44,7 +45,9 @@ public class ExportWizardController extends BaseController<ExportWizardModel> {
      * select column page
      */
     private ExportWizardSelectColumnPage selectColumnPage;
-
+    /**
+     * info wizard info page
+     */
     private ExportWizardInfoPage infoPage;
 
     @Override
@@ -98,7 +101,15 @@ public class ExportWizardController extends BaseController<ExportWizardModel> {
     public void completeOrCancel(ActionEvent event) {
         var index = pagination.getCurrentPageIndex();
         if (index == pagination.getPageCount() - 1) {
-            //start
+            infoPage.reset();
+            var factory = ExportFactory.factory(data);
+            factory.textProperty().addListener((observable, oldValue, newValue) -> {
+                infoPage.appendStr(newValue);
+            });
+            factory.progressProperty().addListener((observable, oldValue, newValue) -> {
+                infoPage.updateProgressValue(newValue.doubleValue());
+            });
+            factory.start();
         } else {
             stage.close();
         }

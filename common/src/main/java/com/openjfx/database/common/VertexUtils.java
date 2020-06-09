@@ -6,26 +6,26 @@ import io.vertx.core.file.FileSystem;
 import io.vertx.core.json.JsonObject;
 
 /**
- * vertx toolkit 工具类
+ * vertx toolkit utils
  *
  * @author yangkui
  * @since 1.0
  */
 public class VertexUtils {
     /*
-     * 在国内这个大环境下,禁用vertx默认dns解析器是有必要的
+     * In this domestic environment, it is necessary to disable the default DNS resolver of vertx
      */
     static {
         System.setProperty("vertx.disableDnsResolver", "true");
     }
 
     /**
-     * vertx实例对象
+     * Vertx instance object
      */
     private static final Vertx VERTX = Vertx.vertx();
 
     /**
-     * vertx 文件系统
+     * Vertx file system
      */
     private static final FileSystem FILE_SYSTEM = VERTX.fileSystem();
 
