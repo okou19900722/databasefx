@@ -66,6 +66,7 @@
 
 .export-wizard-select-column-page .top-box {
     -fx-padding: 10px;
+    -fx-spacing: 10px;
 }
 
 .export-wizard-select-column-page .export-wizard-select-column-item {

@@ -33,7 +33,7 @@ public class ExportWizardController extends BaseController<ExportWizardModel> {
 
     private static final String[] TITLE = {
             "向导可以让你指定导出数据的细节。你要使用哪一种导出格式?(1/3)",
-            "你可以选择导出哪些列。(2/3)",
+            "你可以选择导出哪些列或者定制化导出列。(2/3)",
             "我们已收集向导导出数据所需要的全部信息。点击[开始]按钮开始导出。(3/3)"
     };
     /**
