@@ -1,6 +1,5 @@
 package com.openjfx.database.common.utils;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
@@ -44,7 +43,7 @@ public class StringUtils {
      * @param defaultValue default value
      * @return str
      */
-    public static String getObjectStrElse(Object obj, String defaultValue) {
+    public static String getObjectStrElseGet(Object obj, String defaultValue) {
         final String str;
         if (obj != null) {
             str = obj.toString();
