@@ -21,6 +21,19 @@ jobs:
       with:
         java-version: 14
         java-package: jdk
+    # add cache to improve workflow execution time
+    - name: Cache .gradle/caches
+      uses: actions/cache@v1
+      with:
+        path: ~/.gradle/caches
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+        restore-keys: ${{ runner.os }}-gradle-
+    - name: Cache .gradle/wrapper
+      uses: actions/cache@v1
+      with:
+        path: ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/*.gradle') }}
+        restore-keys: ${{ runner.os }}-gradle-wrapper-
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
