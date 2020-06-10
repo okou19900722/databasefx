@@ -155,6 +155,10 @@ public class ExportFactory {
         writerFile(json.toBuffer().getBytes());
     }
 
+    /**
+     * Export table as csv
+     * @param map table data
+     */
     private void exportAsCsv(LinkedHashMap<String, List<String>> map) {
         String fileName=model.getPath();
         File csvFile;
