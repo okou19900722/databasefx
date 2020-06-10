@@ -1,6 +1,8 @@
 package com.openjfx.database.common;
 
+import io.vertx.core.Future;
 import io.vertx.core.Vertx;
+import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.file.FileSystem;
 import io.vertx.core.json.JsonObject;
@@ -44,6 +46,17 @@ public class VertexUtils {
 
     public static EventBus eventBus() {
         return VERTX.eventBus();
+    }
+
+    /**
+     * writer file
+     *
+     * @param path  file path
+     * @param bytes byte
+     * @return return writer result
+     */
+    public static Future<Void> writerFile(String path, byte[] bytes) {
+        return FILE_SYSTEM.writeFile(path, Buffer.buffer(bytes));
     }
 
     /**

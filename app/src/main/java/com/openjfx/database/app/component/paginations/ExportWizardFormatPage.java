@@ -68,34 +68,44 @@ public class ExportWizardFormatPage extends BorderPane {
         /**
          * txt
          */
-        TXT,
+        TXT("txt"),
         /**
          * csv
          */
-        CSV,
+        CSV("csv"),
         /**
          * html
          */
-        HTML,
+        HTML("html"),
         /**
          * excel
          */
-        EXCEL,
+        EXCEL("xls"),
         /**
          * excel(2007 later)
          */
-        EXCEL_PRIOR,
+        EXCEL_PRIOR("xlsx"),
         /**
          * SQL script
          */
-        SQL_SCRIPT,
+        SQL_SCRIPT("sql"),
         /**
          * xml
          */
-        XML,
+        XML("xml"),
         /**
          * JSON
          */
-        JSON
+        JSON("json");
+
+        private final String suffix;
+
+        ExportDataType(String suffix) {
+            this.suffix = suffix;
+        }
+
+        public String getSuffix() {
+            return suffix;
+        }
     }
 }

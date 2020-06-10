@@ -31,6 +31,10 @@ public class ExportWizardModel {
      */
     private String customExportSql;
     /**
+     * save path
+     */
+    private String path;
+    /**
      * user select table column
      */
     private List<TableColumnMeta> selectTableColumn = new ArrayList<>();
@@ -92,6 +96,14 @@ public class ExportWizardModel {
 
     public void setSelectColumnPattern(ExportWizardSelectColumnPage.SelectColumnPattern selectColumnPattern) {
         this.selectColumnPattern = selectColumnPattern;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 
     @Override

@@ -1,10 +1,9 @@
 package com.openjfx.database.app.component.paginations;
 
+import com.openjfx.database.app.controls.SQLEditor;
 import com.openjfx.database.app.model.ExportWizardModel;
 import javafx.application.Platform;
-import javafx.beans.property.StringProperty;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 
 /**
@@ -17,7 +16,7 @@ public class ExportWizardInfoPage extends BorderPane {
     /**
      * export text info
      */
-    private final TextArea textArea = new TextArea();
+    private final SQLEditor textArea = new SQLEditor();
     /**
      * export progress info
      */
@@ -26,6 +25,7 @@ public class ExportWizardInfoPage extends BorderPane {
     public ExportWizardInfoPage(ExportWizardModel model) {
         textArea.setEditable(false);
         progressBar.setProgress(0);
+        textArea.setWrapText(true);
         setCenter(textArea);
         setBottom(progressBar);
         getStyleClass().add("export-wizard-info");
