@@ -98,6 +98,7 @@ public class ExportFactory {
                 case JSON -> exportAsJson(map);
                 case EXCEL -> exportAsExcel(map);
                 case EXCEL_PRIOR -> exportAsSeniorExcel(map);
+                case HTML -> exportAsHtml(map);
                 default -> exportAsTxt(map);
             }
         });
@@ -199,7 +200,7 @@ public class ExportFactory {
     /**
      * Encapsulation is used to unify versions before and after 07
      *
-     * @param map table data
+     * @param map   table data
      * @param sheet 07 after and before sheet
      */
     private void updateSheet(Map<String, List<String>> map, Sheet sheet) {
@@ -228,6 +229,54 @@ public class ExportFactory {
         }
     }
 
+    /**
+     * Export table data as html
+     *
+     * @param map table data
+     */
+    private void exportAsHtml(Map<String, List<String>> map) {
+        var templatePath = "assets/html/export_html_template.html";
+        VertexUtils.getFileSystem().readFile(templatePath, ar -> {
+            if (ar.failed()) {
+                var str = "Export failed:\r\n html template file not found!";
+                setText(str);
+                return;
+            }
+            var title = "{{TABLE_TITLE}}";
+            var content = "{{TABLE_CONTENT}}";
+            var text = ar.result().toString().replace(title, model.getTable());
+            var table = new StringBuilder();
+            table.append("<tr>");
+            for (String s : map.keySet()) {
+                table.append("<th>").append(s).append("</th>");
+            }
+            table.append("</tr>");
+            var values = map.values();
+            var list = new ArrayList<String>();
+            for (List<String> value : values) {
+                list.addAll(value);
+            }
+            var rowSize = list.size() / map.size();
+            for (int j = 0; j < rowSize; j++) {
+                table.append("<tr>");
+                var k = 0;
+                while (k < map.size()) {
+                    var td = list.get(k * rowSize);
+                    table.append("<td>").append(td).append("</td>");
+                    k++;
+                }
+                table.append("</tr>");
+            }
+            text = text.replace(content, table.toString());
+            writerFile(text.getBytes());
+        });
+    }
+
+    /**
+     * Export table data as TXT
+     *
+     * @param map table data
+     */
     private void exportAsTxt(Map<String, List<String>> map) {
 
     }
