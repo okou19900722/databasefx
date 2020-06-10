@@ -397,4 +397,24 @@ public class SQLGeneratorImpl implements SQLGenerator {
         }
         return key;
     }
+
+    @Override
+    public String select(List<TableColumnMeta> metas, String table) {
+        var tableName = SQLHelper.escapeMysqlField(table);
+        var sb = new StringBuilder();
+        sb.append("SELECT ");
+        var i = 0;
+        for (TableColumnMeta meta : metas) {
+            sb.append(meta.getField());
+            if (i == metas.size() - 1) {
+                sb.append(" ");
+            } else {
+                sb.append(",");
+            }
+            i++;
+        }
+        sb.append(" FROM ");
+        sb.append(tableName);
+        return sb.toString();
+    }
 }

@@ -42,4 +42,12 @@ public interface SQLGenerator {
      * @return create table sql
      */
     String createTable(String table, List<RowChangeModel> changeModels);
+
+    /**
+     * generate select sql
+     *
+     * @param metas table column meta
+     * @return sql statement
+     */
+    String select(List<TableColumnMeta> metas, String table);
 }

@@ -7,10 +7,12 @@ import com.openjfx.database.model.TableColumnMeta;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 
 import java.util.stream.Collectors;
 
@@ -46,24 +48,52 @@ public class ExportWizardSelectColumnPage extends BorderPane {
     private final ListView<NormalColumnNode> listView = new ListView<>();
     private final SQLEditor sqlEditor = new SQLEditor();
     private final ExportWizardModel model;
+    private final Pagination pagination = new Pagination();
+    private final VBox vBox = new VBox();
 
     public ExportWizardSelectColumnPage(ExportWizardModel model) {
         this.model = model;
 
+        var topBox = new HBox();
+        var bottomBox = new HBox();
         var normal = new RadioButton("常规");
         var senior = new RadioButton("高级");
-        var topBox = new HBox();
+        var entireSelect = new Button("全选");
+        var cancelSelect = new Button("取消全选");
 
         normal.setUserData(NORMAL);
         senior.setUserData(SENIOR);
+        VBox.setVgrow(listView, Priority.ALWAYS);
+        vBox.getChildren().addAll(listView, bottomBox);
+        bottomBox.getChildren().addAll(entireSelect, cancelSelect);
 
         toggleGroup.getToggles().addAll(normal, senior);
-        toggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> updatePattern(model));
+
         topBox.getChildren().addAll(normal, senior);
         setTop(topBox);
+        setCenter(pagination);
         updatePattern(model);
+        pagination.setPageFactory((index) -> {
+            final Node node;
+            if (index == 0) {
+                node = vBox;
+            } else {
+                node = sqlEditor;
+            }
+            return node;
+        });
+
+        bottomBox.getStyleClass().add("bottom-box");
         topBox.getStyleClass().add("top-box");
         getStyleClass().add("export-wizard-select-column-page");
+
+        //register all select or cancel all select event
+        cancelSelect.setOnAction(event -> listView.getItems().forEach(t -> t.select(false)));
+        entireSelect.setOnAction(event -> listView.getItems().forEach(t -> t.select(true)));
+
+        toggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> updatePattern(model));
+        //Note that row must place after toggleGroup#selectToggleProperty
+        updatePattern(model);
         //listener sql-editor text change
         sqlEditor.textProperty().addListener((observable, oldValue, newValue) -> model.setCustomExportSql(newValue));
     }
@@ -82,10 +112,10 @@ public class ExportWizardSelectColumnPage extends BorderPane {
         }
         var userData = selectItem.getUserData();
         if (userData == NORMAL) {
-            setCenter(listView);
+            pagination.setCurrentPageIndex(0);
             initTableColumn(model);
         } else {
-            setCenter(sqlEditor);
+            pagination.setCurrentPageIndex(1);
         }
         if (model.getSelectColumnPattern() != userData) {
             model.setSelectColumnPattern((SelectColumnPattern) userData);
@@ -113,26 +143,37 @@ public class ExportWizardSelectColumnPage extends BorderPane {
      * @param status select/un-select
      */
     private void selectChange(TableColumnMeta meta, Boolean status) {
+        var selectTableColumn = model.getSelectTableColumn();
         if (status) {
-            model.getSelectTableColumn().add(meta);
+            if (!selectTableColumn.contains(meta)) {
+                selectTableColumn.add(meta);
+            }
         } else {
-            model.getSelectTableColumn().remove(meta);
+            selectTableColumn.remove(meta);
         }
     }
 
     private class NormalColumnNode extends HBox {
+        private final CheckBox checkBox = new CheckBox();
+        private final TableColumnMeta meta;
 
         public NormalColumnNode(TableColumnMeta meta) {
+            this.meta = meta;
+
             var column = new Label();
             var hBox = new HBox();
             HBox.setHgrow(hBox, Priority.ALWAYS);
             column.setText(meta.getField());
             hBox.getChildren().add(column);
-            var checkBox = new CheckBox();
             getChildren().addAll(checkBox, hBox);
             checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> selectChange(meta, newValue));
             getStyleClass().add("export-wizard-select-column-item");
+        }
 
+        //select or un-select CheckBox
+        public void select(boolean is) {
+            checkBox.setSelected(is);
+            selectChange(meta, is);
         }
     }
 }

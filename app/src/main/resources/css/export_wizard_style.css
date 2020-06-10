@@ -64,7 +64,7 @@
     -fx-background-color: #7ac4f0;
 }
 
-.export-wizard-select-column-page .top-box {
+.export-wizard-select-column-page .top-box, .export-wizard-select-column-page .bottom-box {
     -fx-padding: 10px;
     -fx-spacing: 10px;
 }
@@ -76,9 +76,11 @@
 .export-wizard-info {
     -fx-background-color: #ffffff;
 }
-.export-wizard-info HBox{
+
+.export-wizard-info HBox {
     -fx-padding: 0 10px;
 }
-.export-wizard-info .text-area{
+
+.export-wizard-info .text-area {
     -fx-background-color: transparent;
 }

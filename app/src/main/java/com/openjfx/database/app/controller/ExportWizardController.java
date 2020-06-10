@@ -6,6 +6,8 @@ import com.openjfx.database.app.component.paginations.ExportWizardInfoPage;
 import com.openjfx.database.app.component.paginations.ExportWizardSelectColumnPage;
 import com.openjfx.database.app.factory.ExportFactory;
 import com.openjfx.database.app.model.ExportWizardModel;
+import com.openjfx.database.app.utils.RobotUtils;
+import com.openjfx.database.common.utils.OSUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -13,7 +15,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Pagination;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.FileChooser;
 import javafx.util.Callback;
+
+import java.io.File;
 
 /**
  * Export Wizard controller
@@ -102,6 +107,10 @@ public class ExportWizardController extends BaseController<ExportWizardModel> {
         var index = pagination.getCurrentPageIndex();
         if (index == pagination.getPageCount() - 1) {
             infoPage.reset();
+            if (data.getPath() == null) {
+                var file = openFileSelector();
+                data.setPath(file.getAbsolutePath());
+            }
             var factory = ExportFactory.factory(data);
             factory.textProperty().addListener((observable, oldValue, newValue) -> {
                 infoPage.appendStr(newValue);
@@ -113,5 +122,16 @@ public class ExportWizardController extends BaseController<ExportWizardModel> {
         } else {
             stage.close();
         }
+    }
+
+    private File openFileSelector() {
+        var fileChooser = new FileChooser();
+        var initPath = OSUtils.getUserHome();
+        fileChooser.setInitialDirectory(new File(initPath));
+        fileChooser.setTitle("请选择保存路径");
+        var suffix = data.getExportDataType().getSuffix();
+        var filter = new FileChooser.ExtensionFilter(suffix.toUpperCase() + " File", "*." + suffix);
+        fileChooser.setSelectedExtensionFilter(filter);
+        return fileChooser.showSaveDialog(getStage());
     }
 }
