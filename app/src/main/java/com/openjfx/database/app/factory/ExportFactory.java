@@ -8,6 +8,7 @@ import com.openjfx.database.base.AbstractDataBasePool;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.common.utils.StringUtils;
 import com.openjfx.database.model.TableColumnMeta;
+import io.vertx.core.CompositeFuture;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.sqlclient.Row;
@@ -19,11 +20,16 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.dom4j.dom.DOMDocument;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 /**
@@ -99,6 +105,7 @@ public class ExportFactory {
                 case EXCEL -> exportAsExcel(map);
                 case EXCEL_PRIOR -> exportAsSeniorExcel(map);
                 case HTML -> exportAsHtml(map);
+                case XML -> exportAsXml(map);
                 default -> exportAsTxt(map);
             }
         });
@@ -269,6 +276,58 @@ public class ExportFactory {
             }
             text = text.replace(content, table.toString());
             writerFile(text.getBytes());
+        });
+    }
+
+    /**
+     * Export table data as XML
+     *
+     * @param map table data
+     */
+    private void exportAsXml(Map<String, List<String>> map) {
+        var dom = DocumentHelper.createDocument();
+        var root = dom.addElement("RECORDS");
+        var values = map.values();
+        var list = new ArrayList<String>();
+        for (List<String> value : values) {
+            list.addAll(value);
+        }
+        var rowSize = list.size() / map.size();
+        var keys = map.keySet().toArray(new String[0]);
+        for (int i = 0; i < rowSize; i++) {
+            var el = root.addElement("RECORD");
+            var k = 0;
+            while (k < map.size()) {
+                var key = keys[k];
+                var ell = el.addElement(key);
+                ell.setText(list.get(k * rowSize));
+                k++;
+            }
+        }
+        //Write XML file asynchronously
+        var format = OutputFormat.createPrettyPrint();
+        format.setEncoding("UTF-8");
+        var file = new File(model.getPath());
+        var future = CompletableFuture.runAsync(() -> {
+            XMLWriter writer = null;
+            Throwable throwable = null;
+            try {
+                writer = new XMLWriter(new FileOutputStream(file), format);
+                writer.setEscapeText(false);
+                writer.write(dom);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throwable = e;
+            } finally {
+                if (writer != null) {
+                    try {
+                        writer.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            writerResult(throwable);
         });
     }
 
