@@ -8,6 +8,33 @@ package com.openjfx.database.common.utils;
  */
 public class OSUtils {
     /**
+     * System OS type
+     *
+     * @author yangkui
+     * @since 1.0
+     */
+    public enum OsType {
+        /**
+         * linux
+         */
+        LINUX("Linux"),
+        /**
+         * window
+         */
+        WINDOW("Window"),
+        /**
+         * mac
+         */
+        MAC("Mac");
+
+        private final String osName;
+
+        OsType(String osName) {
+            this.osName = osName;
+        }
+    }
+
+    /**
      * 获取操作系统名称
      *
      * @return 返回操作系统名称
@@ -18,9 +45,11 @@ public class OSUtils {
 
     /**
      * 获取用户主目录
+     *
      * @return 返回主目录路径
      */
-    public static String getUserHome(){
+    public static String getUserHome() {
         return System.getProperty("user.home");
     }
+
 }

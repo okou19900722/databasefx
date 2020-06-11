@@ -24,7 +24,6 @@ import com.openjfx.database.app.stage.SQLEditStage;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.app.utils.EventBusUtils;
 import com.openjfx.database.app.utils.TreeDataUtils;
-import com.openjfx.database.common.VertexUtils;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;
@@ -110,11 +109,7 @@ public class DatabaseFxController extends BaseController<Void> {
                 });
             }
         }
-
         var menu = new ContextMenu();
-        treeView.setContextMenu(menu);
-
-        VBox.setVgrow(treeView, Priority.ALWAYS);
 
         treeView.setOnContextMenuRequested(e -> {
             menu.getItems().clear();
@@ -123,6 +118,11 @@ public class DatabaseFxController extends BaseController<Void> {
                 menu.getItems().addAll(((BaseTreeNode<String>) item).getMenus());
             }
         });
+
+        treeView.setContextMenu(menu);
+
+        VBox.setVgrow(treeView, Priority.ALWAYS);
+
 
         treeView.setOnMouseClicked(e -> {
             if (e.getClickCount() >= 2) {
