@@ -1,12 +1,10 @@
 plugins {
-    id 'java'
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.8'
     id 'com.gluonhq.client-gradle-plugin' version '0.1.23'
 }
 
 mainClassName = 'com.openjfx.database.app.DatabaseFX'
-sourceCompatibility = 14
 
 applicationDefaultJvmArgs = ['-Djdk.gtk.version=2', '-Dsun.java2d.opengl=true', '-XX:+UnlockExperimentalVMOptions', '-XX:+UseZGC', '-Xms512M', '-Xmx1024M']
 
@@ -14,8 +12,8 @@ gluonClient {
     graalvmHome = "/home/yangkui/application/graalvm"
 }
 
-group 'com.openjfx.database'
-version '1.0-SNAPSHOT'
+//group 'com.openjfx.database'
+//version '1.0-SNAPSHOT'
 
 javafx {
     version = "14.0.1"

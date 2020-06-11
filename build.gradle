@@ -1,28 +1,32 @@
 buildscript {
     repositories {
-        maven { url 'https://maven.aliyun.com/repository/central' }
-        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
-        maven { url 'https://maven.aliyun.com/repository/google' }
-        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
-        maven { url 'https://maven.aliyun.com/repository/jcenter' }
-        maven { url 'https://maven.aliyun.com/repository/central' }
+        maven { url 'http://maven.aliyun.com/repository/central' }
+        maven { url 'http://maven.aliyun.com/repository/gradle-plugin' }
+        maven { url 'http://maven.aliyun.com/repository/google' }
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { url 'http://maven.aliyun.com/repository/jcenter' }
+        maven { url 'http://maven.aliyun.com/repository/central' }
     }
 }
 
-plugins {
-    id 'java'
-}
-
-group 'com.openjfx.database'
-version '1.0-SNAPSHOT'
-
 allprojects {
+    apply plugin:'java'
+    group 'com.openjfx.database'
+    version= '1.0-SNAPSHOT'
+    sourceCompatibility = 14
+
     repositories {
         maven { url 'https://maven.aliyun.com/repository/central' }
-        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
-        maven { url 'https://maven.aliyun.com/repository/google' }
-        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
-        maven { url 'https://maven.aliyun.com/repository/jcenter' }
-        maven { url 'https://maven.aliyun.com/repository/central' }
+        maven { url 'http://maven.aliyun.com/repository/gradle-plugin' }
+        maven { url 'http://maven.aliyun.com/repository/google' }
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { url 'http://maven.aliyun.com/repository/jcenter' }
+        maven { url 'http://maven.aliyun.com/repository/central' }
+    }
+}
+
+subprojects {
+    dependencies {
+        compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
     }
 }
