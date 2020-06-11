@@ -157,22 +157,24 @@ public class ExportFactory {
 
     /**
      * Export table as csv
+     *
      * @param map table data
      */
     private void exportAsCsv(LinkedHashMap<String, List<String>> map) {
-        String fileName=model.getPath();
+        String fileName = model.getPath();
         File csvFile;
         BufferedWriter csvWtriter = null;
+        Throwable throwable = null;
         try {
             csvFile = new File(fileName);
-            if (!csvFile.exists()){
-                if(!csvFile.createNewFile()){
+            if (!csvFile.exists()) {
+                if (!csvFile.createNewFile()) {
                     throw new Exception("fail to create csv file");
                 }
             }
             csvWtriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
                     csvFile), StandardCharsets.UTF_8), 1024);
-            List<String> headers= new ArrayList<>(map.keySet());
+            List<String> headers = new ArrayList<>(map.keySet());
             // write header
             writeCsvRow(headers, csvWtriter);
             // write items
@@ -181,12 +183,13 @@ public class ExportFactory {
             List<String> rowData;
             for (int i = 0; i < rowCount; i++) {
                 int finalIndex = i;
-                rowData=dataCollect.stream().map(t->t.get(finalIndex)).collect(Collectors.toList());
+                rowData = dataCollect.stream().map(t -> t.get(finalIndex)).collect(Collectors.toList());
                 writeCsvRow(rowData, csvWtriter);
             }
             csvWtriter.flush();
         } catch (Exception e) {
             e.printStackTrace();
+            throwable = e;
         } finally {
             try {
                 assert csvWtriter != null;
@@ -195,12 +198,13 @@ public class ExportFactory {
                 e.printStackTrace();
             }
         }
-
+        writerResult(throwable);
     }
 
     /**
      * write one row data to file
-     * @param row row data
+     *
+     * @param row       row data
      * @param csvWriter BufferedWriter object
      * @throws IOException io exception
      */
@@ -209,7 +213,7 @@ public class ExportFactory {
         for (String item : row) {
             sb.append("\"").append(item).append("\",");
         }
-        sb.deleteCharAt(sb.length()-1);
+        sb.deleteCharAt(sb.length() - 1);
         csvWriter.write(sb.toString());
         csvWriter.newLine();
     }
@@ -286,14 +290,16 @@ public class ExportFactory {
         for (List<String> value : values) {
             list.addAll(value);
         }
-        var rowSize = list.size() / map.size();
-        for (int j = 0; j < rowSize; j++) {
-            var row = sheet.createRow(j + 1);
-            var k = 0;
-            while (k < map.size()) {
-                var cell = row.createCell(k, CellType.STRING);
-                cell.setCellValue(list.get(k * rowSize));
-                k++;
+        if (map.size() > 0) {
+            var rowSize = list.size() / map.size();
+            for (int j = 0; j < rowSize; j++) {
+                var row = sheet.createRow(j + 1);
+                var k = 0;
+                while (k < map.size()) {
+                    var cell = row.createCell(k, CellType.STRING);
+                    cell.setCellValue(list.get(k * rowSize));
+                    k++;
+                }
             }
         }
     }
@@ -325,16 +331,18 @@ public class ExportFactory {
             for (List<String> value : values) {
                 list.addAll(value);
             }
-            var rowSize = list.size() / map.size();
-            for (int j = 0; j < rowSize; j++) {
-                table.append("<tr>");
-                var k = 0;
-                while (k < map.size()) {
-                    var td = list.get(k * rowSize);
-                    table.append("<td>").append(td).append("</td>");
-                    k++;
+            if (map.size() > 0) {
+                var rowSize = list.size() / map.size();
+                for (int j = 0; j < rowSize; j++) {
+                    table.append("<tr>");
+                    var k = 0;
+                    while (k < map.size()) {
+                        var td = list.get(k * rowSize);
+                        table.append("<td>").append(td).append("</td>");
+                        k++;
+                    }
+                    table.append("</tr>");
                 }
-                table.append("</tr>");
             }
             text = text.replace(content, table.toString());
             writerFile(text.getBytes());
