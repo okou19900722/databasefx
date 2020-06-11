@@ -5,11 +5,11 @@
 ![Java CI with Gradle](https://github.com/databasefx/databasefx/workflows/Java%20CI%20with%20Gradle/badge.svg)
 
 ## Build
-要运行databasefx，请执行以下命令：
+在运行databasefx前请先执行以下命令：
 ```
 gradlew build
 ```
-To run the product, execute the following command:
+运行databasefx执行以下命令:
 ```
 gradlew run
 ```
