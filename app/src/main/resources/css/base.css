@@ -1,5 +1,5 @@
 * {
-    -fx-font-size: 16px;
+    -fx-font-size: 1.1em;
     -fx-font-family: "WenQuanYi Zen Hei Mono";
 }
 
@@ -8,7 +8,7 @@
 }
 
 .table-view * {
-    -fx-font-size: 15px;
+    -fx-font-size: 0.95em;
 }
 
 .table-view .column-header-background .filler {
@@ -17,12 +17,12 @@
 
 .table-view .column-header-background .nested-column-header {
     -fx-border-color: #f4f4f4;
-    -fx-border-width: 2px 0 0 0;
+    -fx-border-width: 0.17em 0em 0em 0em;
 }
 
 .table-view .column-header-background .filler {
     -fx-border-color: #f4f4f4;
-    -fx-border-width: 0 0 2px 0;
+    -fx-border-width: 0em 0em 0.17em 0em;
 }
 
 .table-view .table-column {
@@ -35,7 +35,7 @@
 
 .table-view .column-header-background .column-header {
     -fx-background-color: #F5F5F5;
-    -fx-border-width: 0 1px 1px 0;
+    -fx-border-width: 0 0.08em 0.08em 0;
     -fx-border-color: #EDEDED;
     -fx-border-style: solid;
 }
@@ -49,11 +49,11 @@
 }
 
 .table-view .scroll-bar:vertical, .tree-view .scroll-bar:vertical {
-    -fx-pref-width: 13px;
+    -fx-pref-width: 1.08em;
 }
 
 .table-view .scroll-bar:horizontal, .tree-view .scroll-bar:horizontal {
-    -fx-pref-height: 13px;
+    -fx-pref-height: 1.08em;
 }
 
 .scroll-bar .decrement-button {
@@ -74,18 +74,18 @@
 
 .tab-pane .tab-header-area {
     -fx-background-color: #ffffff;
-    -fx-padding: 0;
+    -fx-padding: 0em;
 }
 
 .tab {
     -fx-background-color: #F5F5F5;
     -fx-border-color: #f4f4f4;
-    -fx-border-width: 0 2px 0 0;
+    -fx-border-width: 0em 0.17em 0em 0em;
     -fx-border-style: solid;
 }
 
 .tab .progress-indicator {
-    -fx-pref-width: 20px;
+    -fx-pref-width: 1.7em;
 }
 
 .tab:selected {
@@ -108,16 +108,12 @@
     -fx-background-color: #3962EF;
 }
 
-/*.tree-view .tree-cell:selected, .table-view .table-cell:focused {*/
-/*    -fx-background-color: #C1CEFA;*/
-/*}*/
-
 .split-pane {
     -fx-background-color: #ffffff;
 }
 
 .split-pane-divider {
-    -fx-pref-width: 5px;
+    -fx-pref-width: 0.417em;
     -fx-background-color: #f5f5f5;
 }
 
@@ -127,18 +123,18 @@
 
 .edit-choice-box {
     -fx-border-color: #afafaf;
-    -fx-border-width: 1px;
+    -fx-border-width: 0.083em;
 }
 
 .context-menu {
     -fx-background-color: #ffffff;
-    -fx-border-width: 1px;
+    -fx-border-width: 0.083em;
     -fx-border-color: #BDBDBD;
 }
 
 .progress-indicator {
-    -fx-pref-width: 20px;
-    -fx-pref-height: 20px;
+    -fx-pref-width: 1.67em;
+    -fx-pref-height: 1.67em;
 }
 
 .work-station-pane {
@@ -146,7 +142,7 @@
 }
 
 .check-box {
-    -fx-border-width: 1px;
+    -fx-border-width: 0.083em;
     -fx-border-color: #949494;
 }
 

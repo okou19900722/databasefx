@@ -127,7 +127,8 @@ public class ExportWizardController extends BaseController<ExportWizardModel> {
         var fileChooser = new FileChooser();
         var initPath = OSUtils.getUserHome();
         var suffix = data.getExportDataType().getSuffix();
-        var filter = new FileChooser.ExtensionFilter(String.format("%s File", suffix.toUpperCase()), String.format("*.%s", suffix));
+        var filter = new FileChooser.ExtensionFilter(String.format("%s File", suffix.toUpperCase()),
+                String.format("*.%s", suffix));
         fileChooser.setTitle("请选择保存路径");
         fileChooser.setInitialDirectory(new File(initPath));
         fileChooser.getExtensionFilters().add(filter);

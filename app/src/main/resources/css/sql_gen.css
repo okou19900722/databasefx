@@ -1,18 +1,21 @@
-.root{
-    -fx-padding: 5px;
+.root {
+    -fx-padding: 0.42em;
 }
+
 VBox {
-    -fx-spacing: 15px;
+    -fx-spacing: 1.25em;
 }
 
 .type-box {
-    -fx-spacing: 20px;
+    -fx-spacing: 1.67em;
 }
-.content-box{
-    -fx-padding: 15px 0px 0px 0px;
+
+.content-box {
+    -fx-padding: 1.25em 0em 0em 0em;
 }
-.bottom-box{
+
+.bottom-box {
     -fx-alignment: CENTER_RIGHT;
-    -fx-spacing: 10px;
-    -fx-padding: 10px 0px 0px 0px;
+    -fx-spacing: 0.83em;
+    -fx-padding: 0.83em 0em 0.83em 0em;
 }

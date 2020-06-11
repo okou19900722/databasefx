@@ -12,18 +12,18 @@
 }
 
 .server, .auth {
-    -fx-spacing: 10px;
+    -fx-spacing: 0.83em;
 }
 
 .server .label, .auth .label {
-    -fx-pref-width: 100px;
+    -fx-pref-width: 8.3em;
 }
 
 .bottom-box HBox {
     -fx-alignment: CENTER_RIGHT;
-    -fx-spacing: 10px;
+    -fx-spacing: 0.83em;
 }
 
 .button-box .button {
-    -fx-pref-width: 100px;
+    -fx-pref-width: 8.3em;
 }

@@ -12,14 +12,14 @@
 }
 
 .top-box {
-    -fx-padding: 5px;
-    -fx-spacing: 10px;
+    -fx-padding: .042em;
+    -fx-spacing: 0.83em;
 }
 
 .top-box .button {
-    -fx-border-width: 1px;
+    -fx-border-width: 0.083em;
     -fx-border-color: #F5F5F5;
-    -fx-border-radius: 3px;
+    -fx-border-radius: 0.25em;
 }
 
 .top-box .button:hover {
@@ -28,16 +28,16 @@
 }
 
 .design-table-option .choice-box {
-    -fx-pref-width: 300px;
+    -fx-pref-width: 25em;
 }
 
 .design-table-option {
-    -fx-padding: 10px;
+    -fx-padding: 0.83em;
 }
 
 .table-view .column-header-background .filler {
     -fx-border-color: #f4f4f4;
-    -fx-border-width: 2px 0 2px 0 !important;
+    -fx-border-width: 0.17em 0em 0.17em 0em !important;
 }
 
 .table-view .table-row-cell:even {
@@ -49,5 +49,5 @@
 }
 
 .table-view .table-cell {
-    -fx-padding: 0;
+    -fx-padding: 0em;
 }
