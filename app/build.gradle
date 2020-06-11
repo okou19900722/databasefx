@@ -15,7 +15,7 @@ gluonClient {
 }
 
 group 'com.openjfx.database'
-version 'alpha'
+version '1.0-SNAPSHOT'
 
 javafx {
     version = "14.0.1"
@@ -54,7 +54,7 @@ tasks.withType(JavaCompile) {
 }
 
 jar {
-    from {
+    from {/**/
         //添加依懒到打包文件
         configurations.runtime.collect { zipTree(it) }
     }

@@ -28,6 +28,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -106,12 +107,14 @@ public class ExportFactory {
                 case EXCEL_PRIOR -> exportAsSeniorExcel(map);
                 case HTML -> exportAsHtml(map);
                 case XML -> exportAsXml(map);
+                case CSV -> exportAsCsv(map);
                 default -> exportAsTxt(map);
             }
         });
         //execute sql fail
         future.onFailure(t -> setText(t.getMessage()));
     }
+
 
     private String getModelText() {
         var sb = new StringBuilder();
@@ -150,6 +153,65 @@ public class ExportFactory {
             json.put(entry.getKey(), values);
         }
         writerFile(json.toBuffer().getBytes());
+    }
+
+    /**
+     * Export table as csv
+     * @param map table data
+     */
+    private void exportAsCsv(LinkedHashMap<String, List<String>> map) {
+        String fileName=model.getPath();
+        File csvFile;
+        BufferedWriter csvWtriter = null;
+        try {
+            csvFile = new File(fileName);
+            if (!csvFile.exists()){
+                if(!csvFile.createNewFile()){
+                    throw new Exception("fail to create csv file");
+                }
+            }
+            csvWtriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
+                    csvFile), StandardCharsets.UTF_8), 1024);
+            List<String> headers= new ArrayList<>(map.keySet());
+            // write header
+            writeCsvRow(headers, csvWtriter);
+            // write items
+            final List<List<String>> dataCollect = new ArrayList<>(map.values());
+            int rowCount = dataCollect.stream().mapToInt(List::size).min().orElse(0);
+            List<String> rowData;
+            for (int i = 0; i < rowCount; i++) {
+                int finalIndex = i;
+                rowData=dataCollect.stream().map(t->t.get(finalIndex)).collect(Collectors.toList());
+                writeCsvRow(rowData, csvWtriter);
+            }
+            csvWtriter.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                assert csvWtriter != null;
+                csvWtriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    /**
+     * write one row data to file
+     * @param row row data
+     * @param csvWriter BufferedWriter object
+     * @throws IOException io exception
+     */
+    private void writeCsvRow(List<String> row, BufferedWriter csvWriter) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        for (String item : row) {
+            sb.append("\"").append(item).append("\",");
+        }
+        sb.deleteCharAt(sb.length()-1);
+        csvWriter.write(sb.toString());
+        csvWriter.newLine();
     }
 
     /**
