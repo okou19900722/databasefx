@@ -5,11 +5,10 @@
 }
 
 .bottom-box {
-    -fx-spacing: 10px;
-    -fx-padding: 10px;
+    -fx-spacing: 0.5em;
+    -fx-padding: 0.5em;
 }
 
 .bottom-box .label {
     -fx-text-fill: white;
-    -fx-font-size: 20px;
 }

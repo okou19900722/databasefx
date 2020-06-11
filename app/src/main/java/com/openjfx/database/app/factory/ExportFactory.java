@@ -61,7 +61,7 @@ public class ExportFactory {
      * start export task
      */
     public void start() {
-        setText("Start check export condition.....");
+        setText("Pre export condition check in progress.....");
         var a = model.getSelectColumnPattern() == ExportWizardSelectColumnPage.SelectColumnPattern.NORMAL
                 && model.getSelectTableColumn().isEmpty();
         var b = model.getSelectColumnPattern() == ExportWizardSelectColumnPage.SelectColumnPattern.SENIOR
@@ -74,19 +74,17 @@ public class ExportFactory {
             setText("高级模式下SQL语句不能为空!");
             return;
         }
-        setText(getModelText());
         var sql = buildSql();
-        setText("Build SQL statement:");
-        setText(" " + sql);
         setProgress(0.1);
         var pool = DatabaseFX.DATABASE_SOURCE.getDataBaseSource(model.getUuid());
         var future = pool.getPool().query(sql);
+        setText("Start reading data.......");
         future.onSuccess(rows -> {
             var map = new LinkedHashMap<String, List<String>>();
             var size = rows.columnsNames().size();
             for (Row row : rows) {
                 for (int i = 0; i < size; i++) {
-                    var val = StringUtils.getObjectStrElseGet(row.getValue(i), "");
+                    var val = StringUtils.getObjectStrElseGet(row.getValue(i), "", "yyyy-MM-dd HH:mm:ss");
                     var columnName = row.getColumnName(i);
                     final List<String> list;
                     if (map.containsKey(columnName)) {
@@ -100,6 +98,9 @@ public class ExportFactory {
                 }
                 setProgress(0.8);
             }
+            setText("Read data successfully.......");
+            formatFilePath();
+            setText("Start writing data.......");
             //execute export
             switch (model.getExportDataType()) {
                 case JSON -> exportAsJson(map);
@@ -112,30 +113,7 @@ public class ExportFactory {
             }
         });
         //execute sql fail
-        future.onFailure(t -> setText(t.getMessage()));
-    }
-
-
-    private String getModelText() {
-        var sb = new StringBuilder();
-        sb.append("Export format:\r\n");
-        sb.append(" ");
-        sb.append(model.getExportDataType());
-        sb.append("\r\n");
-        sb.append("Select column model:\r\n");
-        sb.append(" ");
-        sb.append(model.getSelectColumnPattern());
-        sb.append("\r\n");
-        if (model.getSelectColumnPattern() == ExportWizardSelectColumnPage.SelectColumnPattern.NORMAL) {
-            sb.append("Export field:\r\n");
-            for (TableColumnMeta tableColumnMeta : model.getSelectTableColumn()) {
-                sb.append(" ").append(tableColumnMeta.getField());
-            }
-        } else {
-            sb.append("Custom sql statement:\r\n");
-            sb.append(" ").append(model.getCustomExportSql());
-        }
-        return sb.toString();
+        future.onFailure(t -> setText("Failed to read data:" + t.getMessage()));
     }
 
     /**
@@ -157,22 +135,24 @@ public class ExportFactory {
 
     /**
      * Export table as csv
+     *
      * @param map table data
      */
     private void exportAsCsv(LinkedHashMap<String, List<String>> map) {
-        String fileName=model.getPath();
+        String fileName = model.getPath();
         File csvFile;
         BufferedWriter csvWtriter = null;
+        Throwable throwable = null;
         try {
             csvFile = new File(fileName);
-            if (!csvFile.exists()){
-                if(!csvFile.createNewFile()){
+            if (!csvFile.exists()) {
+                if (!csvFile.createNewFile()) {
                     throw new Exception("fail to create csv file");
                 }
             }
             csvWtriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
                     csvFile), StandardCharsets.UTF_8), 1024);
-            List<String> headers= new ArrayList<>(map.keySet());
+            List<String> headers = new ArrayList<>(map.keySet());
             // write header
             writeCsvRow(headers, csvWtriter);
             // write items
@@ -181,12 +161,13 @@ public class ExportFactory {
             List<String> rowData;
             for (int i = 0; i < rowCount; i++) {
                 int finalIndex = i;
-                rowData=dataCollect.stream().map(t->t.get(finalIndex)).collect(Collectors.toList());
+                rowData = dataCollect.stream().map(t -> t.get(finalIndex)).collect(Collectors.toList());
                 writeCsvRow(rowData, csvWtriter);
             }
             csvWtriter.flush();
         } catch (Exception e) {
             e.printStackTrace();
+            throwable = e;
         } finally {
             try {
                 assert csvWtriter != null;
@@ -195,12 +176,13 @@ public class ExportFactory {
                 e.printStackTrace();
             }
         }
-
+        writerResult(throwable);
     }
 
     /**
      * write one row data to file
-     * @param row row data
+     *
+     * @param row       row data
      * @param csvWriter BufferedWriter object
      * @throws IOException io exception
      */
@@ -209,7 +191,7 @@ public class ExportFactory {
         for (String item : row) {
             sb.append("\"").append(item).append("\",");
         }
-        sb.deleteCharAt(sb.length()-1);
+        sb.deleteCharAt(sb.length() - 1);
         csvWriter.write(sb.toString());
         csvWriter.newLine();
     }
@@ -286,14 +268,16 @@ public class ExportFactory {
         for (List<String> value : values) {
             list.addAll(value);
         }
-        var rowSize = list.size() / map.size();
-        for (int j = 0; j < rowSize; j++) {
-            var row = sheet.createRow(j + 1);
-            var k = 0;
-            while (k < map.size()) {
-                var cell = row.createCell(k, CellType.STRING);
-                cell.setCellValue(list.get(k * rowSize));
-                k++;
+        if (map.size() > 0) {
+            var rowSize = list.size() / map.size();
+            for (int j = 0; j < rowSize; j++) {
+                var row = sheet.createRow(j + 1);
+                var k = 0;
+                while (k < map.size()) {
+                    var cell = row.createCell(k, CellType.STRING);
+                    cell.setCellValue(list.get(k * rowSize));
+                    k++;
+                }
             }
         }
     }
@@ -325,16 +309,18 @@ public class ExportFactory {
             for (List<String> value : values) {
                 list.addAll(value);
             }
-            var rowSize = list.size() / map.size();
-            for (int j = 0; j < rowSize; j++) {
-                table.append("<tr>");
-                var k = 0;
-                while (k < map.size()) {
-                    var td = list.get(k * rowSize);
-                    table.append("<td>").append(td).append("</td>");
-                    k++;
+            if (map.size() > 0) {
+                var rowSize = list.size() / map.size();
+                for (int j = 0; j < rowSize; j++) {
+                    table.append("<tr>");
+                    var k = 0;
+                    while (k < map.size()) {
+                        var td = list.get(k * rowSize);
+                        table.append("<td>").append(td).append("</td>");
+                        k++;
+                    }
+                    table.append("</tr>");
                 }
-                table.append("</tr>");
             }
             text = text.replace(content, table.toString());
             writerFile(text.getBytes());
@@ -370,7 +356,7 @@ public class ExportFactory {
         var format = OutputFormat.createPrettyPrint();
         format.setEncoding("UTF-8");
         var file = new File(model.getPath());
-        var future = CompletableFuture.runAsync(() -> {
+        CompletableFuture.runAsync(() -> {
             XMLWriter writer = null;
             Throwable throwable = null;
             try {
@@ -389,7 +375,7 @@ public class ExportFactory {
                     }
                 }
             }
-            writerResult(throwable);
+            this.writerResult(throwable);
         });
     }
 
@@ -421,14 +407,34 @@ public class ExportFactory {
     }
 
     private void writerResult(Throwable throwable) {
-        var str = "Export result:\r\n";
+        final String str;
         if (throwable == null) {
-            str += "  Export success file path:" + model.getPath();
+            str = "File success save in:" + model.getPath();
             setProgress(1);
         } else {
-            str += " Export failed cause:" + throwable.getMessage();
+            str = "Failed to generate file:" + throwable.getMessage();
         }
         setText(str);
+    }
+
+    /**
+     * <p>Because the file selector of Linux platform does not automatically
+     * add the file extension to the path after selecting the file save path,
+     * this function is added to deal with the problem of no suffix in the
+     * exported file of Linux platform
+     * </p>
+     */
+    private void formatFilePath() {
+        var array = model.getPath().split(File.separator);
+        if (array.length == 0) {
+            return;
+        }
+        var lastKey = array[array.length - 1];
+        var suffix = model.getExportDataType().getSuffix();
+        if (!lastKey.matches("(.)*\\." + suffix)) {
+            var path = model.getPath() + "." + suffix;
+            model.setPath(path);
+        }
     }
 
     public double getProgress() {

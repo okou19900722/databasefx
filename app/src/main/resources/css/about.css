@@ -1,11 +1,13 @@
-.center-box{
+.center-box {
     -fx-alignment: CENTER;
-    -fx-spacing: 10px;
+    -fx-spacing: 0.83em;
 }
-.app-info{
-    -fx-spacing: 10px;
+
+.app-info {
+    -fx-spacing: 0.83em;
 }
-.app-info HBox{
+
+.app-info HBox {
     -fx-alignment: center-left;
-    -fx-spacing: 10px;
+    -fx-spacing: 0.83em;
 }

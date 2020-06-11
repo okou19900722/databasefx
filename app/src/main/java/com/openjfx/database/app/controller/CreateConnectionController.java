@@ -99,7 +99,7 @@ public class CreateConnectionController extends BaseController<String> {
         message.put(UUID, param.getUuid());
 
         if (flag) {
-            VertexUtils.eventBus().send(DatabaseFxController.EVENT_ADDRESS, message);
+            VertexUtils.send(DatabaseFxController.EVENT_ADDRESS, message);
         }
 
         stage.close();

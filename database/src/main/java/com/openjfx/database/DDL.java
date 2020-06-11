@@ -30,9 +30,10 @@ public interface DDL {
      * 删除table
      *
      * @param table 表名
+     * @param schem scheme
      * @return 返回删除结果
      */
-    Future<Void> dropTable(String table);
+    Future<Void> dropTable(String table, String schem);
 
     /**
      * delete view

@@ -182,6 +182,23 @@ public class DMLImpl implements DML {
         return promise.future();
     }
 
+    @Override
+    public Future<Integer> renameTable(String table, String target, String scheme) {
+        var t = scheme + "." + table;
+        var tt = scheme + "." + target;
+        var sql = "rename table " + SQLHelper.escapeMysqlField(t) + " to " + SQLHelper.escapeMysqlField(tt);
+        var promise = Promise.<Integer>promise();
+        var future = client.query(sql);
+        future.onComplete(ar -> {
+            if (ar.succeeded()) {
+                promise.complete(ar.result().rowCount());
+            } else {
+                promise.fail(ar.cause());
+            }
+        });
+        return promise.future();
+    }
+
     /**
      * Get auto increment field
      */

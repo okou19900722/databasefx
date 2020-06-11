@@ -24,8 +24,8 @@ public class DDLImpl implements DDL {
     }
 
     @Override
-    public Future<Void> dropTable(String table) {
-        var tableName = SQLHelper.escapeMysqlField(table);
+    public Future<Void> dropTable(String table, String scheme) {
+        var tableName = SQLHelper.escapeMysqlField(scheme + "." + table);
         var sql = "DROP TABLE " + tableName;
         var promise = Promise.<Void>promise();
         var future = client.query(sql);

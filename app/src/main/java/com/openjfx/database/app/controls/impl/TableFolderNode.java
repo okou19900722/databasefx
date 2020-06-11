@@ -1,12 +1,9 @@
 package com.openjfx.database.app.controls.impl;
 
-import com.openjfx.database.app.config.Constants;
-import com.openjfx.database.app.controller.DatabaseFxController;
 import com.openjfx.database.app.controls.BaseTreeNode;
 import com.openjfx.database.app.model.tab.meta.DesignTabModel;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.app.utils.EventBusUtils;
-import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.model.ConnectionParam;
 import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;
@@ -47,7 +44,7 @@ public class TableFolderNode extends BaseTreeNode<String> {
         flush.setOnAction((event) -> flush());
 
         //register event bus
-        VertexUtils.eventBus().<JsonObject>consumer(eventBusAddress, msg -> {
+        EventBusUtils.<JsonObject>registerEventBus(eventBusAddress, msg -> {
             var body = msg.body();
             var action = body.getString(ACTION);
             if (EventBusAction.FLUSH_TABLE == EventBusAction.valueOf(action)) {

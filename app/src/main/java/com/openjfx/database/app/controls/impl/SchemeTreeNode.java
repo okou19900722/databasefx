@@ -6,6 +6,7 @@ import com.openjfx.database.app.component.MainTabPane;
 import com.openjfx.database.app.config.Constants;
 import com.openjfx.database.app.stage.SQLEditStage;
 import com.openjfx.database.app.utils.DialogUtils;
+import com.openjfx.database.app.utils.EventBusUtils;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.model.ConnectionParam;
 import io.vertx.core.json.JsonObject;
@@ -29,38 +30,33 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
 
     private static final Image ICON_IMAGE = getLocalImage(20, 20, "db_icon.png");
 
-    private final String scheme;
-
     private final MenuItem close;
 
     public SchemeTreeNode(String scheme, ConnectionParam param) {
         super(param, ICON_IMAGE);
-        this.scheme = scheme;
+
         setValue(scheme);
 
-        var tableFolder = new TableFolderNode(getParam(), scheme);
-        var viewFolder = new ViewFolderNode(getParam(), scheme);
+        var tableFolder = new TableFolderNode(getParam(), getValue());
+        var viewFolder = new ViewFolderNode(getParam(), getValue());
 
 
         getChildren().addAll(tableFolder, viewFolder);
 
         close = new MenuItem(I18N.getString("menu.databasefx.tree.close.database"));
 
-        final var deleteMenu = new MenuItem(I18N.getString("menu.databasefx.tree.delete.database"));
-        final var sqlEditor = new MenuItem(I18N.getString("men.databasefx.tree.sql.editor"));
-
-        addMenuItem(sqlEditor, deleteMenu);
-
+        var deleteMenu = new MenuItem(I18N.getString("menu.databasefx.tree.delete.database"));
+        var sqlEditor = new MenuItem(I18N.getString("men.databasefx.tree.sql.editor"));
 
         deleteMenu.setOnAction(event -> {
-            var result = DialogUtils.showAlertConfirm(I18N.getString("menu.databasefx.tree.delete.database.tips") + " " + scheme + "?");
+            var result = DialogUtils.showAlertConfirm(I18N.getString("menu.databasefx.tree.delete.database.tips") + " " + getValue() + "?");
             if (result) {
                 var dml = DATABASE_SOURCE.getDataBaseSource(getUuid()).getDdl();
-                var future = dml.dropDatabase(scheme);
+                var future = dml.dropDatabase(getValue());
                 future.onSuccess(r -> {
-                    closeOpenTab();
                     //delete current node from parent node
                     getParent().getChildren().remove(this);
+                    EventBusUtils.closeSchemeRelationTab(getUuid(), getValue());
                 });
                 future.onFailure(t -> DialogUtils.showErrorDialog(t, I18N.getString("menu.databasefx.tree.delete.database.fail.tips")));
             }
@@ -70,8 +66,8 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
         close.setOnAction(e -> {
             setExpanded(false);
             getChildren().clear();
-            closeOpenTab();
             removeMenu(close);
+            EventBusUtils.closeSchemeRelationTab(getUuid(), getValue());
         });
 
         //open sql editor
@@ -81,16 +77,7 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
             json.put(Constants.SCHEME, getValue());
             new SQLEditStage(json);
         });
-    }
-
-    /**
-     * by event bus notify {@link MainTabPane} close current scheme relative tab
-     */
-    private void closeOpenTab() {
-        var message = new JsonObject();
-        message.put(ACTION, MainTabPane.EventBusAction.REMOVE_MANY);
-        message.put(FLAG, getUuid() + "_" + scheme);
-        VertexUtils.send(MainTabPane.EVENT_BUS_ADDRESS, message);
+        addMenuItem(sqlEditor, deleteMenu);
     }
 
     @Override

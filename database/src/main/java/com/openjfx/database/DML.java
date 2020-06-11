@@ -80,4 +80,14 @@ public interface DML {
      * @return 返回受影响行数
      */
     Future<Integer> executeSqlUpdate(String sql);
+
+    /**
+     * Rename table
+     *
+     * @param table  current table name
+     * @param target target table name
+     * @param scheme current scheme
+     * @return result
+     */
+    Future<Integer> renameTable(String table, String target, String scheme);
 }
