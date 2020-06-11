@@ -1,6 +1,7 @@
 package com.openjfx.database.app.component;
 
 import com.openjfx.database.app.component.tabs.TableTab;
+import com.openjfx.database.app.utils.EventBusUtils;
 import com.openjfx.database.common.VertexUtils;
 import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;
@@ -25,13 +26,13 @@ public class MainTabPane extends TabPane {
      */
     public static final String EVENT_BUS_ADDRESS = "controls:mainTabPane";
 
-    {
+    public MainTabPane() {
         registerEventBus();
         getStyleClass().add(TabPane.STYLE_CLASS_FLOATING);
     }
 
     private void registerEventBus() {
-        VertexUtils.eventBus().<JsonObject>consumer(EVENT_BUS_ADDRESS, handler -> {
+        EventBusUtils.<JsonObject>registerEventBus(EVENT_BUS_ADDRESS, handler -> {
             var body = handler.body();
             var action = body.getString(ACTION);
             var flag = body.getString(FLAG);

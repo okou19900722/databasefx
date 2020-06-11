@@ -61,7 +61,7 @@ public class SQLEditController extends BaseController<JsonObject> {
             stage.close();
             return;
         }
-        //加载scheme
+        //load scheme
         var param = client.getConnectionParam();
         final String title;
         if (StringUtils.nonEmpty(scheme)) {

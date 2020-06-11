@@ -5,6 +5,7 @@ import com.openjfx.database.app.DatabaseFX;
 import com.openjfx.database.app.controls.EditChoiceBox;
 import com.openjfx.database.app.controls.SQLEditor;
 import com.openjfx.database.app.utils.DialogUtils;
+import com.openjfx.database.app.utils.EventBusUtils;
 import com.openjfx.database.base.AbstractDatabaseSource;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.common.utils.StringUtils;
@@ -14,6 +15,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TabPane;
+import jdk.jfr.Event;
 
 import static com.openjfx.database.app.config.Constants.ACTION;
 import static com.openjfx.database.app.config.Constants.UUID;
@@ -79,11 +81,7 @@ public class CreateSchemeController extends BaseController<String> {
             var pool = databaseSource.getDataBaseSource(data);
             var future = pool.getDql().executeSql(sql);
             future.onSuccess(rs -> {
-                //event bus notify flush scheme list
-                var msg = new JsonObject();
-                msg.put(ACTION, DatabaseFxController.EventBusAction.FLUSH_SCHEME);
-                msg.put(UUID, data);
-                VertexUtils.send(DatabaseFxController.EVENT_ADDRESS, msg);
+                EventBusUtils.flushScheme(data);
                 //close current stage
                 Platform.runLater(stage::close);
             });

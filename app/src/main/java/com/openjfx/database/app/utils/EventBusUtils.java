@@ -6,10 +6,11 @@ import com.openjfx.database.app.controller.DatabaseFxController;
 import com.openjfx.database.app.controls.impl.TableFolderNode;
 import com.openjfx.database.app.model.tab.meta.DesignTabModel;
 import com.openjfx.database.common.VertexUtils;
+import io.vertx.core.Handler;
+import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
 
-import static com.openjfx.database.app.config.Constants.ACTION;
-import static com.openjfx.database.app.config.Constants.FLAG;
+import static com.openjfx.database.app.config.Constants.*;
 
 /**
  * app event bus utils
@@ -18,6 +19,17 @@ import static com.openjfx.database.app.config.Constants.FLAG;
  * @since 1.0
  */
 public class EventBusUtils {
+    /**
+     * register event bus
+     *
+     * @param eventBusAddress event bus address
+     * @param message         message handler
+     * @param <T>             message data type
+     */
+    public static <T> void registerEventBus(String eventBusAddress, Handler<Message<T>> message) {
+        VertexUtils.eventBus().consumer(eventBusAddress, message);
+    }
+
     /**
      * notify {@link DatabaseFxController} open design tab
      *
@@ -34,6 +46,15 @@ public class EventBusUtils {
         params.put(Constants.ACTION, DatabaseFxController.EventBusAction.OPEN_DESIGN_TAB);
         params.put(Constants.TABLE_NAME, tableName);
         VertexUtils.send(DatabaseFxController.EVENT_ADDRESS, params);
+    }
+
+    /**
+     * Notify {@link MainTabPane} to clear all {@link com.openjfx.database.app.component.BaseTab}
+     */
+    public static void clearMainTab() {
+        var message = new JsonObject();
+        message.put(ACTION, MainTabPane.EventBusAction.CLEAR);
+        VertexUtils.send(MainTabPane.EVENT_BUS_ADDRESS, message);
     }
 
     /**
@@ -65,7 +86,16 @@ public class EventBusUtils {
     }
 
     /**
-     *
+     * Notify {@link MainTabPane} close current scheme relative tab
+     */
+    public static void closeSchemeRelationTab(String uuid, String scheme) {
+        var message = new JsonObject();
+        message.put(ACTION, MainTabPane.EventBusAction.REMOVE_MANY);
+        message.put(FLAG, uuid + "_" + scheme);
+        VertexUtils.send(MainTabPane.EVENT_BUS_ADDRESS, message);
+    }
+
+    /**
      * Notify {@link TableFolderNode} to flush table list
      *
      * @param uuid   uuid
@@ -76,5 +106,17 @@ public class EventBusUtils {
         var address = uuid + "_" + scheme;
         msg.put(ACTION, TableFolderNode.EventBusAction.FLUSH_TABLE);
         VertexUtils.send(address, msg);
+    }
+
+    /**
+     * event bus notify flush scheme list
+     *
+     * @param uuid database flag
+     */
+    public static void flushScheme(String uuid) {
+        var msg = new JsonObject();
+        msg.put(ACTION, DatabaseFxController.EventBusAction.FLUSH_SCHEME);
+        msg.put(UUID, uuid);
+        VertexUtils.send(DatabaseFxController.EVENT_ADDRESS, msg);
     }
 }

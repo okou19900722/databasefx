@@ -15,11 +15,11 @@ import java.util.ResourceBundle;
  */
 public abstract class BaseController<D> implements Initializable {
     /**
-     * 外部数据
+     * extension data
      */
     protected D data;
     /**
-     * stage引用
+     * stage reference
      */
     protected Stage stage;
     /**

@@ -22,6 +22,7 @@ import com.openjfx.database.app.stage.AboutStage;
 import com.openjfx.database.app.stage.CreateConnectionStage;
 import com.openjfx.database.app.stage.SQLEditStage;
 import com.openjfx.database.app.utils.DialogUtils;
+import com.openjfx.database.app.utils.EventBusUtils;
 import com.openjfx.database.app.utils.TreeDataUtils;
 import com.openjfx.database.common.VertexUtils;
 import io.vertx.core.eventbus.Message;
@@ -49,7 +50,6 @@ import static com.openjfx.database.app.config.Constants.SCHEME;
  * @since 1.0
  */
 public class DatabaseFxController extends BaseController<Void> {
-
     /**
      * Top menu bar
      */
@@ -179,8 +179,7 @@ public class DatabaseFxController extends BaseController<Void> {
         });
         //window close->close all connection
         stage.setOnCloseRequest(e -> Platform.exit());
-
-        VertexUtils.eventBus().consumer(EVENT_ADDRESS, this::eventBusHandler);
+        EventBusUtils.registerEventBus(EVENT_ADDRESS, this::eventBusHandler);
     }
 
     /**
@@ -207,9 +206,7 @@ public class DatabaseFxController extends BaseController<Void> {
                 tabPane.getTabs().clear();
                 DATABASE_SOURCE.closeAll();
                 initDbList();
-                var message = new JsonObject();
-                message.put(ACTION, MainTabPane.EventBusAction.CLEAR);
-                VertexUtils.send(MainTabPane.EVENT_BUS_ADDRESS, message);
+                EventBusUtils.clearMainTab();
             }
         }
     }

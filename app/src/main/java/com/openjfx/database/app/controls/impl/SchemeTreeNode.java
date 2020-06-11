@@ -6,6 +6,7 @@ import com.openjfx.database.app.component.MainTabPane;
 import com.openjfx.database.app.config.Constants;
 import com.openjfx.database.app.stage.SQLEditStage;
 import com.openjfx.database.app.utils.DialogUtils;
+import com.openjfx.database.app.utils.EventBusUtils;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.model.ConnectionParam;
 import io.vertx.core.json.JsonObject;
@@ -58,9 +59,9 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
                 var dml = DATABASE_SOURCE.getDataBaseSource(getUuid()).getDdl();
                 var future = dml.dropDatabase(scheme);
                 future.onSuccess(r -> {
-                    closeOpenTab();
                     //delete current node from parent node
                     getParent().getChildren().remove(this);
+                    EventBusUtils.closeSchemeRelationTab(getUuid(), scheme);
                 });
                 future.onFailure(t -> DialogUtils.showErrorDialog(t, I18N.getString("menu.databasefx.tree.delete.database.fail.tips")));
             }
@@ -70,8 +71,8 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
         close.setOnAction(e -> {
             setExpanded(false);
             getChildren().clear();
-            closeOpenTab();
             removeMenu(close);
+            EventBusUtils.closeSchemeRelationTab(getUuid(), scheme);
         });
 
         //open sql editor
@@ -81,16 +82,6 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
             json.put(Constants.SCHEME, getValue());
             new SQLEditStage(json);
         });
-    }
-
-    /**
-     * by event bus notify {@link MainTabPane} close current scheme relative tab
-     */
-    private void closeOpenTab() {
-        var message = new JsonObject();
-        message.put(ACTION, MainTabPane.EventBusAction.REMOVE_MANY);
-        message.put(FLAG, getUuid() + "_" + scheme);
-        VertexUtils.send(MainTabPane.EVENT_BUS_ADDRESS, message);
     }
 
     @Override
