@@ -1,6 +1,6 @@
 # databasefx
 
-This is a free, cross platform, open source database management tool based on JavaFX and vertx SQL client.
+This is a free, cross platform, open source database management tool based on JavaFX and Vertx.
 
 ![Java CI with Gradle](https://github.com/databasefx/databasefx/workflows/Java%20CI%20with%20Gradle/badge.svg)
 

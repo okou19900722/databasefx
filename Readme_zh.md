@@ -1,6 +1,6 @@
 # databasefx
 
-这是一个基于JavaFX和vertx SQL客户端的免费、跨平台、开源的数据库管理工具。
+这是一个基于JavaFX和Vertx的免费、跨平台、开源的数据库管理工具。
 
 ![Java CI with Gradle](https://github.com/databasefx/databasefx/workflows/Java%20CI%20with%20Gradle/badge.svg)
 
