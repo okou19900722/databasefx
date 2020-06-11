@@ -1,5 +1,6 @@
 package com.openjfx.database.common.utils;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
@@ -49,6 +50,23 @@ public class StringUtils {
             str = obj.toString();
         } else {
             str = defaultValue;
+        }
+        return str;
+    }
+
+    /**
+     * obtain object str value {@link Object#toString()}
+     *
+     * @param obj          target object
+     * @param defaultValue default value
+     * @return str
+     */
+    public static String getObjectStrElseGet(Object obj, String defaultValue, String format) {
+        final String str;
+        if (obj instanceof LocalDateTime) {
+            str = StringUtils.localDateTimeToStr((LocalDateTime) obj, format);
+        } else {
+            str = getObjectStrElseGet(obj, defaultValue);
         }
         return str;
     }

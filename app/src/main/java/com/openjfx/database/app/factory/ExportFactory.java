@@ -86,7 +86,7 @@ public class ExportFactory {
             var size = rows.columnsNames().size();
             for (Row row : rows) {
                 for (int i = 0; i < size; i++) {
-                    var val = StringUtils.getObjectStrElseGet(row.getValue(i), "");
+                    var val = StringUtils.getObjectStrElseGet(row.getValue(i), "", "yyyy-MM-dd HH:mm:ss");
                     var columnName = row.getColumnName(i);
                     final List<String> list;
                     if (map.containsKey(columnName)) {
@@ -370,7 +370,7 @@ public class ExportFactory {
         var format = OutputFormat.createPrettyPrint();
         format.setEncoding("UTF-8");
         var file = new File(model.getPath());
-        var future = CompletableFuture.runAsync(() -> {
+        CompletableFuture.runAsync(() -> {
             XMLWriter writer = null;
             Throwable throwable = null;
             try {
@@ -389,7 +389,7 @@ public class ExportFactory {
                     }
                 }
             }
-            writerResult(throwable);
+            ExportFactory.this.writerResult(throwable);
         });
     }
 
