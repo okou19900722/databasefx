@@ -1,5 +1,6 @@
 .bottom-box {
     -fx-padding: 0.83em;
+    -fx-spacing: 1em;
     -fx-background-color: #f5f5f5;
 }
 
@@ -11,8 +12,9 @@
     visibility: hidden;
 }
 
-.bottom-box HBox {
+.bottom-box {
     -fx-background-color: transparent;
+    -fx-alignment: center-right;
 }
 
 .bottom-box .button {
@@ -26,11 +28,6 @@
 
 .bottom-box .button:hover {
     -fx-background-color: #ffffff;
-}
-
-.right-box {
-    -fx-spacing: 0.83em;
-    -fx-alignment: center-right;
 }
 
 .title-box, .title-box .label {

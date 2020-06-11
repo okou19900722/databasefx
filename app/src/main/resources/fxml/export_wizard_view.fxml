@@ -20,14 +20,9 @@
     </center>
     <bottom>
         <HBox styleClass="bottom-box">
-            <HBox>
-                <Button text="%app.save"/>
-            </HBox>
-            <HBox HBox.hgrow="ALWAYS" styleClass="right-box">
-                <Button text="上一步" onAction="#last"/>
-                <Button text="下一步" onAction="#next"/>
-                <Button text="取消" onAction="#completeOrCancel" fx:id="startOrCancel"/>
-            </HBox>
+            <Button text="上一步" onAction="#last"/>
+            <Button text="下一步" onAction="#next"/>
+            <Button text="取消" onAction="#completeOrCancel" fx:id="startOrCancel"/>
         </HBox>
     </bottom>
     <VBox>
