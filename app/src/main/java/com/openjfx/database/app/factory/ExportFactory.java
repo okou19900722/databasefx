@@ -126,12 +126,25 @@ public class ExportFactory {
      */
     private void exportAsJson(Map<String, List<String>> map) {
         var json = new JsonObject();
-        for (Map.Entry<String, List<String>> entry : map.entrySet()) {
-            var values = entry.getValue();
-            var array = new JsonArray();
-            values.forEach(array::add);
-
-            json.put(entry.getKey(), values);
+        var array = new JsonArray();
+        json.put("RECORDS", array);
+        var list = new ArrayList<String>();
+        var values = map.values();
+        for (List<String> value : values) {
+            list.addAll(value);
+        }
+        if (map.size() > 0) {
+            var rowSize = list.size() / map.size();
+            var keys = map.keySet().toArray(new String[0]);
+            for (int j = 0; j < rowSize; j++) {
+                var k = 0;
+                var record = new JsonObject();
+                while (k < map.size()) {
+                    record.put(keys[k], list.get(j + k * rowSize));
+                    k++;
+                }
+                array.add(record);
+            }
         }
         writerFile(json.toBuffer().getBytes());
     }
