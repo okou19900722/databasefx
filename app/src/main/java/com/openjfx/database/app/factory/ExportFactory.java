@@ -81,7 +81,9 @@ public class ExportFactory {
         setText("Start reading data.......");
         future.onSuccess(rows -> {
             var map = new LinkedHashMap<String, List<String>>();
-            var size = rows.columnsNames().size();
+            int size = rows.columnsNames().size();
+            int rowSize = rows.size();
+            int count = 0;
             for (Row row : rows) {
                 for (int i = 0; i < size; i++) {
                     var val = StringUtils.getObjectStrElseGet(row.getValue(i), "", "yyyy-MM-dd HH:mm:ss");
@@ -95,8 +97,9 @@ public class ExportFactory {
                         map.put(columnName, list);
                     }
                     list.add(val);
+                    setProgress((1f - progress.getValue()) * (10f * count + i) / (rowSize * size));
                 }
-                setProgress(0.8);
+                count++;
             }
             setText("Read data successfully.......");
             formatFilePath();
@@ -154,7 +157,7 @@ public class ExportFactory {
                     csvFile), StandardCharsets.UTF_8), 1024);
             List<String> headers = new ArrayList<>(map.keySet());
             // write header
-            writeCsvRow(headers, csvWtriter);
+            writeRow(headers, csvWtriter, ",");
             // write items
             final List<List<String>> dataCollect = new ArrayList<>(map.values());
             int rowCount = dataCollect.stream().mapToInt(List::size).min().orElse(0);
@@ -162,7 +165,7 @@ public class ExportFactory {
             for (int i = 0; i < rowCount; i++) {
                 int finalIndex = i;
                 rowData = dataCollect.stream().map(t -> t.get(finalIndex)).collect(Collectors.toList());
-                writeCsvRow(rowData, csvWtriter);
+                writeRow(rowData, csvWtriter, ",");
             }
             csvWtriter.flush();
         } catch (Exception e) {
@@ -184,12 +187,13 @@ public class ExportFactory {
      *
      * @param row       row data
      * @param csvWriter BufferedWriter object
+     * @param rule      design the rule to append data
      * @throws IOException io exception
      */
-    private void writeCsvRow(List<String> row, BufferedWriter csvWriter) throws IOException {
+    private void writeRow(List<String> row, BufferedWriter csvWriter, String rule) throws IOException {
         StringBuilder sb = new StringBuilder();
         for (String item : row) {
-            sb.append("\"").append(item).append("\",");
+            sb.append("\"").append(item).append("\"").append(rule);
         }
         sb.deleteCharAt(sb.length() - 1);
         csvWriter.write(sb.toString());
@@ -385,7 +389,45 @@ public class ExportFactory {
      * @param map table data
      */
     private void exportAsTxt(Map<String, List<String>> map) {
-
+        String fileName = model.getPath();
+        File txtFile;
+        BufferedWriter csvWtriter = null;
+        Throwable throwable = null;
+        try {
+            txtFile = new File(fileName);
+            if (!txtFile.exists()) {
+                boolean writable = txtFile.setWritable(true);
+                if (!txtFile.createNewFile() && !writable) {
+                    throw new Exception("fail to create txt file");
+                }
+            }
+            csvWtriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
+                    txtFile), StandardCharsets.UTF_8), 1024);
+            List<String> headers = new ArrayList<>(map.keySet());
+            // write header
+            writeRow(headers, csvWtriter, "\t\t");
+            // write items
+            final List<List<String>> dataCollect = new ArrayList<>(map.values());
+            int rowCount = dataCollect.stream().mapToInt(List::size).min().orElse(0);
+            List<String> rowData;
+            for (int i = 0; i < rowCount; i++) {
+                int finalIndex = i;
+                rowData = dataCollect.stream().map(t -> t.get(finalIndex)).collect(Collectors.toList());
+                writeRow(rowData, csvWtriter, "\t\t");
+            }
+            csvWtriter.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throwable = e;
+        } finally {
+            try {
+                assert csvWtriter != null;
+                csvWtriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        writerResult(throwable);
     }
 
     private String buildSql() {

@@ -18,7 +18,7 @@ gradlew run
 ## 应用快照
 ### 应用主界面
 ![Travis CI](./SNAPSHOTS/a.png)
-### 创建你连接
+### 创建连接
 ![Travis CI](./SNAPSHOTS/e.png)
 ### 数据库导航栏
 ![Travis CI](./SNAPSHOTS/b.png)
