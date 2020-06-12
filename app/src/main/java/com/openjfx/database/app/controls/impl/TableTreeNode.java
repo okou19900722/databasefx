@@ -67,8 +67,8 @@ public class TableTreeNode extends BaseTreeNode<String> {
         });
         //rename table
         rename.setOnAction(e -> {
-            var target = DialogUtils.showInputDialog(I18N.getString("menu.databasefx.tree.rename.failed"));
-            if (target.trim().equals(getValue())) {
+            var target = DialogUtils.showInputDialog(I18N.getString("menu.databasefx.tree.rename.table.tips")).trim();
+            if (target.isEmpty() || target.trim().equals(getValue())) {
                 return;
             }
             var pool = DATABASE_SOURCE.getDataBaseSource(getUuid());
@@ -78,7 +78,7 @@ public class TableTreeNode extends BaseTreeNode<String> {
                 EventBusUtils.closeTableTab(getUuid(), scheme, getValue());
                 Platform.runLater(() -> setValue(target));
             });
-            future.onFailure(t -> DialogUtils.showErrorDialog(t, "重命名失败!"));
+            future.onFailure(t -> DialogUtils.showErrorDialog(t, I18N.getString("menu.databasefx.tree.rename.failed")));
         });
         addMenuItem(design, exportData, rename, delete);
     }

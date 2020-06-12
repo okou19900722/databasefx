@@ -10,6 +10,8 @@ import javafx.scene.control.TextInputDialog;
 import org.controlsfx.control.Notifications;
 import org.controlsfx.dialog.ExceptionDialog;
 
+import static com.openjfx.database.app.DatabaseFX.I18N;
+
 /**
  * application dialog utils
  *
@@ -90,7 +92,7 @@ public class DialogUtils {
      */
     public static String showInputDialog(String title) {
         var dialog = new TextInputDialog();
-        dialog.setTitle("inout dialog");
+        dialog.setTitle(I18N.getString("app.dialog.input"));
         dialog.setHeaderText(title);
         dialog.getDialogPane().getStylesheets().add("css/base.css");
         var optional = dialog.showAndWait();
