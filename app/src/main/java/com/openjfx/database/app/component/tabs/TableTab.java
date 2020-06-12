@@ -366,23 +366,31 @@ public class TableTab extends BaseTab<TableTabModel> {
 
         List<Future> futures = new ArrayList<>();
 
-        for (ObservableList<StringProperty> newRow : newRows) {
+        for (var newRow : newRows) {
             var columns = TableDataHelper.fxPropertyToObject(newRow);
             var future = dml.insert(metas, columns, model.getTable());
-            var optional = dml.getAutoIncreaseField(metas);
-            if (optional.isPresent()) {
-                int i = metas.indexOf(optional.get());
-                //Auto increment ID of callback processing after success
-                future.setHandler(ar -> {
-                    Platform.runLater(() -> {
-                        int index = tableView.getItems().indexOf(newRow);
-                        if (index != -1) {
-                            var item = tableView.getItems().get(index);
-                            item.set(i, new SimpleStringProperty(String.valueOf(ar.result())));
-                        }
-                    });
-                });
-            }
+            //Add successfully, callback to deal with the problem of self increasing ID and default value
+            future.setHandler(ar -> {
+                if (ar.failed()) {
+                    return;
+                }
+                for (int i = 0; i < metas.size(); i++) {
+                    var meta = metas.get(i);
+                    //if row already delete
+                    var j = -1;
+                    if ((j = tableView.getItems().indexOf(newRow)) == -1) {
+                        return;
+                    }
+                    var item = tableView.getItems().get(j);
+                    var isNull = newRow.get(i).get().equals(NULL);
+                    if (meta.getAutoIncrement() && isNull) {
+                        item.set(i, new SimpleStringProperty(ar.result().toString()));
+                    }
+                    if (!StringUtils.isEmpty(meta.getDefault()) && isNull) {
+                        item.set(i, new SimpleStringProperty(meta.getDefault()));
+                    }
+                }
+            });
             futures.add(future);
         }
         var promise = Promise.<Integer>promise();

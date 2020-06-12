@@ -204,13 +204,14 @@ public class DMLImpl implements DML {
      */
     @Override
     public Optional<TableColumnMeta> getAutoIncreaseField(List<TableColumnMeta> metas) {
-        var optional = Optional.<TableColumnMeta>empty();
-        for (var tableColumnMeta : metas) {
-            if (tableColumnMeta.getExtra().contains("auto_increment")) {
-                optional = Optional.of(tableColumnMeta);
-                break;
-            }
-        }
-        return optional;
+        return metas.stream().filter(TableColumnMeta::getAutoIncrement).findAny();
+//        var optional = Optional.<TableColumnMeta>empty();
+//        for (var tableColumnMeta : metas) {
+//            if (tableColumnMeta.getExtra().contains("auto_increment")) {
+//                optional = Optional.of(tableColumnMeta);
+//                break;
+//            }
+//        }
+//        return optional;
     }
 }
