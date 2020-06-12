@@ -1,7 +1,6 @@
 plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.8'
-    id 'com.gluonhq.client-gradle-plugin' version '0.1.23'
 }
 
 mainClassName = 'com.openjfx.database.app.DatabaseFX'
@@ -12,28 +11,10 @@ gluonClient {
     graalvmHome = "/home/yangkui/application/graalvm"
 }
 
-//group 'com.openjfx.database'
-//version '1.0-SNAPSHOT'
-
 javafx {
     version = "14.0.1"
     modules = ['javafx.controls', 'javafx.fxml', 'javafx.base', 'javafx.graphics']
 }
-
-
-//gluonClient {
-//    target = 'host'
-//    compilerArgs = [
-//            '-Dio.netty.noUnsafe = true',
-//            '--initialize-at-run-time=io.netty .handler.codec.http.HttpObjectEncoder',
-//            '--initialize-at-run-time=io.netty.handler.codec.http2.Http2CodecUtil',
-//            '--initialize-at-run-time=io.netty .handler.codec.http2.DefaultHttp2FrameWriter',
-//            '--initialize-at-run-time=io.netty.handler.codec.http.websocketx .WebSocket00FrameEncoder',
-//            '--initialize-at-run-time=io.netty.resolver.dns.DefaultDnsServerAddressStreamProvider',
-//            '--initialize-at-run-time=io.netty.util.AbstractReferenceCounted,io.netty.util.concurrent.GlobalEventExecutor,io.netty.util.concurrent.ImmediateEventExecutor,io.netty.util.concurrent.ScheduledFutureTask,io.netty.util.internal.ThreadLocalRandom',
-//            '--report-unsupported-elements-at-runtime'
-//    ]
-//}
 
 dependencies {
     compile project(":common")
@@ -52,7 +33,7 @@ tasks.withType(JavaCompile) {
 }
 
 jar {
-    from {/**/
+    from {
         //添加依懒到打包文件
         configurations.runtime.collect { zipTree(it) }
     }
