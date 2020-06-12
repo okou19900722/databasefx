@@ -9,6 +9,7 @@ import com.openjfx.database.app.enums.NotificationType;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.app.utils.RobotUtils;
 import com.openjfx.database.base.AbstractDataBasePool;
+import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.common.utils.StringUtils;
 import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;
@@ -20,10 +21,16 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.TableView;
+import javafx.scene.input.MouseDragEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.FileChooser;
 
+import java.io.File;
 import java.util.*;
 
 import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
+import static com.openjfx.database.app.DatabaseFX.I18N;
 
 /**
  * sql editor controller
@@ -81,7 +88,15 @@ public class SQLEditController extends BaseController<JsonObject> {
             //place into database source pool
             con.close();
         });
-
+        stage.getScene().setOnDragEntered(event -> {
+            var files = event.getDragboard().getFiles();
+            if (files.size() > 1) {
+                DialogUtils.showAlertInfo(I18N.getString("app.stage.sql.terminal.drag.number"));
+                return;
+            }
+            var file = files.get(0);
+            loadSqlFile(file);
+        });
         stage.setOnCloseRequest(event -> DATABASE_SOURCE.close(uuid));
     }
 
@@ -112,6 +127,18 @@ public class SQLEditController extends BaseController<JsonObject> {
     }
 
     @FXML
+    public void openFileChooser() {
+        var fileChooser = new FileChooser();
+        var filter = new FileChooser.ExtensionFilter("SQL Script file", "*.sql");
+        fileChooser.setSelectedExtensionFilter(filter);
+        var file = fileChooser.showOpenDialog(stage);
+        if (file == null) {
+            return;
+        }
+        loadSqlFile(file);
+    }
+
+    @FXML
     public void copySql(ActionEvent event) {
         var sql = sqlEditor.getText();
         if (StringUtils.isEmpty(sql)) {
@@ -124,6 +151,23 @@ public class SQLEditController extends BaseController<JsonObject> {
     @FXML
     public void clearSql(ActionEvent event) {
         sqlEditor.deleteText(0, sqlEditor.getText().length());
+    }
+
+    private void loadSqlFile(File file) {
+        var path = file.getAbsolutePath();
+        var pattern = "(.)*\\.(sql|SQL)";
+        if (!path.matches(pattern)) {
+            DialogUtils.showAlertInfo(I18N.getString("app.stage.sql.terminal.drag.format"));
+            return;
+        }
+        var fut = VertexUtils.getFileSystem().readFile(path);
+        fut.onComplete(ar -> {
+            if (ar.failed()) {
+                return;
+            }
+            var str = ar.result().toString("utf8");
+            Platform.runLater(() -> sqlEditor.setText(str));
+        });
     }
 
 

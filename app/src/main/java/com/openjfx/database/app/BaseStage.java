@@ -84,10 +84,11 @@ public class BaseStage<D> extends Stage {
             throw new RuntimeException(e);
         }
         scene = new Scene(root);
-        //add global style
-        scene.getStylesheets().add("css/base.css");
+        setScene(scene);
         controller = loader.getController();
         controller.setStage(this);
+        //add global style
+        scene.getStylesheets().add("css/base.css");
     }
 
     /**
@@ -96,7 +97,6 @@ public class BaseStage<D> extends Stage {
     private void initStage() {
         Layout layout = getLayout();
 
-        setScene(scene);
         setWidth(layout.width());
         setHeight(layout.height());
         setMaximized(layout.maximized());

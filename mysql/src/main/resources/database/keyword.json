@@ -32,5 +32,6 @@
   "TABLE",
   "COMMENT",
   "NOT",
-  "NULL"
+  "NULL",
+  "VALUES"
 ]

@@ -7,6 +7,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextInputDialog;
+import javafx.stage.Window;
 import org.controlsfx.control.Notifications;
 import org.controlsfx.dialog.ExceptionDialog;
 
@@ -46,10 +47,25 @@ public class DialogUtils {
      * @param type {@link NotificationType} notification type
      */
     public static void showNotification(String text, Pos pos, NotificationType type) {
+        showNotification(text, pos, type, null);
+    }
+
+    /**
+     * show notification
+     *
+     * @param text   notification content
+     * @param pos    {@link Pos} notification show position
+     * @param window target window
+     * @param type   {@link NotificationType} notification type
+     */
+    public static void showNotification(String text, Pos pos, NotificationType type, Window window) {
+        var notifications = Notifications.create();
+        notifications.position(pos);
+        notifications.text(text);
+        if (window != null) {
+            notifications.owner(window);
+        }
         Platform.runLater(() -> {
-            var notifications = Notifications.create();
-            notifications.position(pos);
-            notifications.text(text);
             switch (type) {
                 case ERROR:
                     notifications.showError();

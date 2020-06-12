@@ -13,7 +13,7 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.openjfx.database.app.controller.SQLEditController"
-            prefHeight="400.0" prefWidth="600.0">
+            prefHeight="400.0" prefWidth="600.0" fx:id="root">
     <stylesheets>
         <URL value="@/css/sql_edit_view.css"/>
     </stylesheets>
@@ -51,6 +51,17 @@
                 <tooltip>
                     <Tooltip text="%view.sql.editor.clear"/>
                 </tooltip>
+            </Button>
+            <Button onAction="#openFileChooser">
+                <tooltip>
+                    <Tooltip text="%view.sql.editor.open.file"/>
+                </tooltip>
+                <graphic>
+                    <ImageView>
+                        <Image url="@/assets/images/sql_script_icon.png" requestedHeight="20" requestedWidth="20"
+                               smooth="true"/>
+                    </ImageView>
+                </graphic>
             </Button>
         </VBox>
     </left>
