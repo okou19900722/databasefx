@@ -292,7 +292,7 @@ public class ExportFactory {
                 var k = 0;
                 while (k < map.size()) {
                     var cell = row.createCell(k, CellType.STRING);
-                    cell.setCellValue(list.get(k * rowSize));
+                    cell.setCellValue(list.get(j + k * rowSize));
                     k++;
                 }
             }
@@ -332,7 +332,7 @@ public class ExportFactory {
                     table.append("<tr>");
                     var k = 0;
                     while (k < map.size()) {
-                        var td = list.get(k * rowSize);
+                        var td = list.get(j + k * rowSize);
                         table.append("<td>").append(td).append("</td>");
                         k++;
                     }
@@ -365,7 +365,7 @@ public class ExportFactory {
             while (k < map.size()) {
                 var key = keys[k];
                 var ell = el.addElement(key);
-                ell.setText(list.get(k * rowSize));
+                ell.setText(list.get(i+k * rowSize));
                 k++;
             }
         }
