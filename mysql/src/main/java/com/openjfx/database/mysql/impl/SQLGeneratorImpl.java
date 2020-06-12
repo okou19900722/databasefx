@@ -417,4 +417,38 @@ public class SQLGeneratorImpl implements SQLGenerator {
         sb.append(tableName);
         return sb.toString();
     }
+
+    @Override
+    public String insert(String[] columns, String scheme, String table, List<String> values) {
+        var tableName = SQLHelper.escapeMysqlField(scheme + "." + table);
+        var sb = new StringBuilder("INSERT INTO " + tableName + "(");
+        for (int i = 0; i < columns.length; i++) {
+            var column = columns[i];
+            sb.append(column);
+            if (i < columns.length - 1) {
+                sb.append(",");
+            }
+        }
+        sb.append(") VALUES ");
+        var rowSize = values.size() / columns.length;
+        for (int i = 0; i < rowSize; i++) {
+            var k = 0;
+            sb.append("(");
+            while (k < columns.length) {
+                var val = values.get(i + k * rowSize);
+                sb.append(SQLHelper.escapeField(val));
+                if (k < columns.length - 1) {
+                    sb.append(",");
+                }
+                k++;
+            }
+            sb.append(")");
+            if (i < rowSize - 1) {
+                sb.append(",");
+            } else {
+                sb.append(";");
+            }
+        }
+        return sb.toString();
+    }
 }

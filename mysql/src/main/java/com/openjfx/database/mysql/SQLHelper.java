@@ -31,6 +31,10 @@ public class SQLHelper {
         return stringBuffer.toString();
     }
 
+    public static String escapeField(String field) {
+        return "'" + field + "'";
+    }
+
     public static List<TableColumnMeta> getPrimaryKey(List<TableColumnMeta> tableColumnMetas) {
         return tableColumnMetas.stream().filter(TableColumnMeta::getPrimaryKey).collect(Collectors.toList());
     }

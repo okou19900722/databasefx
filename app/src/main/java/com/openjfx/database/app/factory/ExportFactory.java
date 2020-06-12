@@ -33,6 +33,8 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
+
 /**
  * Factory class is used for data export
  *
@@ -76,7 +78,7 @@ public class ExportFactory {
         }
         var sql = buildSql();
         setProgress(0.1);
-        var pool = DatabaseFX.DATABASE_SOURCE.getDataBaseSource(model.getUuid());
+        var pool = DATABASE_SOURCE.getDataBaseSource(model.getUuid());
         var future = pool.getPool().query(sql);
         setText("Start reading data.......");
         future.onSuccess(rows -> {
@@ -112,6 +114,7 @@ public class ExportFactory {
                 case HTML -> exportAsHtml(map);
                 case XML -> exportAsXml(map);
                 case CSV -> exportAsCsv(map);
+                case SQL_SCRIPT -> exportAsSQL(map);
                 default -> exportAsTxt(map);
             }
         });
@@ -128,11 +131,7 @@ public class ExportFactory {
         var json = new JsonObject();
         var array = new JsonArray();
         json.put("RECORDS", array);
-        var list = new ArrayList<String>();
-        var values = map.values();
-        for (List<String> value : values) {
-            list.addAll(value);
-        }
+        var list = getValueList(map.values());
         if (map.size() > 0) {
             var rowSize = list.size() / map.size();
             var keys = map.keySet().toArray(new String[0]);
@@ -280,11 +279,7 @@ public class ExportFactory {
             cell.setCellValue(s);
             i++;
         }
-        var list = new ArrayList<String>();
-        var values = map.values();
-        for (List<String> value : values) {
-            list.addAll(value);
-        }
+        var list = getValueList(map.values());
         if (map.size() > 0) {
             var rowSize = list.size() / map.size();
             for (int j = 0; j < rowSize; j++) {
@@ -321,11 +316,7 @@ public class ExportFactory {
                 table.append("<th>").append(s).append("</th>");
             }
             table.append("</tr>");
-            var values = map.values();
-            var list = new ArrayList<String>();
-            for (List<String> value : values) {
-                list.addAll(value);
-            }
+            var list = getValueList(map.values());
             if (map.size() > 0) {
                 var rowSize = list.size() / map.size();
                 for (int j = 0; j < rowSize; j++) {
@@ -353,10 +344,7 @@ public class ExportFactory {
         var dom = DocumentHelper.createDocument();
         var root = dom.addElement("RECORDS");
         var values = map.values();
-        var list = new ArrayList<String>();
-        for (List<String> value : values) {
-            list.addAll(value);
-        }
+        var list = getValueList(map.values());
         var rowSize = list.size() / map.size();
         var keys = map.keySet().toArray(new String[0]);
         for (int i = 0; i < rowSize; i++) {
@@ -365,7 +353,7 @@ public class ExportFactory {
             while (k < map.size()) {
                 var key = keys[k];
                 var ell = el.addElement(key);
-                ell.setText(list.get(i+k * rowSize));
+                ell.setText(list.get(i + k * rowSize));
                 k++;
             }
         }
@@ -443,12 +431,23 @@ public class ExportFactory {
         writerResult(throwable);
     }
 
+    /**
+     * export data as sql
+     */
+    private void exportAsSQL(Map<String, List<String>> map) {
+        var generate = DATABASE_SOURCE.getGenerator();
+        var columns = map.keySet().toArray(new String[0]);
+        var list = getValueList(map.values());
+        var sql = generate.insert(columns, model.getScheme(), model.getTable(), list);
+        writerFile(sql.getBytes());
+    }
+
     private String buildSql() {
         final String sql;
         if (model.getSelectColumnPattern() == ExportWizardSelectColumnPage.SelectColumnPattern.SENIOR) {
             sql = model.getCustomExportSql();
         } else {
-            var generator = DatabaseFX.DATABASE_SOURCE.getGenerator();
+            var generator = DATABASE_SOURCE.getGenerator();
             var table = model.getScheme() + "." + model.getTable();
             sql = generator.select(model.getSelectTableColumn(), table);
         }
@@ -490,6 +489,14 @@ public class ExportFactory {
             var path = model.getPath() + "." + suffix;
             model.setPath(path);
         }
+    }
+
+    private List<String> getValueList(Collection<List<String>> values) {
+        var list = new ArrayList<String>();
+        for (List<String> value : values) {
+            list.addAll(value);
+        }
+        return list;
     }
 
     public double getProgress() {

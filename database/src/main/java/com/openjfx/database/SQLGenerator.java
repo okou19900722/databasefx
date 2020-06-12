@@ -50,4 +50,15 @@ public interface SQLGenerator {
      * @return sql statement
      */
     String select(List<TableColumnMeta> metas, String table);
+
+    /**
+     * generate insert sql
+     *
+     * @param columns table column list
+     * @param scheme  table scheme
+     * @param table   table name
+     * @param values  value
+     * @return insert statement
+     */
+    String insert(String[] columns, String scheme, String table, List<String> values);
 }
